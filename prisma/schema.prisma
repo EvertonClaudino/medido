@@ -1,0 +1,337 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  OWNER
+  FOREMAN
+  WORKER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum WorkLogStatus {
+  PENDING
+  VALIDATED
+  REJECTED
+}
+
+enum TaskStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum VisitStatus {
+  REQUESTED
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum BudgetStatus {
+  DRAFT
+  SENT
+  NEGOTIATION
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum BudgetRevisionType {
+  CREATED
+  CONTENT_EDIT
+  STATUS_CHANGE
+}
+
+enum MeasureUnit {
+  M
+  M2
+  M3
+  UN
+  KG
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  nif       String?  @unique
+  address   String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users         User[]
+  clients       Client[]
+  projects      Project[]
+  workLogs      WorkLog[]
+  measurements  WorkLogMeasurement[]
+  tasks         Task[]
+  visitRequests VisitRequest[]
+  budgets       Budget[]
+
+  @@map("companies")
+}
+
+model User {
+  id                 String     @id @default(cuid())
+  companyId          String
+  name               String
+  email              String     @unique
+  password           String
+  role               Role       @default(WORKER)
+  status             UserStatus @default(ACTIVE)
+  mustChangePassword Boolean    @default(false)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  company              Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  assignments          ProjectAssignment[]
+  workLogs             WorkLog[]           @relation("WorkerLogs")
+  reviews              WorkLog[]           @relation("ForemanReviews")
+  createdTasks         Task[]              @relation("TaskCreator")
+  assignedTasks        Task[]              @relation("TaskAssignee")
+  createdVisitRequests VisitRequest[]      @relation("VisitRequestCreator")
+  createdBudgets       Budget[]            @relation("BudgetCreator")
+  budgetRevisions      BudgetRevision[]    @relation("BudgetRevisionEditor")
+
+  @@index([companyId])
+  @@map("users")
+}
+
+model Project {
+  id         String        @id @default(cuid())
+  companyId  String
+  clientId   String?
+  name        String
+  code        String?
+  serviceType String?
+  clientName  String?
+  address    String?
+  budget     Float?
+  status     ProjectStatus @default(ACTIVE)
+  startDate  DateTime?
+  endDate    DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  company     Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  client      Client?             @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  assignments ProjectAssignment[]
+  workLogs    WorkLog[]
+  tasks       Task[]
+  quote       Budget?
+
+  @@index([companyId])
+  @@index([companyId, clientId])
+  @@map("projects")
+}
+
+model ProjectAssignment {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  isLead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+  @@map("project_assignments")
+}
+
+model WorkLog {
+  id              String        @id @default(cuid())
+  companyId       String
+  projectId       String
+  authorId        String
+  workDate        DateTime      @db.Date
+  hours           Decimal?      @db.Decimal(4, 2)
+  description     String?
+  status          WorkLogStatus @default(PENDING)
+  rejectionReason String?
+  reviewedById    String?
+  reviewedAt      DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  measurements WorkLogMeasurement[]
+
+  company    Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  author     User    @relation("WorkerLogs", fields: [authorId], references: [id], onDelete: Restrict)
+  reviewedBy User?   @relation("ForemanReviews", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([companyId, projectId, status])
+  @@index([companyId, authorId, workDate])
+  @@map("work_logs")
+}
+
+model WorkLogMeasurement {
+  id          String      @id @default(cuid())
+  companyId   String
+  workLogId   String
+  description String
+  quantity    Decimal     @db.Decimal(12, 3)
+  unit        MeasureUnit
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  workLog WorkLog @relation(fields: [workLogId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, workLogId])
+  @@map("work_log_measurements")
+}
+
+model Task {
+  id           String     @id @default(cuid())
+  companyId    String
+  projectId    String?
+  createdById  String
+  assignedToId String
+  title        String
+  description  String?
+  dueDate      DateTime?
+  status       TaskStatus @default(PENDING)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  project    Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  createdBy  User     @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  assignedTo User     @relation("TaskAssignee", fields: [assignedToId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, assignedToId, status])
+  @@index([companyId, dueDate])
+  @@index([companyId, projectId])
+  @@map("tasks")
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  companyId String
+  name      String
+  nif       String?
+  email     String?
+  phone     String?
+  address   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  projects      Project[]
+  visitRequests VisitRequest[]
+  budgets       Budget[]
+
+  @@index([companyId])
+  @@map("clients")
+}
+
+model VisitRequest {
+  id               String      @id @default(cuid())
+  companyId        String
+  clientId         String
+  requestedAddress String
+  scheduledAt      DateTime?
+  status           VisitStatus @default(REQUESTED)
+  notes            String?
+  createdById      String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  client    Client  @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  createdBy User    @relation("VisitRequestCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  budget    Budget?
+
+  @@index([companyId, status, createdAt])
+  @@index([companyId, clientId])
+  @@map("visit_requests")
+}
+
+model Budget {
+  id             String       @id @default(cuid())
+  companyId      String
+  clientId       String
+  visitRequestId String       @unique
+  projectId      String?      @unique
+  projectName    String
+  workAddress    String
+  notes          String?
+  status         BudgetStatus @default(DRAFT)
+  createdById    String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  company      Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  client       Client           @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  visitRequest VisitRequest     @relation(fields: [visitRequestId], references: [id], onDelete: Restrict)
+  project      Project?         @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  createdBy    User             @relation("BudgetCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  items        BudgetItem[]
+  revisions    BudgetRevision[]
+
+  @@index([companyId, status, updatedAt])
+  @@index([companyId, clientId])
+  @@map("budgets")
+}
+
+model BudgetItem {
+  id          String  @id @default(cuid())
+  budgetId    String
+  description String
+  quantity    Decimal @db.Decimal(14, 3)
+  unit        String
+  unitPrice   Decimal @db.Decimal(14, 2)
+  vatRate     Decimal @db.Decimal(5, 2)
+  position    Int
+
+  budget Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+
+  @@index([budgetId, position])
+  @@map("budget_items")
+}
+
+model BudgetRevision {
+  id             String             @id @default(cuid())
+  budgetId       String
+  revisionNumber Int
+  type           BudgetRevisionType
+  snapshot       Json
+  editorId       String
+  createdAt      DateTime           @default(now())
+
+  budget Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  editor User   @relation("BudgetRevisionEditor", fields: [editorId], references: [id], onDelete: Restrict)
+
+  @@unique([budgetId, revisionNumber])
+  @@index([budgetId, createdAt])
+  @@map("budget_revisions")
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String
+  createdAt DateTime @default(now())
+
+  @@map("leads")
+}

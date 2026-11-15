@@ -1,0 +1,29 @@
+"use client";
+
+import { useEffect } from "react";
+import { texts } from "@/lib/texts";
+
+export default function DashboardError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
+  return (
+    <div role="alert" className="rounded-xl border border-red-200 bg-white p-8 text-center">
+      <h1 className="text-lg font-bold text-red-900">{texts.dashboard.errorTitle}</h1>
+      <button
+        type="button"
+        onClick={reset}
+        className="mt-4 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+      >
+        {texts.dashboard.retry}
+      </button>
+    </div>
+  );
+}
