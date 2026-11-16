@@ -2,6 +2,11 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ProjectStatus, Role } from "@prisma/client";
 import { getLisbonStartOfDay } from "@/lib/dashboard-utils";
+import {
+  calculateProjectProgress,
+  isProjectDelayed,
+  getNextProjectCode,
+} from "@/lib/project-utils";
 import ObrasView, { type ProjectItemData } from "./ObrasView";
 
 export const metadata = {
@@ -80,11 +85,8 @@ export default async function ObrasPage() {
   ]);
 
   const projects: ProjectItemData[] = rawProjects.map((p) => {
-    // 1. Obra Atrasada: status ACTIVE, endDate !== null e endDate < startOfToday (Lisboa)
-    const isDelayed =
-      p.status === ProjectStatus.ACTIVE &&
-      p.endDate !== null &&
-      new Date(p.endDate) < startOfToday;
+    // 1. Obra Atrasada calculada pela função pura
+    const isDelayed = isProjectDelayed(p, now);
 
     // 2. Tarefas da Obra: totais, concluídas, pendentes e atrasadas
     const totalTasksCount = p.tasks.length;
@@ -94,13 +96,12 @@ export default async function ObrasPage() {
       (t) => t.status === "PENDING" && t.dueDate !== null && new Date(t.dueDate) < startOfToday
     ).length;
 
-    // Percentagem de conclusão baseada em tarefas
-    const progressPercentage =
-      totalTasksCount > 0
-        ? Math.round((completedTasksCount / totalTasksCount) * 100)
-        : p.status === ProjectStatus.COMPLETED
-        ? 100
-        : 0;
+    // Percentagem de conclusão calculada pela função pura
+    const progressPercentage = calculateProjectProgress(
+      totalTasksCount,
+      completedTasksCount,
+      p.status
+    );
 
     // Encarregados atribuídos à obra
     const foremenList = p.assignments
@@ -156,7 +157,7 @@ export default async function ObrasPage() {
   const delayed = projects.filter((p) => p.isDelayed).length;
 
   const currentYear = now.getFullYear();
-  const nextCodeSuggestion = `OBR-${currentYear}-${String(total + 1).padStart(3, "0")}`;
+  const nextCodeSuggestion = await getNextProjectCode(companyId, currentYear);
 
   return (
     <ObrasView

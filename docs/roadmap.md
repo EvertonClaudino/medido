@@ -54,6 +54,7 @@ Estado: **Em desenvolvimento**
 - [x] Módulo de Clientes (`/dashboard/clientes`) — restrito ao Dono da empresa:
   - Modelo `Client` com campos `name`, `nif`, `email`, `phone`, `address`, `notes`; migração versionada aplicada (`20261109223407_add_clients_model`).
   - Ligação opcional a `Project` via `clientId` (onDelete: SetNull).
+  - Cards Operacionais com avatar de iniciais, contactos, NIF, histórico de obras com chips de estado e diálogo de perfil completo (`ClientDetailsDialog`).
   - CRUD completo via pop-up / modal (sem páginas separadas `/nova`): criar, editar e eliminar (com proteção contra eliminação de cliente com obras associadas).
   - Server actions `createClientAction`, `updateClientAction`, `deleteClientAction` com validação Zod e isolamento multi-tenant.
   - Componente reutilizável `components/ui/dialog.tsx` (sem dependências externas): fecha com Escape, clique no backdrop e botão X; bloqueia scroll; foco inicial no painel.
@@ -94,11 +95,12 @@ Estado: **Em desenvolvimento**
 - [x] 4 cards KPI no topo da página de obras: Total de Obras, Obras Ativas, Obras Terminadas, Obras em Atraso.
 - [x] Barra de pesquisa (nome, código, cliente, tipo de serviço, morada) e filtros por estado (pills).
 - [x] Migração `20261111225103_add_project_service_type` aplicada ao Neon (campo `serviceType String?` em `Project`).
-- [x] Gestão de equipa da empresa: convite com geração de senha temporária forte e desativação segura.
+- [x] Gestão de equipa da empresa reformulada (`/dashboard/equipa`): Cards Operacionais de alta densidade visual (1/2/3 colunas), avatar com iniciais coloridas e indicador de perfil, especialidade/cargo profissional (`specialty`), obras atribuídas com indicação de Encarregado Responsável (`isLead`), controlo de estado Ativo/Inativo e Diálogo Modal (`Dialog`) de convite com visualização e cópia de senha temporária gerada.
+- [x] Migração `20261115221000_add_user_specialty` aplicada ao Neon (campo `specialty String?` em `User`).
 - [x] Apontamento diário mobile-first com suporte a horas opcionais e medições métricas (`M`, `M2`, `M3`, `UN`, `KG`).
 - [x] Validação e rejeição de registos pelo Encarregado (apenas nas suas obras responsáveis).
 - [x] Reenvio de registos rejeitados pelo Funcionário.
-- [x] Centralização integral de textos visíveis em [`lib/texts.ts`](file:///c:/Users/evert/Desktop/Projetos/medido/lib/texts.ts) em PT-PT.
+- [x] Centralização integral de textos visíveis em [`lib/texts.ts`](file:///c:/Users/user/Desktop/Projeto/medido/lib/texts.ts) em PT-PT.
 - [x] Implementação do fluxo OWNER de pedidos de visita (`/dashboard/visitas`), com criação inline de cliente, agendamento em `Europe/Lisbon` e estados recebida/agendada/realizada/cancelada.
 - [x] Implementação de orçamentos detalhados (`/dashboard/orcamentos`), com IVA por linha configurável, revisões/snapshots e seleção livre de estado pelo OWNER.
 - [x] Aprovação do orçamento cria uma obra ativa sem equipa; `Project.budget` fica com o total com IVA; alterações do orçamento sincronizam a obra e o cancelamento arquiva-a.

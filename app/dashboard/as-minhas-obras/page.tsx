@@ -7,11 +7,18 @@ export default async function AsMinhasObrasPage() {
 
   const assignments = await prisma.projectAssignment.findMany({
     where: { userId: user.id },
-    include: {
+    select: {
+      id: true,
       project: {
-        include: {
+        select: {
+          id: true,
+          name: true,
+          code: true,
+          address: true,
+          clientName: true,
           assignments: {
-            include: {
+            select: {
+              id: true,
               user: {
                 select: {
                   id: true,

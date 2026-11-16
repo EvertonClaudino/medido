@@ -19,6 +19,7 @@ import {
   ExternalLink,
   ListTodo,
   AlertTriangle,
+  PlayCircle,
 } from "lucide-react";
 import type { ProjectItemData } from "./ObrasView";
 
@@ -41,58 +42,70 @@ export default function ProjectDetailsDialog({
   let statusBadge = "bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]";
   let statusLabel = "Em Curso";
   let progressBarColor = "bg-[#2563EB]";
+  let StatusIcon = PlayCircle;
 
   if (project.isDelayed) {
     statusBadge = "bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]";
     statusLabel = "Em Atraso";
     progressBarColor = "bg-[#DC2626]";
+    StatusIcon = ClockAlert;
   } else if (project.status === "COMPLETED" || project.status === "ARCHIVED") {
     statusBadge = "bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]";
     statusLabel = project.status === "COMPLETED" ? "Concluída" : "Arquivada";
     progressBarColor = "bg-[#16A34A]";
+    StatusIcon = project.status === "COMPLETED" ? CheckCircle2 : Building2;
   }
+
+  const hasTasks = project.totalTasksCount > 0;
+  const tasksProgressLabel = hasTasks
+    ? `Tarefas concluídas ${project.completedTasksCount} de ${project.totalTasksCount}`
+    : "Sem tarefas";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
-        {/* Cabeçalho do Modal */}
-        <DialogHeader>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pr-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-                <Building2 className="h-6 w-6" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  {project.code && (
-                    <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded">
-                      {project.code}
-                    </span>
-                  )}
-                  {project.serviceType && (
-                    <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-700">
-                      {project.serviceType}
-                    </span>
-                  )}
+      <DialogContent className="max-w-3xl max-h-[92vh] flex flex-col p-0 overflow-hidden sm:max-w-3xl">
+        {/* Cabeçalho Fixo do Modal — Botão X sempre visível */}
+        <div className="p-4 sm:p-6 pb-4 border-b border-slate-100 bg-white shrink-0 pr-12">
+          <DialogHeader>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                  <Building2 className="h-6 w-6" />
                 </div>
-                <DialogTitle className="text-xl font-black text-slate-900 mt-1">
-                  {project.name}
-                </DialogTitle>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {project.code && (
+                      <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded">
+                        {project.code}
+                      </span>
+                    )}
+                    {project.serviceType && (
+                      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-700">
+                        {project.serviceType}
+                      </span>
+                    )}
+                  </div>
+                  <DialogTitle className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+                    {project.name}
+                  </DialogTitle>
+                </div>
+              </div>
+
+              {/* Estado com Ícone + Texto */}
+              <div className="flex items-center gap-2 mt-1 sm:mt-0">
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${statusBadge}`}
+                >
+                  <StatusIcon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>{statusLabel}</span>
+                </span>
               </div>
             </div>
+          </DialogHeader>
+        </div>
 
-            <div className="flex items-center gap-2">
-              <span
-                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${statusBadge}`}
-              >
-                <span className="h-2 w-2 rounded-full bg-current opacity-75" />
-                {statusLabel}
-              </span>
-            </div>
-          </div>
-        </DialogHeader>
-
-        <div className="space-y-6 pt-3 text-xs">
+        {/* Corpo com Scroll Suave */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 text-xs focus:outline-none">
           {/* Alerta de Atraso se aplicável */}
           {project.isDelayed && (
             <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-rose-800 font-semibold">
@@ -108,7 +121,7 @@ export default function ProjectDetailsDialog({
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
                 Orçamento Previsto
               </span>
-              <span className="font-mono text-sm font-black text-slate-900 block">
+              <span className="font-mono text-sm font-black text-slate-900 block truncate">
                 {project.budget !== null && project.budget !== undefined
                   ? new Intl.NumberFormat("pt-PT", {
                       style: "currency",
@@ -118,20 +131,25 @@ export default function ProjectDetailsDialog({
               </span>
             </div>
 
-            {/* Progresso de Tarefas */}
+            {/* Progresso de Tarefas: rótulo Tarefas concluídas X de Y / Sem tarefas */}
             <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                Progresso Geral
+              <span
+                className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1 truncate"
+                title={tasksProgressLabel}
+              >
+                {tasksProgressLabel}
               </span>
               <div className="flex items-baseline gap-1">
                 <span className="text-sm font-black text-slate-900">
-                  {project.totalTasksCount > 0 || project.status === "COMPLETED"
+                  {hasTasks || project.status === "COMPLETED"
                     ? `${project.progressPercentage}%`
                     : "0%"}
                 </span>
-                <span className="text-[10px] text-slate-400">
-                  ({project.completedTasksCount}/{project.totalTasksCount} tar.)
-                </span>
+                {hasTasks && (
+                  <span className="text-[10px] text-slate-400">
+                    ({project.completedTasksCount}/{project.totalTasksCount})
+                  </span>
+                )}
               </div>
             </div>
 
@@ -141,7 +159,7 @@ export default function ProjectDetailsDialog({
                 Data Limite
               </span>
               <span
-                className={`text-xs font-bold block ${
+                className={`text-xs font-bold block truncate ${
                   project.isDelayed ? "text-rose-600" : project.endDate ? "text-slate-800" : "text-slate-400 font-normal"
                 }`}
               >
@@ -161,7 +179,7 @@ export default function ProjectDetailsDialog({
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
                 Apontamentos Diários
               </span>
-              <span className="text-sm font-black text-slate-900 block">
+              <span className="text-sm font-black text-slate-900 block truncate">
                 {project.workLogsCount} registos
               </span>
             </div>
@@ -170,7 +188,9 @@ export default function ProjectDetailsDialog({
           {/* Barra de Progresso Real */}
           <div>
             <div className="flex items-center justify-between text-xs mb-1.5">
-              <span className="text-[11px] font-bold text-slate-700">Execução das Tarefas da Obra</span>
+              <span className="text-[11px] font-bold text-slate-700">
+                {hasTasks ? "Execução das Tarefas da Obra" : "Execução da Obra (sem tarefas associadas)"}
+              </span>
               <span className="font-mono text-xs font-bold text-slate-900">{project.progressPercentage}%</span>
             </div>
             <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
@@ -247,7 +267,7 @@ export default function ProjectDetailsDialog({
                 </div>
                 <Link
                   href={`/dashboard/obras/${project.id}/equipa`}
-                  className="text-[11px] font-bold text-blue-600 hover:underline inline-flex items-center gap-1"
+                  className="text-[11px] font-bold text-blue-600 hover:underline inline-flex items-center gap-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                 >
                   <span>Gerir Equipa</span>
                   <ExternalLink className="h-3 w-3" />
@@ -307,7 +327,7 @@ export default function ProjectDetailsDialog({
                 <ListTodo className="h-4 w-4 text-slate-500" />
                 <span>Tarefas Associadas ({project.totalTasksCount})</span>
               </div>
-              <div className="flex items-center gap-2 text-[10px] font-bold">
+              <div className="flex items-center gap-2 text-[10px] font-bold flex-wrap justify-end">
                 <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
                   {project.completedTasksCount} Concluídas
                 </span>
@@ -373,31 +393,31 @@ export default function ProjectDetailsDialog({
           </div>
         </div>
 
-        {/* Rodapé com Ações */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+        {/* Rodapé Fixo com Ações — Áreas mínimas de toque de 44px e Foco Visível */}
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center sm:justify-between gap-3 p-4 sm:p-6 pt-3 pb-4 border-t border-slate-100 bg-slate-50/70 shrink-0">
           <DialogClose asChild>
             <button
               type="button"
-              className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 transition active:scale-[0.98]"
             >
               Fechar
             </button>
           </DialogClose>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <Link
               href={`/dashboard/obras/${project.id}/equipa`}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2 text-xs font-bold text-amber-900 hover:bg-amber-100 transition shadow-2xs"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-xs font-bold text-amber-900 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 transition shadow-2xs active:scale-[0.98]"
             >
-              <HardHat className="h-3.5 w-3.5" />
+              <HardHat className="h-4 w-4" />
               <span>Gerir Equipa</span>
             </Link>
 
             <Link
               href={`/dashboard/obras/${project.id}/editar`}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 transition shadow-xs"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition shadow-xs active:scale-[0.98]"
             >
-              <Edit className="h-3.5 w-3.5" />
+              <Edit className="h-4 w-4" />
               <span>Editar Obra</span>
             </Link>
           </div>

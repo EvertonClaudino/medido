@@ -139,22 +139,12 @@ export async function deleteClientAction(clientId: string) {
   return { success: true };
 }
 
+import { projectSchema } from "@/lib/validations/project";
+import { getNextProjectCode } from "@/lib/project-utils";
+
 // ==========================================
 // 1. AÇÕES DE OBRAS (DONO)
 // ==========================================
-
-const projectSchema = z.object({
-  name: z.string().min(2, "O nome da obra é obrigatório.").max(120),
-  code: z.string().max(30).optional(),
-  serviceType: z.string().max(80).optional(),
-  clientId: z.string().optional(),
-  clientName: z.string().max(120).optional(),
-  address: z.string().max(200).optional(),
-  budget: z.coerce.number().positive().optional(),
-  foremanId: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
-});
 
 export async function createProjectAction(formData: FormData) {
   const user = await requireRole([Role.OWNER]);
@@ -218,31 +208,52 @@ export async function createProjectAction(formData: FormData) {
     }
   }
 
-  // Código Interno de Obra criado automaticamente se não fornecido
-  let finalCode = code?.trim();
-  if (!finalCode) {
-    const year = new Date().getFullYear();
-    const existingCount = await prisma.project.count({
-      where: { companyId: user.companyId },
-    });
-    finalCode = `OBR-${year}-${String(existingCount + 1).padStart(3, "0")}`;
+  const isAutoCode = !code?.trim();
+  const year = new Date().getFullYear();
+  const MAX_ATTEMPTS = 5;
+  let project = null;
+
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    const finalCode = isAutoCode
+      ? await getNextProjectCode(user.companyId, year, attempt)
+      : code!.trim();
+
+    try {
+      project = await prisma.project.create({
+        data: {
+          companyId: user.companyId,
+          clientId: clientId || null,
+          name,
+          code: finalCode,
+          serviceType: serviceType || null,
+          clientName: resolvedClientName || null,
+          address: address || null,
+          budget: budget || null,
+          startDate: startDate ? new Date(startDate) : null,
+          endDate: endDate ? new Date(endDate) : null,
+          status: ProjectStatus.ACTIVE,
+        },
+      });
+      break;
+    } catch (err: unknown) {
+      const isUniqueConstraint =
+        (typeof err === "object" && err !== null && "code" in err && (err as { code: string }).code === "P2002") ||
+        (err instanceof Error && (err.message.includes("Unique constraint failed") || err.message.includes("P2002")));
+
+      if (isUniqueConstraint) {
+        if (!isAutoCode) {
+          return { error: "Já existe uma obra com este código na empresa." };
+        }
+        // Em código automático, tenta com o próximo número sequencial
+        continue;
+      }
+      throw err;
+    }
   }
 
-  const project = await prisma.project.create({
-    data: {
-      companyId: user.companyId,
-      clientId: clientId || null,
-      name,
-      code: finalCode,
-      serviceType: serviceType || null,
-      clientName: resolvedClientName || null,
-      address: address || null,
-      budget: budget || null,
-      startDate: startDate ? new Date(startDate) : null,
-      endDate: endDate ? new Date(endDate) : null,
-      status: ProjectStatus.ACTIVE,
-    },
-  });
+  if (!project) {
+    return { error: "Já existe uma obra com este código na empresa." };
+  }
 
   if (foremanId) {
     await prisma.projectAssignment.create({
@@ -280,6 +291,7 @@ const teamInviteSchema = z.object({
   name: z.string().min(2, "Nome obrigatório").max(100),
   email: z.string().email("Email inválido").max(254),
   role: z.enum(["FOREMAN", "WORKER"]), // Nunca permite convidar como OWNER
+  specialty: z.string().trim().max(100, "A especialidade não pode ter mais de 100 carateres.").optional(),
   temporaryPassword: z
     .string()
     .min(8, "A palavra-passe temporária tem de ter pelo menos 8 carateres.")
@@ -297,6 +309,7 @@ export async function inviteUserAction(formData: FormData) {
     name: formData.get("name"),
     email: formData.get("email"),
     role: formData.get("role"),
+    specialty: formData.get("specialty") || undefined,
     temporaryPassword: formData.get("temporaryPassword") || undefined,
   });
 
@@ -305,7 +318,7 @@ export async function inviteUserAction(formData: FormData) {
     return { error: firstIssue };
   }
 
-  const { name, email, role, temporaryPassword: customPassword } = parsed.data;
+  const { name, email, role, specialty, temporaryPassword: customPassword } = parsed.data;
 
   // Regra (c): Garantia explícita em código que nunca cria OWNER
   if (role !== "FOREMAN" && role !== "WORKER") {
@@ -326,6 +339,7 @@ export async function inviteUserAction(formData: FormData) {
         name,
         email: email.toLowerCase().trim(),
         role: role as Role,
+        specialty: specialty?.trim() || null,
         password: hashedPassword,
         mustChangePassword: true,
       },
@@ -336,6 +350,26 @@ export async function inviteUserAction(formData: FormData) {
   } catch {
     return { error: "Este endereço de email já se encontra registado." };
   }
+}
+
+export async function updateUserSpecialtyAction(userId: string, specialty: string) {
+  const user = await requireRole([Role.OWNER]);
+
+  const target = await prisma.user.findFirst({
+    where: { id: userId, companyId: user.companyId },
+    select: { id: true },
+  });
+  if (!target) return { error: "Utilizador não encontrado." };
+
+  const cleanSpecialty = specialty.trim().slice(0, 100);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { specialty: cleanSpecialty || null },
+  });
+
+  safeRevalidatePath("/dashboard/equipa");
+  return { success: true };
 }
 
 export async function toggleUserStatusAction(userId: string, currentStatus: string) {
@@ -681,21 +715,19 @@ export async function updateCompanyAction(formData: FormData) {
 // 5. AÇÕES DE EDIÇÃO DE OBRAS (DONO)
 // ==========================================
 
-const updateProjectSchema = z.object({
-  name: z.string().min(2, "O nome da obra é obrigatório.").max(120),
-  code: z.string().max(30).optional(),
-  serviceType: z.string().max(80).optional(),
-  clientName: z.string().max(120).optional(),
-  address: z.string().max(200).optional(),
-  budget: z.coerce.number().positive().optional(),
-});
-
 export async function updateProjectAction(projectId: string, formData: FormData) {
   const user = await requireRole([Role.OWNER]);
 
   const project = await prisma.project.findFirst({
     where: { id: projectId, companyId: user.companyId },
-    select: { id: true, name: true, quote: { select: { id: true } } },
+    select: {
+      id: true,
+      name: true,
+      clientId: true,
+      startDate: true,
+      endDate: true,
+      quote: { select: { id: true } },
+    },
   });
 
   if (!project) {
@@ -706,32 +738,50 @@ export async function updateProjectAction(projectId: string, formData: FormData)
     name: formData.get("name") || project.name,
     code: formData.get("code") || undefined,
     serviceType: formData.get("serviceType") || undefined,
+    clientId: formData.get("clientId") || project.clientId || undefined,
     clientName: formData.get("clientName") || undefined,
     address: formData.get("address") || undefined,
     budget: formData.get("budget") || undefined,
+    startDate: formData.get("startDate") || undefined,
+    endDate: formData.get("endDate") || undefined,
   };
 
-  const parsed = updateProjectSchema.safeParse(rawData);
+  const parsed = projectSchema.safeParse(rawData);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
   }
 
-  await prisma.project.updateMany({
-    where: { id: projectId, companyId: user.companyId },
-    data: project.quote
-      ? {
-          code: parsed.data.code ?? null,
-          serviceType: parsed.data.serviceType ?? null,
-        }
-      : {
-          name: parsed.data.name,
-          code: parsed.data.code ?? null,
-          serviceType: parsed.data.serviceType ?? null,
-          clientName: parsed.data.clientName ?? null,
-          address: parsed.data.address ?? null,
-          budget: parsed.data.budget ?? null,
-        },
-  });
+  try {
+    await prisma.project.update({
+      where: { id: projectId, companyId: user.companyId },
+      data: project.quote
+        ? {
+            code: parsed.data.code?.trim() || null,
+            serviceType: parsed.data.serviceType || null,
+            startDate: parsed.data.startDate ? new Date(parsed.data.startDate) : null,
+            endDate: parsed.data.endDate ? new Date(parsed.data.endDate) : null,
+          }
+        : {
+            name: parsed.data.name,
+            code: parsed.data.code?.trim() || null,
+            serviceType: parsed.data.serviceType || null,
+            clientName: parsed.data.clientName || null,
+            address: parsed.data.address || null,
+            budget: parsed.data.budget || null,
+            startDate: parsed.data.startDate ? new Date(parsed.data.startDate) : null,
+            endDate: parsed.data.endDate ? new Date(parsed.data.endDate) : null,
+          },
+    });
+  } catch (err: unknown) {
+    const isUniqueConstraint =
+      (typeof err === "object" && err !== null && "code" in err && (err as { code: string }).code === "P2002") ||
+      (err instanceof Error && (err.message.includes("Unique constraint failed") || err.message.includes("P2002")));
+
+    if (isUniqueConstraint) {
+      return { error: "Já existe uma obra com este código na empresa." };
+    }
+    throw err;
+  }
 
   safeRevalidatePath("/dashboard/obras");
   return { success: true };

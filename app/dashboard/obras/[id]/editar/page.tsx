@@ -24,6 +24,8 @@ export default async function EditarObraPage({
       clientName: true,
       address: true,
       budget: true,
+      startDate: true,
+      endDate: true,
       quote: { select: { id: true } },
     },
   });
@@ -158,6 +160,32 @@ export default async function EditarObraPage({
               </div>
             </>
           )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-semibold uppercase text-slate-700">
+                Data de Início
+              </label>
+              <input
+                type="date"
+                name="startDate"
+                defaultValue={project.startDate ? new Date(project.startDate).toISOString().slice(0, 10) : ""}
+                className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold uppercase text-slate-700">
+                Data Limite / Conclusão
+              </label>
+              <input
+                type="date"
+                name="endDate"
+                defaultValue={project.endDate ? new Date(project.endDate).toISOString().slice(0, 10) : ""}
+                className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden"
+              />
+            </div>
+          </div>
 
           <div className="flex gap-3 pt-2">
             <button

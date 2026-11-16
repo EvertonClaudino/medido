@@ -181,3 +181,60 @@ Regras e estrutura:
    - Se o orçamento já foi aprovado e tem obra ativa associada, a ação retorna sucesso com o `projectId` existente sem criar duplicados.
    - Se o orçamento foi anteriormente cancelado e a obra arquivada, a reaprovação reativa a mesma obra (`Project.status = ACTIVE`), mantendo o mesmo `Project.id` e código `OBR-YYYY-NNN`.
    - Na primeira aprovação, o código `OBR-YYYY-NNN` é gerado no interior da transação `Serializable` através do maior sequencial do ano corrente na empresa.
+
+## 014: Reformulação da Gestão de Equipa com Cards Operacionais, Especialidade e Diálogo de Convite (15/11/2026)
+
+**Decisão:** Substituir a lista simples da página de Equipa (`/dashboard/equipa`) por uma grelha de Cards Operacionais responsivos de alta densidade visual (1 col mobile, 2 cols tablet, 3 cols desktop), adicionar suporte a especialidade/cargo profissional e migrar o formulário de convite para Diálogo Modal (`Dialog` do Radix/shadcn).
+
+**Princípios e Implementação:**
+1. **Modelagem de Dados e Especialidade:**
+   - Adicionado campo opcional `specialty String?` ao modelo `User` via migração `20261115221000_add_user_specialty`.
+   - Permite registar ofícios e especialidades da construção civil (ex.: "Encarregado Geral", "Pedreiro de 1.ª", "Eletricista", "Carpinteiro de Cofragem", etc.).
+2. **Cards Operacionais com Identificação Visual:**
+   - Avatar com iniciais dinâmicas e paleta cromática semântica por perfil (Dono em roxo com escudo, Encarregado em âmbar com capacete, Funcionário em azul com pasta).
+   - Indicação de estado Ativo / Inativo com alternância rápida com botões de área mínima de 44 px.
+   - Apresentação das obras ativas alocadas (`ProjectAssignment`), discriminando o papel de "Responsável" (`isLead: true`) ou "Equipa".
+   - Dono com indicação de "Acesso global a todas as obras da empresa".
+3. **Diálogo Modal de Convite:**
+   - Substituição do formulário inline estático por Diálogo modal com validação e sugestões de especialidades comuns de construção civil.
+   - Apresentação destacada da palavra-passe temporária gerada com botão de cópia com 1 clique e lembrete de obrigatoriedade de alteração no primeiro acesso.
+4. **Filtros e Pesquisa:**
+   - Pesquisa em tempo real (nome, email, especialidade, obra) e filtros por perfil (Todos, Encarregados, Funcionários) e estado (Ativos, Inativos).
+5. **Diálogo Modal de Perfil e Detalhes do Colaborador (`MemberDetailsDialog`):**
+   - Ao clicar em qualquer card de colaborador, abre um diálogo modal detalhado com avatar ampliado, identificação completa, perfil, estado da conta, data de admissão e estado de primeiro acesso (`mustChangePassword`).
+   - Apresenta estatísticas de atividade operacional (apontamentos de obra e tarefas atribuídas) e listagem completa de obras com atalho para a gestão da equipa da obra.
+   - Permite ao Dono editar diretamente a especialidade/cargo técnico do colaborador sem recarregar a página.
+   - Controlo de ativação/desativação no rodapé com conformidade móvel de 44 px e isolamento de evento (`stopPropagation`) nos botões do card para evitar abertura indesejada.
+
+## 015: Reformulação dos Cards de Clientes com Histórico de Obras e Melhoria do Diálogo de Convite (16/11/2026)
+
+**Decisão:** Alinhar o design do módulo de Clientes (`/dashboard/clientes`) com o padrão visual dos colaboradores, integrando histórico de obras e diálogo de detalhes, e elevar a ergonomia do diálogo de convite da equipa.
+
+**Princípios e Implementação:**
+1. **Cards Operacionais de Clientes:**
+   - Avatar com iniciais estilizadas em verde esmeralda.
+   - Apresentação de NIF, telefone, email e morada fiscal.
+   - Secção de Histórico de Obras com chips de código (`[OBR-2026-001]`), nome e badges semânticos de estado (Em curso, Concluída, Arquivada).
+   - Métricas no topo: Total de Clientes, Clientes com Obras Ativas, Histórico de Obras e Orçamentos.
+   - Barra de pesquisa integrada filtrando por nome, NIF, contactos ou nome de obra associada.
+2. **Diálogo de Perfil e Histórico do Cliente (`ClientDetailsDialog`):**
+   - Abertura ao clicar em qualquer cartão com foco acessível e área de toque móvel de 44 px.
+   - Apresentação completa das informações fiscais e notas internas.
+   - Histórico detalhado de todas as obras (código, nome, datas de início/conclusão, tipo de serviço e link para `/dashboard/obras`).
+   - Botões de Ação rápida: Editar Cliente, Eliminar (com proteção relacional) e Fechar.
+3. **Melhoria do Diálogo de Convite da Equipa:**
+   - Seletor de Perfil de Acesso com Radio Cards visuais (Funcionário vs Encarregado) com ícones temáticos e descrições claras de funções em obra.
+   - Pills de seleção rápida com 1 toque para as especialidades mais comuns da construção civil ("Pedreiro de 1.ª", "Encarregado Geral", "Eletricista", "Carpinteiro", "Pintor", etc.).
+   - Bloco visual de palavra-passe com indicação de geração automática segura recomendada.
+
+## 016: Otimização de Layout Responsivo — Barra Inferior até 768x1024 e Sidebar Compacto em Desktop (16/11/2026)
+
+**Decisão:** Manter a barra de navegação inferior ativa em ecrãs móveis e tablets até à resolução 768x1024 (`< 1024px` / `< lg`), e reduzir a largura lateral do sidebar em ecrãs maiores para libertar espaço para os cartões de obras, equipa e clientes.
+
+**Princípios e Implementação:**
+1. **Transição de Breakpoint (de `md` para `lg`):**
+   - Em tablets (incluindo 768x1024 em portrait), o sidebar lateral fica oculto (`hidden lg:flex`) e o dashboard opera em ecrã inteiro com a barra inferior (`lg:hidden`).
+   - O padding inferior do layout ajusta-se para `pb-16 lg:pb-0`.
+2. **Redução da Largura do Sidebar Lateral:**
+   - Em ecrãs `>= 1024px`, o sidebar passa de `w-64` (256px) para `w-52` (208px, `shrink-0`), com espaçamentos otimizados (`px-2.5 py-1.5` nos links).
+   - O padding do `<main>` passa de `md:p-8` para `sm:p-6 lg:p-6`, concedendo uma área útil substancialmente maior para que a grelha de cards respire confortavelmente em desktop e não fique reduzida.
