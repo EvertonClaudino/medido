@@ -1,6 +1,6 @@
 # Roadmap do Medido
 
-Última atualização: 17/11/2026
+Última atualização: 18/11/2026
 
 ## Fase 1: Landing page
 Estado: **Concluída com sucesso (Landing Page Corporativa integrada com o Dashboard)**
@@ -120,6 +120,7 @@ Estado: **Em desenvolvimento**
 
 - [x] Registo de empresa (`/registo`) com sessão iniciada, base de dados limpa para dados reais, testes de integração isolados e nova landing, login e registo (decisão 024).
 - [x] Landing redesenhada a partir da referência extds.eu: hero de ecrã inteiro com desenho técnico animado, montra do produto, movimento ligado ao scroll e tipografia de display (decisão 025).
+- [x] Revisão visual da landing, do início de sessão e do registo para clareza e usabilidade: produto visível no primeiro ecrã, secção de funcionalidades, sem jargão técnico, formulários num cartão com alternância entre modos, ícones nos campos e regras da palavra-passe em tempo real (decisão 026).
 
 ### 2. O que falta na Fase 3:
 - [ ] Validação cruzada e refinamento dos filtros de pesquisa de registos por data/obra.

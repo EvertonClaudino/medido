@@ -456,28 +456,32 @@ export const texts = {
   },
   auth: {
     panel: {
-      statement: "Cada metro, cada hora, cada orçamento — registado na obra e validado pelo encarregado.",
+      label: "Medido · Gestão de obra",
+      statement: "Cada metro, cada hora e cada orçamento, registados na obra e validados pelo encarregado.",
       points: [
-        "Registos diários com horas e medições em M, M², M³, UN e KG",
+        "Registos diários com horas e medições em m, m², m³, un e kg",
         "Orçamentos com IVA por linha e aprovação que cria a obra",
         "Visitas marcadas com a agenda do encarregado à vista",
       ],
       footer: "Software de gestão de obra para empresas de construção em Portugal.",
     },
+    switcher: {
+      label: "Iniciar sessão ou criar conta",
+      login: "Iniciar sessão",
+      register: "Criar conta",
+    },
+    backHome: "Voltar ao site",
     login: {
-      title: "Iniciar sessão",
-      subtitle: "Aceda à conta da sua empresa.",
+      title: "Aceda à sua conta",
+      subtitle: "Use o email e a palavra-passe da sua conta Medido.",
       email: "Email",
       password: "Palavra-passe",
       showPassword: "Mostrar palavra-passe",
       hidePassword: "Ocultar palavra-passe",
       submit: "Iniciar sessão",
       submitting: "A verificar…",
-      noAccount: "Ainda não tem conta?",
-      createAccount: "Criar conta da empresa",
       inactive: "A sessão terminou ou o utilizador foi desativado. Inicie sessão novamente.",
       genericError: "Não foi possível iniciar sessão. Tente novamente.",
-      backHome: "Voltar ao site",
     },
     register: {
       title: "Criar conta da empresa",
@@ -492,12 +496,15 @@ export const texts = {
       email: "Email",
       emailHint: "Usado para iniciar sessão.",
       password: "Palavra-passe",
-      passwordHint: "Mínimo 8 carateres, com uma maiúscula e um algarismo.",
+      passwordRules: {
+        length: "Pelo menos 8 carateres",
+        uppercase: "Uma letra maiúscula",
+        digit: "Um algarismo",
+      },
       confirmPassword: "Confirmar palavra-passe",
+      passwordsMatch: "As palavras-passe coincidem.",
       submit: "Criar conta",
       submitting: "A criar conta…",
-      haveAccount: "Já tem conta?",
-      login: "Iniciar sessão",
       errors: {
         companyName: "Indique o nome da empresa.",
         nif: "O NIF tem de ter 9 algarismos.",
@@ -517,7 +524,7 @@ export const texts = {
   landing: {
     nav: {
       links: [
-        { href: "#produto", label: "Produto" },
+        { href: "#funcionalidades", label: "Funcionalidades" },
         { href: "#percurso", label: "Como funciona" },
         { href: "#perfis", label: "Perfis" },
         { href: "#estaleiro", label: "No estaleiro" },
@@ -529,35 +536,38 @@ export const texts = {
       closeMenu: "Fechar menu",
     },
     hero: {
-      eyebrow: "Software de gestão de obra · Portugal",
-      lines: ["Cada metro", "conta."],
-      body: "Do primeiro contacto com o cliente à última medição validada. O Medido junta o escritório, o encarregado e o estaleiro no mesmo registo.",
+      eyebrow: "Gestão de obra para empresas de construção",
+      title: "Obras, equipas e medições",
+      titleAccent: "num só lugar.",
+      body: "Do primeiro contacto com o cliente à última medição validada. O escritório, o encarregado e o estaleiro trabalham no mesmo registo.",
       primary: "Criar conta da empresa",
       secondary: "Iniciar sessão",
-      drawingLabel: "Alçado principal · esc. 1:100",
-      dimension: "24,50 m²",
-      meta: [
-        { term: "Fuso", value: "Europe/Lisbon" },
-        { term: "Moeda", value: "1 234,56 €" },
-        { term: "Unidades", value: "m · m² · m³ · un · kg" },
+      highlights: [
+        "Funciona no telemóvel, sem instalar nada",
+        "Cada empresa só vê os seus dados",
+        "Euros, IVA e datas no formato português",
       ],
-      scroll: "Deslize",
+      dimension: "24,50 m²",
     },
-    marquee: ["Clientes", "Visitas", "Orçamentos", "Obras", "Equipa", "Tarefas", "Registos diários", "Medições", "Validação"],
     intro: {
       eyebrow: "O Medido",
       statement:
         "Uma obra perde dinheiro nos detalhes que ninguém registou. O Medido regista-os no dia em que acontecem, por quem lá está.",
-      pillars: [
-        { title: "Escritório", body: "Clientes, visitas e orçamentos com IVA por linha. Cada alteração fica guardada numa revisão." },
-        { title: "Encarregado", body: "Agenda de visitas, equipa das suas obras e validação dos registos diários." },
-        { title: "Estaleiro", body: "Horas e medições registadas no telemóvel, em poucos toques, no próprio dia." },
+    },
+    features: {
+      eyebrow: "Funcionalidades",
+      title: "Tudo o que a obra precisa, sem folhas de cálculo.",
+      body: "Módulos ligados entre si: o que se regista num aparece nos outros.",
+      items: [
+        { title: "Clientes e visitas", body: "Ficha de cada cliente com contactos, histórico e visitas marcadas na agenda do responsável." },
+        { title: "Orçamentos", body: "Linhas com quantidade, unidade, preço e IVA. Cada alteração fica guardada numa revisão." },
+        { title: "Obras", body: "Aprovar um orçamento cria a obra, com código próprio, equipa e prazos." },
+        { title: "Registo diário", body: "Horas e medições em m, m², m³, un e kg, registadas no telemóvel no próprio dia." },
+        { title: "Validação", body: "O encarregado valida ou devolve com motivo. O Dono vê tudo consolidado." },
+        { title: "Tarefas e alertas", body: "Prazos, tarefas em atraso, obras sem registos e registos por validar, sempre à vista." },
       ],
     },
     product: {
-      eyebrow: "Produto",
-      title: "O escritório e o estaleiro a ver a mesma obra.",
-      body: "O Dono acompanha obras, orçamentos e a agenda da equipa. No telemóvel, quem está na obra regista o dia e o encarregado valida.",
       exampleLabel: "Ecrãs com dados de exemplo",
       dashboard: {
         title: "Painel",
@@ -637,7 +647,7 @@ export const texts = {
         { value: "0,25 h", label: "Horas registadas em múltiplos de um quarto de hora." },
         { value: "20", label: "Medições por registo diário, cada uma com a sua unidade." },
         { value: "5", label: "Unidades (m, m², m³, un, kg), nunca somadas entre si." },
-        { value: "44 px", label: "Área mínima de toque, com navegação inferior no telemóvel." },
+        { value: "PT-PT", label: "Datas dd/mm/aaaa, euros e IVA como se usam em Portugal." },
       ],
     },
     cta: {

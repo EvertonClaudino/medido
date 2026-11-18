@@ -402,3 +402,21 @@ Regras e estrutura:
 3. **Archivo (variável, eixo de largura) como fonte de display**, via `next/font`, só nas páginas públicas. IBM Plex mantém-se para texto corrido e rótulos técnicos. O título do login e do registo passa a usar a mesma fonte de display.
 4. **Movimento só com CSS, sem bibliotecas novas:** texto do hero a subir de uma máscara, traço SVG a desenhar-se, faixa contínua (marquee) e revelações ligadas ao scroll com `animation-timeline: view()`. Em browsers sem suporte o conteúdo fica estático e visível. Tudo é desativado com `prefers-reduced-motion`.
 5. **Secções:** hero, faixa contínua, declaração com revelação palavra a palavra, produto, percurso com título fixo, perfis, números do estaleiro (só especificações reais do produto), chamada final e rodapé com a marca em grande escala.
+
+## 026: Landing e autenticação mais claras e intuitivas (18/11/2026)
+
+**Contexto:** o responsável pelo produto considerou a landing e as páginas de iniciar sessão/registo "pouco intuitivas" e visualmente fracas. Diagnóstico: o hero não dizia o que é o produto (só um slogan sobreposto ao desenho), o produto só aparecia após cerca de 2000 px, havia jargão técnico ("Europe/Lisbon", "44 px"), ruído (faixa âmbar contínua, marca gigante no rodapé) e títulos enormes em todas as secções.
+
+**Decisões:**
+1. **Identidade mantida:** slate + âmbar, Archivo/IBM Plex, grelha de planta técnica. Muda a composição, não a marca.
+2. **Hero em duas colunas:** à esquerda, o que é o Medido ("Obras, equipas e medições num só lugar."), as ações e três garantias verificáveis (telemóvel sem instalar nada, isolamento por empresa, formato português). À direita, a montra do produto (painel + registo diário), que sobe para o primeiro ecrã. No telemóvel mostra-se só o painel, para o hero não ficar longo.
+3. **Nova secção "Funcionalidades"** com os seis módulos reais (lista com ícone ao lado, sem cartões com ícone por cima). Os pilares da introdução saíram por repetirem esta secção.
+4. **Removidos:** a faixa contínua (e o respetivo CSS), a linha de metadados técnicos do hero, a marca gigante no rodapé e o componente `landing-mockup.tsx`, que não era usado. O valor "44 px" passou a "PT-PT" (datas, euros e IVA).
+5. **Iniciar sessão e registo:**
+   - formulário num cartão centrado com alternância "Iniciar sessão / Criar conta" (`aria-current`), que substitui os links no fundo;
+   - link "Voltar ao site";
+   - campos com 48 px de altura e ícone;
+   - registo em dois passos numerados.
+6. **Regras da palavra-passe em tempo real** no registo (8 carateres, maiúscula, algarismo) e confirmação de coincidência. São só orientação visual; a validação continua no servidor com zod.
+7. **Painel lateral de autenticação** com o telemóvel do registo diário, reutilizando `PhoneScreen` da montra.
+

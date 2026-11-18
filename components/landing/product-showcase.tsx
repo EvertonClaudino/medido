@@ -14,7 +14,7 @@ export function ProductShowcase() {
       <div className="relative sm:pb-16 lg:pb-20">
         <DashboardScreen />
         <div
-          className="lp-parallax mx-auto mt-8 w-[min(100%,250px)] sm:absolute sm:-bottom-2 sm:right-6 sm:mt-0 lg:right-12"
+          className="lp-parallax hidden w-[250px] sm:absolute sm:-bottom-2 sm:right-6 sm:block lg:right-12"
           style={{ "--lp-shift": "40px" } as CSSProperties}
         >
           <PhoneScreen />
@@ -118,7 +118,7 @@ function DashboardScreen() {
   );
 }
 
-function PhoneScreen() {
+export function PhoneScreen() {
   const r = t.record;
   return (
     <div className="rounded-[38px] border border-slate-700 bg-slate-900 p-2 shadow-[0_30px_60px_-20px_rgb(2_6_23/0.55)]">

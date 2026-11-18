@@ -1,6 +1,17 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BellRing,
+  Building2,
+  Calculator,
+  Check,
+  CheckCheck,
+  ClipboardList,
+  Contact,
+  type LucideIcon,
+} from "lucide-react";
 import { LandingNav } from "@/components/landing-nav";
 import { HeroDrawing } from "@/components/landing/hero-drawing";
 import { ProductShowcase } from "@/components/landing/product-showcase";
@@ -10,15 +21,19 @@ import { texts } from "@/lib/texts";
 
 const t = texts.landing;
 
-const container = "mx-auto w-full max-w-[90rem] px-5 sm:px-8 lg:px-12";
+const container = "mx-auto w-full max-w-[84rem] px-5 sm:px-8 lg:px-12";
 const eyebrow = "font-plexmono text-xs uppercase tracking-[0.2em]";
-const display = "font-display font-bold tracking-[-0.035em] [font-stretch:108%]";
+const display = "font-display font-bold tracking-[-0.03em] [font-stretch:106%]";
+const sectionTitle = `${display} mt-5 text-[clamp(2.1rem,4.2vw,3.6rem)] leading-[1.02] text-balance`;
+const sectionBody = "max-w-md text-[17px] leading-relaxed text-slate-600 dark:text-slate-400";
 const primaryButton =
   "group inline-flex h-14 items-center justify-center gap-3 rounded-full bg-amber-500 pr-2 pl-7 text-[15px] font-semibold text-slate-950 transition-colors hover:bg-amber-400 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-500";
 const primaryIcon =
-  "inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-950 text-amber-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-rotate-45";
+  "inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-950 text-amber-400 transition-transform duration-300 group-hover:translate-x-0.5";
 const ghostButtonDark =
-  "inline-flex h-14 items-center justify-center rounded-full border border-white/25 px-7 text-[15px] font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-slate-950";
+  "inline-flex h-14 items-center justify-center rounded-full border border-white/25 px-7 text-[15px] font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
+
+const featureIcons: LucideIcon[] = [Contact, Calculator, Building2, ClipboardList, CheckCheck, BellRing];
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
@@ -31,9 +46,8 @@ export default function Home() {
 
       <main className="flex-1">
         <Hero />
-        <Marquee />
         <Intro />
-        <Product />
+        <Features />
         <Journey />
         <Roles />
         <SiteFigures />
@@ -48,130 +62,116 @@ export default function Home() {
 function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-slate-950 bg-blueprint-dark text-white">
-      <HeroDrawing className="pointer-events-none absolute top-[14%] right-[-28%] -z-10 w-[120%] max-w-none opacity-60 sm:right-[-10%] sm:w-[80%] lg:top-[10%] lg:right-[2%] lg:w-[52%] lg:opacity-90" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-2/3 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-slate-950 to-transparent" />
+      <div className="pointer-events-none absolute top-1/3 right-[-10%] -z-10 h-[32rem] w-[32rem] rounded-full bg-amber-500/10 blur-3xl" />
 
-      <div className={`${container} flex min-h-[100svh] flex-col pt-28 pb-8 lg:pt-36`}>
-        <div className="flex items-start justify-between gap-6">
-          <p className={`${eyebrow} lp-fade text-amber-400`} style={delay(200)}>
+      <div
+        className={`${container} grid gap-14 pt-32 pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center lg:gap-14 lg:pt-40 lg:pb-28`}
+      >
+        <div>
+          <p
+            className="lp-fade inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[13px] text-slate-300"
+            style={delay(100)}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" aria-hidden="true" />
             {t.hero.eyebrow}
           </p>
-          <p className={`${eyebrow} lp-fade hidden text-slate-500 lg:block`} style={delay(400)}>
-            {t.hero.drawingLabel}
-          </p>
-        </div>
 
-        <div className="mt-auto pt-16">
-          <h1 className={`${display} text-[clamp(3.6rem,12.4vw,13rem)] leading-[0.84] uppercase`}>
+          <h1 className={`${display} mt-7 text-[clamp(2.6rem,5vw,4.4rem)] leading-[1.02]`}>
             <span className="lp-mask">
               <span className="lp-rise" style={delay(150)}>
-                {t.hero.lines[0]}
+                {t.hero.title}
               </span>
             </span>
-            <span className="lp-mask lg:pl-[18vw]">
-              <span className="lp-rise text-amber-500" style={delay(300)}>
-                {t.hero.lines[1]}
+            <span className="lp-mask">
+              <span className="lp-rise text-amber-400" style={delay(280)}>
+                {t.hero.titleAccent}
               </span>
             </span>
           </h1>
 
-          <div className="lp-fade mt-10 flex flex-col gap-8 lg:mt-14 lg:flex-row lg:items-end lg:justify-between" style={delay(700)}>
-            <p className="max-w-md text-lg leading-relaxed text-slate-300 text-pretty">{t.hero.body}</p>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link href="/registo" className={primaryButton}>
-                {t.hero.primary}
-                <span className={primaryIcon}>
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          <p className="lp-fade mt-6 max-w-lg text-lg leading-relaxed text-slate-300 text-pretty" style={delay(450)}>
+            {t.hero.body}
+          </p>
+
+          <div className="lp-fade mt-9 flex flex-col gap-3 sm:flex-row" style={delay(600)}>
+            <Link href="/registo" className={primaryButton}>
+              {t.hero.primary}
+              <span className={primaryIcon}>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </span>
+            </Link>
+            <Link href="/login" className={ghostButtonDark}>
+              {t.hero.secondary}
+            </Link>
+          </div>
+
+          <ul className="lp-fade mt-10 space-y-2.5 text-[15px] text-slate-300" style={delay(750)}>
+            {t.hero.highlights.map((item) => (
+              <li key={item} className="flex items-center gap-3">
+                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-amber-400">
+                  <Check className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
                 </span>
-              </Link>
-              <Link href="/login" className={ghostButtonDark}>
-                {t.hero.secondary}
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <dl className="lp-fade mt-12 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-white/10 pt-5 sm:grid-cols-4" style={delay(900)}>
-          {t.hero.meta.map((item, index) => (
-            <div key={item.term} className={index === 2 ? "col-span-2 sm:col-span-1" : undefined}>
-              <dt className="font-plexmono text-[11px] tracking-[0.18em] text-slate-500 uppercase">{item.term}</dt>
-              <dd className="mt-1 font-plexmono text-sm text-slate-200">{item.value}</dd>
-            </div>
-          ))}
-          <div className="hidden items-end justify-end sm:flex">
-            <a href="#produto" className="font-plexmono text-[11px] tracking-[0.18em] text-slate-400 uppercase hover:text-white">
-              {t.hero.scroll} ↓
-            </a>
-          </div>
-        </dl>
-      </div>
-    </section>
-  );
-}
-
-function Marquee() {
-  const items = [...t.marquee, ...t.marquee];
-  return (
-    <div className="overflow-hidden border-y border-slate-950 bg-amber-500 py-4 text-slate-950 sm:py-5">
-      <div className="lp-marquee flex w-max">
-        {[0, 1].map((copy) => (
-          <ul key={copy} aria-hidden={copy === 1} className="flex shrink-0 items-center">
-            {items.map((item, index) => (
-              <li key={`${item}-${index}`} className={`${display} flex items-center text-2xl uppercase sm:text-3xl`}>
-                <span className="px-6 sm:px-8">{item}</span>
-                <span className="h-2.5 w-2.5 bg-slate-950" aria-hidden="true" />
+                {item}
               </li>
             ))}
           </ul>
-        ))}
+        </div>
+
+        <div className="lp-fade" style={delay(500)}>
+          <ProductShowcase />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
 function Intro() {
   const words = t.intro.statement.split(" ");
   return (
-    <section className="py-24 sm:py-32 lg:py-44">
+    <section className="py-24 sm:py-32">
       <div className={container}>
         <p className={`${eyebrow} text-amber-700 dark:text-amber-400`}>{t.intro.eyebrow}</p>
-        <p className={`${display} mt-8 max-w-[22ch] text-[clamp(2rem,5.2vw,5rem)] leading-[1.02] font-semibold`}>
+        <p className={`${display} mt-6 max-w-[26ch] text-[clamp(1.8rem,3.6vw,3.25rem)] leading-[1.1] font-semibold`}>
           {words.map((word, index) => (
             <span key={`${word}-${index}`} className="lp-word">
               {word}{" "}
             </span>
           ))}
         </p>
-
-        <ol className="mt-20 grid gap-10 sm:mt-28 md:grid-cols-3 md:gap-8">
-          {t.intro.pillars.map((pillar, index) => (
-            <li key={pillar.title} className="lp-reveal border-t border-slate-900 pt-6 dark:border-slate-200">
-              <span className="font-plexmono text-xs text-slate-500 dark:text-slate-400">{String(index + 1).padStart(2, "0")}</span>
-              <h3 className={`${display} mt-6 text-3xl`}>{pillar.title}</h3>
-              <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-slate-600 dark:text-slate-400">{pillar.body}</p>
-            </li>
-          ))}
-        </ol>
       </div>
     </section>
   );
 }
 
-function Product() {
+function Features() {
   return (
-    <section id="produto" className="scroll-mt-20 bg-slate-100 py-24 sm:py-32 dark:bg-slate-900/60">
+    <section id="funcionalidades" className="scroll-mt-20 bg-slate-50 py-24 sm:py-28 dark:bg-slate-900/60">
       <div className={container}>
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)] lg:items-end">
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-end">
           <div>
-            <p className={`${eyebrow} text-amber-700 dark:text-amber-400`}>{t.product.eyebrow}</p>
-            <h2 className={`${display} mt-6 max-w-[16ch] text-[clamp(2.4rem,5.6vw,5.5rem)] leading-[0.95]`}>{t.product.title}</h2>
+            <p className={`${eyebrow} text-amber-700 dark:text-amber-400`}>{t.features.eyebrow}</p>
+            <h2 className={`${sectionTitle} max-w-[18ch]`}>{t.features.title}</h2>
           </div>
-          <p className="max-w-md text-[17px] leading-relaxed text-slate-600 lg:justify-self-end dark:text-slate-400">{t.product.body}</p>
+          <p className={`${sectionBody} lg:justify-self-end`}>{t.features.body}</p>
         </div>
 
-        <div className="lp-reveal mt-16 sm:mt-20">
-          <ProductShowcase />
-        </div>
+        <ul className="mt-14 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
+          {t.features.items.map((feature, index) => {
+            const Icon = featureIcons[index];
+            return (
+              <li key={feature.title} className="lp-reveal flex gap-4 border-t border-slate-200 py-8 dark:border-slate-800">
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-amber-600 ring-1 ring-slate-200 dark:bg-slate-900 dark:text-amber-400 dark:ring-slate-800">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div>
+                  <h3 className="text-lg font-semibold">{feature.title}</h3>
+                  <p className="mt-1.5 text-[15px] leading-relaxed text-slate-600 dark:text-slate-400">{feature.body}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );
@@ -183,19 +183,19 @@ function Journey() {
       <div className={`${container} grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-20`}>
         <div className="lg:sticky lg:top-32 lg:self-start">
           <p className={`${eyebrow} text-amber-700 dark:text-amber-400`}>{t.journey.eyebrow}</p>
-          <h2 className={`${display} mt-6 text-[clamp(2.4rem,4.6vw,4.5rem)] leading-[0.98]`}>{t.journey.title}</h2>
+          <h2 className={sectionTitle}>{t.journey.title}</h2>
         </div>
 
         <ol>
           {t.journey.steps.map((step, index) => (
             <li
               key={step.title}
-              className="lp-focus grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 border-t border-slate-200 py-10 last:border-b sm:grid-cols-[7rem_minmax(0,1fr)] sm:py-14 dark:border-slate-800"
+              className="lp-focus grid grid-cols-[3.5rem_minmax(0,1fr)] gap-4 border-t border-slate-200 py-8 last:border-b sm:grid-cols-[5rem_minmax(0,1fr)] sm:py-10 dark:border-slate-800"
             >
-              <span className={`${display} text-5xl text-amber-500 tabular-nums sm:text-7xl`}>{String(index + 1).padStart(2, "0")}</span>
-              <div className="pt-1 sm:pt-3">
-                <h3 className={`${display} text-2xl sm:text-4xl`}>{step.title}</h3>
-                <p className="mt-3 max-w-md text-[16px] leading-relaxed text-slate-600 dark:text-slate-400">{step.body}</p>
+              <span className={`${display} text-4xl text-amber-500 tabular-nums sm:text-5xl`}>{String(index + 1).padStart(2, "0")}</span>
+              <div className="pt-1">
+                <h3 className={`${display} text-2xl sm:text-3xl`}>{step.title}</h3>
+                <p className="mt-2 max-w-md text-[16px] leading-relaxed text-slate-600 dark:text-slate-400">{step.body}</p>
               </div>
             </li>
           ))}
@@ -209,19 +209,19 @@ function Roles() {
   return (
     <section id="perfis" className="scroll-mt-20 bg-slate-950 py-24 text-white sm:py-32 dark:bg-slate-900">
       <div className={container}>
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-end">
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-end">
           <div>
             <p className={`${eyebrow} text-amber-400`}>{t.roles.eyebrow}</p>
-            <h2 className={`${display} mt-6 max-w-[14ch] text-[clamp(2.4rem,5vw,5rem)] leading-[0.95]`}>{t.roles.title}</h2>
+            <h2 className={`${sectionTitle} max-w-[16ch]`}>{t.roles.title}</h2>
           </div>
           <p className="max-w-md text-[17px] leading-relaxed text-slate-400 lg:justify-self-end">{t.roles.body}</p>
         </div>
 
-        <ul className="mt-16 grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:mt-20 md:grid-cols-3">
+        <ul className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:grid-cols-3">
           {t.roles.panels.map((panel, index) => (
             <li
               key={panel.role}
-              className="group lp-reveal relative flex min-h-[26rem] flex-col bg-slate-950 p-7 transition-colors duration-500 hover:bg-slate-900 sm:p-9 dark:bg-slate-900 dark:hover:bg-slate-800"
+              className="group lp-reveal relative flex flex-col bg-slate-950 p-7 transition-colors duration-500 hover:bg-slate-900 sm:p-9 dark:bg-slate-900 dark:hover:bg-slate-800"
             >
               <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-amber-500 transition-transform duration-500 group-hover:scale-x-100" />
               <div className="flex items-start justify-between">
@@ -231,12 +231,12 @@ function Roles() {
                   aria-hidden="true"
                 />
               </div>
-              <h3 className={`${display} mt-16 text-[clamp(2.4rem,3.6vw,3.5rem)] leading-none`}>{panel.role}</h3>
+              <h3 className={`${display} mt-10 text-4xl leading-none`}>{panel.role}</h3>
               <p className="mt-2 text-[15px] text-amber-400">{panel.tagline}</p>
               <ul className="mt-7 space-y-2.5 border-t border-white/10 pt-6 text-[15px] text-slate-300">
                 {panel.items.map((item) => (
                   <li key={item} className="flex gap-3">
-                    <span className="mt-2.5 h-px w-3 shrink-0 bg-slate-500" aria-hidden="true" />
+                    <Check className="mt-1 h-3.5 w-3.5 shrink-0 text-amber-400" aria-hidden="true" />
                     {item}
                   </li>
                 ))}
@@ -251,24 +251,24 @@ function Roles() {
 
 function SiteFigures() {
   return (
-    <section id="estaleiro" className="scroll-mt-20 py-24 sm:py-32 lg:py-40">
+    <section id="estaleiro" className="scroll-mt-20 py-24 sm:py-32">
       <div className={container}>
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-end">
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-end">
           <div>
             <p className={`${eyebrow} text-amber-700 dark:text-amber-400`}>{t.site.eyebrow}</p>
-            <h2 className={`${display} mt-6 max-w-[15ch] text-[clamp(2.4rem,5vw,5rem)] leading-[0.95]`}>{t.site.title}</h2>
+            <h2 className={`${sectionTitle} max-w-[16ch]`}>{t.site.title}</h2>
           </div>
-          <p className="max-w-md text-[17px] leading-relaxed text-slate-600 lg:justify-self-end dark:text-slate-400">{t.site.body}</p>
+          <p className={`${sectionBody} lg:justify-self-end`}>{t.site.body}</p>
         </div>
 
-        <dl className="mt-16 grid border-t border-slate-900 sm:mt-24 sm:grid-cols-2 lg:grid-cols-4 dark:border-slate-200">
+        <dl className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {t.site.figures.map((figure) => (
             <div
               key={figure.value}
-              className="lp-reveal flex flex-col-reverse border-b border-slate-200 py-8 sm:pr-8 lg:border-b-0 lg:border-l lg:py-10 lg:pl-8 lg:first:border-l-0 lg:first:pl-0 dark:border-slate-800"
+              className="lp-reveal flex flex-col-reverse rounded-2xl border border-slate-200 p-6 dark:border-slate-800"
             >
-              <dt className="mt-4 max-w-[24ch] text-[15px] leading-relaxed text-slate-600 dark:text-slate-400">{figure.label}</dt>
-              <dd className={`${display} text-[clamp(3.2rem,6vw,5.75rem)] leading-none tabular-nums`}>{figure.value}</dd>
+              <dt className="mt-3 text-[15px] leading-relaxed text-slate-600 dark:text-slate-400">{figure.label}</dt>
+              <dd className={`${display} text-[clamp(2.6rem,4vw,3.5rem)] leading-none tabular-nums`}>{figure.value}</dd>
             </div>
           ))}
         </dl>
@@ -281,11 +281,11 @@ function FinalCta() {
   return (
     <section className="pb-24 sm:pb-32">
       <div className={container}>
-        <div className="relative isolate grid overflow-hidden bg-slate-950 bg-blueprint-dark text-white lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] dark:border dark:border-slate-800 dark:bg-slate-900">
+        <div className="relative isolate grid overflow-hidden rounded-3xl bg-slate-950 bg-blueprint-dark text-white lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] dark:border dark:border-slate-800 dark:bg-slate-900">
           <div className="p-8 sm:p-12 lg:p-16">
             <p className={`${eyebrow} text-amber-400`}>{t.cta.eyebrow}</p>
-            <h2 className={`${display} mt-6 max-w-[14ch] text-[clamp(2.4rem,5vw,4.75rem)] leading-[0.95]`}>{t.cta.title}</h2>
-            <p className="mt-6 max-w-md text-[17px] leading-relaxed text-slate-400">{t.cta.body}</p>
+            <h2 className={`${sectionTitle} max-w-[16ch]`}>{t.cta.title}</h2>
+            <p className="mt-5 max-w-md text-[17px] leading-relaxed text-slate-400">{t.cta.body}</p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Link href="/registo" className={primaryButton}>
                 {t.cta.primary}
@@ -298,8 +298,8 @@ function FinalCta() {
               </Link>
             </div>
           </div>
-          <div className="relative hidden min-h-[24rem] border-l border-white/10 lg:block">
-            <HeroDrawing animated={false} className="absolute inset-0 m-auto w-[90%] opacity-80" />
+          <div className="relative hidden min-h-[22rem] border-l border-white/10 lg:block">
+            <HeroDrawing animated={false} className="absolute inset-0 m-auto w-[88%] opacity-80" />
           </div>
         </div>
       </div>
@@ -309,8 +309,8 @@ function FinalCta() {
 
 function Footer() {
   return (
-    <footer className="overflow-hidden border-t border-slate-200 dark:border-slate-800">
-      <div className={`${container} grid gap-10 pt-16 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)]`}>
+    <footer className="border-t border-slate-200 dark:border-slate-800">
+      <div className={`${container} grid gap-10 py-14 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)]`}>
         <div>
           <Logo />
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-500 dark:text-slate-400">{t.footer.tagline}</p>
@@ -325,16 +325,9 @@ function Footer() {
         />
       </div>
 
-      <div className={`${container} mt-16 flex items-center justify-between border-t border-slate-200 py-6 dark:border-slate-800`}>
+      <div className={`${container} border-t border-slate-200 py-6 dark:border-slate-800`}>
         <p className="font-plexmono text-xs text-slate-500 dark:text-slate-400">© {new Date().getFullYear()} Medido</p>
       </div>
-
-      <p
-        aria-hidden="true"
-        className={`${display} -mb-[0.2em] text-center text-[20.5vw] leading-[0.8] text-slate-100 uppercase select-none dark:text-slate-900`}
-      >
-        Medido
-      </p>
     </footer>
   );
 }

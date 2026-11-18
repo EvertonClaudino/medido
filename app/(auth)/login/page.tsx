@@ -20,7 +20,7 @@ export default async function LoginPage({
   if (!params?.error && (await hasActiveSession())) redirect("/dashboard");
 
   return (
-    <AuthShell>
+    <AuthShell mode="login">
       <LoginForm initialError={params?.error} />
     </AuthShell>
   );
