@@ -13,7 +13,7 @@ export default async function RegisterPage() {
   if (await hasActiveSession()) redirect("/dashboard");
 
   return (
-    <AuthShell>
+    <AuthShell mode="register">
       <RegisterForm />
     </AuthShell>
   );
