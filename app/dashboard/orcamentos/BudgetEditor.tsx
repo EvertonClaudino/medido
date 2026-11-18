@@ -16,7 +16,8 @@ export interface BudgetFormLine {
 
 interface BudgetEditorProps {
   mode: "create" | "edit";
-  visitRequestId?: string;
+  clientId?: string;
+  visitRequestId?: string | null;
   budgetId?: string;
   initialProjectName: string;
   initialWorkAddress: string;
@@ -79,8 +80,8 @@ export default function BudgetEditor(props: BudgetEditorProps) {
     const formData = new FormData(event.currentTarget);
     formData.set("itemCount", String(lines.length));
     startTransition(async () => {
-      const result = props.mode === "create" && props.visitRequestId
-        ? await createBudgetAction(props.visitRequestId, formData)
+      const result = props.mode === "create" && props.clientId
+        ? await createBudgetAction({ clientId: props.clientId, visitRequestId: props.visitRequestId }, formData)
         : props.mode === "edit" && props.budgetId
           ? await updateBudgetAction(props.budgetId, formData)
           : { error: labels.missingId };
@@ -99,7 +100,7 @@ export default function BudgetEditor(props: BudgetEditorProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs sm:grid-cols-2">
+      <div className="grid gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900 sm:grid-cols-2">
         <Field
           label={labels.projectName}
           name="projectName"
@@ -113,7 +114,7 @@ export default function BudgetEditor(props: BudgetEditorProps) {
           required
         />
         <div className="sm:col-span-2">
-          <label htmlFor="budget-notes" className="block text-xs font-semibold text-slate-700">
+          <label htmlFor="budget-notes" className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
             {labels.notes}
           </label>
           <textarea
@@ -122,29 +123,29 @@ export default function BudgetEditor(props: BudgetEditorProps) {
             rows={3}
             maxLength={2000}
             defaultValue={props.initialNotes}
-            className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+            className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
           />
         </div>
       </div>
 
       <section aria-labelledby="budget-lines-heading" className="space-y-3">
         <div className="flex items-center justify-between gap-3">
-          <h2 id="budget-lines-heading" className="text-base font-bold text-slate-900">{labels.lines}</h2>
+          <h2 id="budget-lines-heading" className="text-base font-bold text-slate-900 dark:text-white">{labels.lines}</h2>
           <button
             type="button"
             onClick={() => setLines((current) => [...current, { ...emptyLine }])}
             disabled={lines.length >= 100}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 disabled:opacity-50"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 disabled:opacity-50"
           >
             {labels.addLine}
           </button>
         </div>
 
         {lines.map((line, index) => (
-          <fieldset key={index} className="grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs sm:grid-cols-2 lg:grid-cols-6">
-            <legend className="px-1 text-xs font-semibold text-slate-600">{labels.line(index + 1)}</legend>
+          <fieldset key={index} className="grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs dark:border-slate-800 dark:bg-slate-900 sm:grid-cols-2 lg:grid-cols-6">
+            <legend className="px-1 text-xs font-semibold text-slate-600 dark:text-slate-400">{labels.line(index + 1)}</legend>
             <div className="sm:col-span-2 lg:col-span-2">
-              <label htmlFor={`line-${index}-description`} className="block text-xs font-semibold text-slate-700">
+              <label htmlFor={`line-${index}-description`} className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                 {labels.itemDescription}
               </label>
               <input
@@ -154,7 +155,7 @@ export default function BudgetEditor(props: BudgetEditorProps) {
                 onChange={(event) => updateLine(index, "description", event.target.value)}
                 maxLength={200}
                 required
-                className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
               />
             </div>
             <NumberField
@@ -166,7 +167,7 @@ export default function BudgetEditor(props: BudgetEditorProps) {
               step="0.001"
             />
             <div>
-              <label htmlFor={`line-${index}-unit`} className="block text-xs font-semibold text-slate-700">
+              <label htmlFor={`line-${index}-unit`} className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                 {labels.unit}
               </label>
               <input
@@ -176,7 +177,7 @@ export default function BudgetEditor(props: BudgetEditorProps) {
                 onChange={(event) => updateLine(index, "unit", event.target.value)}
                 maxLength={20}
                 required
-                className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
               />
             </div>
             <NumberField
@@ -200,7 +201,7 @@ export default function BudgetEditor(props: BudgetEditorProps) {
               <button
                 type="button"
                 onClick={() => setLines((current) => current.filter((_, lineIndex) => lineIndex !== index))}
-                className="justify-self-start text-xs font-semibold text-red-800 underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 sm:col-span-2 lg:col-span-6"
+                className="justify-self-start text-xs font-semibold text-red-800 underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 sm:col-span-2 lg:col-span-6 dark:text-red-300"
               >
                 {labels.removeLine}
               </button>
@@ -210,14 +211,14 @@ export default function BudgetEditor(props: BudgetEditorProps) {
       </section>
 
       {totals && (
-        <div className="ml-auto grid max-w-sm gap-2 rounded-xl border border-slate-200 bg-white p-4 text-sm">
+        <div className="ml-auto grid max-w-sm gap-2 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
           <Total label={labels.net} cents={totals.netCents} />
           <Total label={labels.vat} cents={totals.vatCents} />
           <Total label={labels.gross} cents={totals.grossCents} emphasized />
         </div>
       )}
 
-      {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>}
+      {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950/40 dark:text-red-300">{error}</p>}
       <div className="flex flex-wrap gap-3">
         <button
           type="submit"
@@ -229,7 +230,7 @@ export default function BudgetEditor(props: BudgetEditorProps) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+          className="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
         >
           {labels.cancel}
         </button>
@@ -251,14 +252,14 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-xs font-semibold text-slate-700">{label}</label>
+      <label htmlFor={name} className="block text-xs font-semibold text-slate-700 dark:text-slate-300">{label}</label>
       <input
         id={name}
         name={name}
         defaultValue={defaultValue}
         maxLength={300}
         required={required}
-        className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+        className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
       />
     </div>
   );
@@ -283,7 +284,7 @@ function NumberField({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-xs font-semibold text-slate-700">{label}</label>
+      <label htmlFor={name} className="block text-xs font-semibold text-slate-700 dark:text-slate-300">{label}</label>
       <input
         id={name}
         name={name}
@@ -294,7 +295,7 @@ function NumberField({
         max={max}
         step={step}
         required
-        className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+        className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
       />
     </div>
   );
@@ -310,7 +311,7 @@ function Total({
   emphasized?: boolean;
 }) {
   return (
-    <div className={`flex justify-between gap-4 ${emphasized ? "border-t border-slate-200 pt-2 font-bold text-slate-900" : "text-slate-600"}`}>
+    <div className={`flex justify-between gap-4 ${emphasized ? "border-t border-slate-200 pt-2 font-bold text-slate-900 dark:border-slate-800 dark:text-white" : "text-slate-600 dark:text-slate-400"}`}>
       <span>{label}</span>
       <span>{formatBudgetAmount(cents)}</span>
     </div>

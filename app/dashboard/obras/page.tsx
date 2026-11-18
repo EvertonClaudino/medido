@@ -129,7 +129,7 @@ export default async function ObrasPage() {
       clientName: p.clientName,
       clientId: p.clientId,
       address: p.address,
-      budget: p.budget,
+      budget: p.budget === null ? null : p.budget.toNumber(),
       status: p.status,
       startDate: p.startDate,
       endDate: p.endDate,

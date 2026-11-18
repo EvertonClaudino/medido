@@ -43,16 +43,16 @@ export default async function NovoRegistoPage({
     <div className="mx-auto max-w-lg space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             Novo Registo Diário
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">
             Otimizado para utilização rápida em estaleiro no telemóvel.
           </p>
         </div>
         <Link
           href="/dashboard"
-          className="text-xs font-semibold text-slate-600 hover:text-slate-900"
+          className="text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
         >
           Voltar
         </Link>

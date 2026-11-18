@@ -56,10 +56,10 @@ export default async function TarefasPage() {
       {/* Cabeçalho */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             {isOwner ? "Tarefas da Empresa" : "As Minhas Tarefas"}
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1 dark:text-slate-400">
             {isOwner
               ? "Atribua e acompanhe tarefas, visitas técnicas e diligências em curso."
               : "Consulte e assinale a conclusão das suas tarefas atribuídas."}
@@ -79,8 +79,8 @@ export default async function TarefasPage() {
 
       {/* Conteúdo: Calendário Mensal e Lista Agrupada */}
       {tasks.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 p-12 text-center bg-white">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+        <div className="rounded-xl border border-dashed border-slate-300 p-12 text-center bg-white dark:border-slate-700 dark:bg-slate-900">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-800">
             <svg
               className="h-6 w-6"
               fill="none"
@@ -95,10 +95,10 @@ export default async function TarefasPage() {
               />
             </svg>
           </div>
-          <h3 className="mt-3 text-sm font-bold text-slate-800">
+          <h3 className="mt-3 text-sm font-bold text-slate-800 dark:text-slate-100">
             Sem tarefas registadas
           </h3>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
             {canCreate
               ? "Crie uma nova tarefa para a equipa (ex.: visita técnica, entrega de materiais)."
               : "Não tem tarefas atribuídas de momento."}

@@ -7,6 +7,10 @@
 @theme inline {
   --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Páginas públicas (lib/fonts.ts): as variáveis só existem dentro de publicFontClasses */
+  --font-plex: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-plexmono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-display: var(--font-archivo), var(--font-plex-sans), ui-sans-serif, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -148,11 +152,12 @@
 
 .dark {
   color-scheme: dark;
-  --background: #0f172a;
+  /* Alinhado com a paleta slate das páginas: fundo slate-950, superfícies slate-900, bordas slate-800 */
+  --background: #020617;
   --foreground: #f8fafc;
-  --card: #111827;
+  --card: #0f172a;
   --card-foreground: #f8fafc;
-  --popover: #111827;
+  --popover: #0f172a;
   --popover-foreground: #f8fafc;
   --primary: #f59e0b;
   --primary-foreground: #1c1917;
@@ -160,11 +165,11 @@
   --secondary-foreground: #f8fafc;
   --muted: #1e293b;
   --muted-foreground: #94a3b8;
-  --accent: #292524;
-  --accent-foreground: #fef3c7;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
   --destructive: #ef4444;
-  --border: #334155;
-  --input: #475569;
+  --border: #1e293b;
+  --input: #334155;
   --ring: #f59e0b;
   --success: #34d399;
   --success-foreground: #a7f3d0;
@@ -205,5 +210,81 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+/* Grelha de planta técnica (páginas públicas): linhas finas a cada 32px */
+@utility bg-blueprint {
+  background-image:
+    linear-gradient(to right, rgb(15 23 42 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(15 23 42 / 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+@utility bg-blueprint-dark {
+  background-image:
+    linear-gradient(to right, rgb(148 163 184 / 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(148 163 184 / 0.09) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ---------- Landing: movimento (sem JavaScript; desativado com prefers-reduced-motion) ---------- */
+
+@keyframes lp-rise {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes lp-fade {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes lp-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes lp-marquee {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes lp-reveal {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes lp-word {
+  from { opacity: 0.16; }
+  to { opacity: 1; }
+}
+
+@keyframes lp-focus {
+  0%, 100% { opacity: 0.28; }
+  35%, 65% { opacity: 1; }
+}
+
+@keyframes lp-parallax {
+  from { transform: translateY(var(--lp-shift, 60px)); }
+  to { transform: translateY(calc(var(--lp-shift, 60px) * -1)); }
+}
+
+.lp-mask { display: block; overflow: hidden; padding-bottom: 0.04em; }
+.lp-rise { display: block; animation: lp-rise 1.1s cubic-bezier(0.19, 1, 0.22, 1) both; animation-delay: var(--d, 0ms); }
+.lp-fade { animation: lp-fade 0.9s cubic-bezier(0.19, 1, 0.22, 1) both; animation-delay: var(--d, 0ms); }
+.lp-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: lp-draw 2.4s cubic-bezier(0.65, 0, 0.35, 1) forwards; animation-delay: var(--d, 0ms); }
+.lp-marquee { animation: lp-marquee 38s linear infinite; }
+
+@supports (animation-timeline: view()) {
+  .lp-reveal { animation: lp-reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+  .lp-word { animation: lp-word linear both; animation-timeline: view(); animation-range: cover 18% cover 42%; }
+  .lp-focus { animation: lp-focus linear both; animation-timeline: view(); animation-range: cover 10% cover 90%; }
+  .lp-parallax { animation: lp-parallax linear both; animation-timeline: view(); animation-range: cover; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-rise, .lp-fade, .lp-draw, .lp-marquee, .lp-reveal, .lp-word, .lp-focus, .lp-parallax {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
   }
 }

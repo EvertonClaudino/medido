@@ -63,7 +63,6 @@ export function getSidebarNavigation(
       {
         label: "Operação",
         items: [
-          { name: "Visitas", href: "/dashboard/visitas", icon: ClockIcon },
           { name: "Orçamentos", href: "/dashboard/orcamentos", icon: BriefcaseIcon },
           {
             name: "Alertas",
@@ -162,7 +161,7 @@ export function getMobileNavigation(
     return [
       { name: "Início", href: "/dashboard", icon: ClipboardListIcon },
       { name: "Obras", href: "/dashboard/obras", icon: BuildingIcon },
-      { name: "Visitas", href: "/dashboard/visitas", icon: ClockIcon },
+      { name: "Clientes", href: "/dashboard/clientes", icon: BriefcaseIcon },
       { name: "Orçamentos", href: "/dashboard/orcamentos", icon: BriefcaseIcon },
       {
         name: "Tarefas",

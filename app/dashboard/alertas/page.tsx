@@ -54,16 +54,16 @@ export default async function AlertasPage({
     <div className="mx-auto max-w-5xl space-y-6">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             {texts.dashboard.alerts.pageTitle}
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             {texts.dashboard.alerts.pageDescription}
           </p>
         </div>
         <Link
           href="/dashboard"
-          className="w-fit rounded-sm text-sm font-semibold text-amber-800 underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+          className="w-fit rounded-sm text-sm font-semibold text-amber-800 underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 dark:text-amber-300"
         >
           ← {texts.dashboard.alerts.backToOverview}
         </Link>
@@ -71,17 +71,17 @@ export default async function AlertasPage({
 
       <form
         method="get"
-        className="grid gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end"
+        className="grid gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end dark:border-slate-800 dark:bg-slate-900"
       >
         <div>
-          <label htmlFor="alert-type" className="mb-1 block text-xs font-semibold text-slate-700">
+          <label htmlFor="alert-type" className="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">
             {texts.dashboard.alerts.typeFilter}
           </label>
           <select
             id="alert-type"
             name="tipo"
             defaultValue={selectedType}
-            className="min-h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+            className="min-h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
           >
             <option value="">{texts.dashboard.alerts.allTypes}</option>
             {alertTypes.map((type) => (
@@ -92,14 +92,14 @@ export default async function AlertasPage({
           </select>
         </div>
         <div>
-          <label htmlFor="alert-project" className="mb-1 block text-xs font-semibold text-slate-700">
+          <label htmlFor="alert-project" className="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">
             {texts.dashboard.alerts.projectFilter}
           </label>
           <select
             id="alert-project"
             name="obra"
             defaultValue={selectedProjectId}
-            className="min-h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+            className="min-h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
           >
             <option value="">{texts.dashboard.alerts.allProjects}</option>
             {projects.map((project) => (
@@ -111,13 +111,13 @@ export default async function AlertasPage({
         </div>
         <button
           type="submit"
-          className="min-h-10 rounded-md bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+          className="min-h-10 rounded-md bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 dark:bg-amber-500 dark:text-slate-950 dark:hover:bg-amber-400"
         >
           {texts.dashboard.alerts.applyFilters}
         </button>
         <Link
           href="/dashboard/alertas"
-          className="inline-flex min-h-10 items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+          className="inline-flex min-h-10 items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           {texts.dashboard.alerts.clearFilters}
         </Link>
@@ -125,11 +125,11 @@ export default async function AlertasPage({
 
       {filteredAlerts.length === 0 ? (
         selectedType || selectedProjectId ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-600">
+          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
             {texts.dashboard.alerts.noFilteredAlerts}
           </div>
         ) : (
-          <div className="rounded-xl border border-slate-200 bg-white">
+          <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
             <AlertsEmptyState />
           </div>
         )
@@ -142,15 +142,15 @@ export default async function AlertasPage({
               <section
                 key={severity}
                 aria-labelledby={`alerts-${severity.toLowerCase()}`}
-                className="overflow-hidden rounded-xl border border-slate-200 bg-white"
+                className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
               >
                 <h2
                   id={`alerts-${severity.toLowerCase()}`}
-                  className="border-b border-slate-200 px-4 py-3 text-sm font-bold text-slate-900"
+                  className="border-b border-slate-200 px-4 py-3 text-sm font-bold text-slate-900 dark:border-slate-800 dark:text-white"
                 >
-                  {label} <span className="text-slate-600">({groupAlerts.length})</span>
+                  {label} <span className="text-slate-600 dark:text-slate-400">({groupAlerts.length})</span>
                 </h2>
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800">
                   {groupAlerts.map((alert) => (
                     <AlertItem key={alert.id} alert={alert} />
                   ))}

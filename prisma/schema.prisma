@@ -8,21 +8,22 @@ datasource db {
 }
 
 model Company {
-  id            String               @id @default(cuid())
-  name          String
-  nif           String?              @unique
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  address       String?
-  phone         String?
-  budgets       Budget[]
-  clients       Client[]
-  projects      Project[]
-  tasks         Task[]
-  users         User[]
-  visitRequests VisitRequest[]
-  measurements  WorkLogMeasurement[]
-  workLogs      WorkLog[]
+  id               String               @id @default(cuid())
+  name             String
+  nif              String?              @unique
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  address          String?
+  phone            String?
+  budgets          Budget[]
+  clientActivities ClientActivity[]
+  clients          Client[]
+  projects         Project[]
+  tasks            Task[]
+  users            User[]
+  visitRequests    VisitRequest[]
+  measurements     WorkLogMeasurement[]
+  workLogs         WorkLog[]
 
   @@map("companies")
 }
@@ -40,12 +41,14 @@ model User {
   updatedAt            DateTime            @updatedAt
   mustChangePassword   Boolean             @default(false)
   budgetRevisions      BudgetRevision[]    @relation("BudgetRevisionEditor")
+  clientActivities     ClientActivity[]    @relation("ClientActivityAuthor")
   createdBudgets       Budget[]            @relation("BudgetCreator")
   assignments          ProjectAssignment[]
   assignedTasks        Task[]              @relation("TaskAssignee")
   createdTasks         Task[]              @relation("TaskCreator")
   company              Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdVisitRequests VisitRequest[]      @relation("VisitRequestCreator")
+  assignedVisits       VisitRequest[]      @relation("VisitRequestAssignee")
   workLogs             WorkLog[]           @relation("WorkerLogs")
   reviews              WorkLog[]           @relation("ForemanReviews")
 
@@ -60,7 +63,7 @@ model Project {
   code        String?
   clientName  String?
   address     String?
-  budget      Float?
+  budget      Decimal?            @db.Decimal(14, 2)
   status      ProjectStatus       @default(ACTIVE)
   startDate   DateTime?
   endDate     DateTime?
@@ -159,7 +162,7 @@ model Task {
 }
 
 model Client {
-  id            String         @id @default(cuid())
+  id            String           @id @default(cuid())
   companyId     String
   name          String
   nif           String?
@@ -167,10 +170,11 @@ model Client {
   phone         String?
   address       String?
   notes         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  activities    ClientActivity[]
   budgets       Budget[]
-  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   projects      Project[]
   visitRequests VisitRequest[]
 
@@ -184,18 +188,24 @@ model VisitRequest {
   clientId         String
   requestedAddress String
   scheduledAt      DateTime?
+  /// Duração prevista da visita, usada na agenda do responsável
+  durationMinutes  Int         @default(60)
   status           VisitStatus @default(REQUESTED)
   notes            String?
   createdById      String
+  /// Encarregado (ou Dono) que realiza a visita
+  assignedToId     String?
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
   budget           Budget?
   client           Client      @relation(fields: [clientId], references: [id])
   company          Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdBy        User        @relation("VisitRequestCreator", fields: [createdById], references: [id])
+  assignedTo       User?       @relation("VisitRequestAssignee", fields: [assignedToId], references: [id])
 
   @@index([companyId, status, createdAt])
   @@index([companyId, clientId])
+  @@index([companyId, assignedToId, scheduledAt])
   @@map("visit_requests")
 }
 
@@ -203,7 +213,7 @@ model Budget {
   id             String           @id @default(cuid())
   companyId      String
   clientId       String
-  visitRequestId String           @unique
+  visitRequestId String?          @unique
   projectId      String?          @unique
   projectName    String
   workAddress    String
@@ -218,7 +228,7 @@ model Budget {
   company        Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdBy      User             @relation("BudgetCreator", fields: [createdById], references: [id])
   project        Project?         @relation(fields: [projectId], references: [id])
-  visitRequest   VisitRequest     @relation(fields: [visitRequestId], references: [id])
+  visitRequest   VisitRequest?    @relation(fields: [visitRequestId], references: [id])
 
   @@index([companyId, status, updatedAt])
   @@index([companyId, clientId])
@@ -254,6 +264,36 @@ model BudgetRevision {
   @@unique([budgetId, revisionNumber])
   @@index([budgetId, createdAt])
   @@map("budget_revisions")
+}
+
+/// Interação registada com um cliente (chamada, email, reunião ou nota)
+model ClientActivity {
+  id          String             @id @default(cuid())
+  companyId   String
+  clientId    String
+  authorId    String
+  type        ClientActivityType
+  description String
+  occurredAt  DateTime
+  createdAt   DateTime           @default(now())
+  company     Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  client      Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  author      User               @relation("ClientActivityAuthor", fields: [authorId], references: [id])
+
+  @@index([companyId, clientId, occurredAt])
+  @@map("client_activities")
+}
+
+/// Tentativas falhadas de início de sessão por chave ("email:<email>" ou "ip:<ip>")
+model LoginAttempt {
+  key          String    @id
+  attempts     Int       @default(0)
+  windowStart  DateTime  @default(now())
+  blockedUntil DateTime?
+  updatedAt    DateTime  @updatedAt
+
+  @@index([updatedAt])
+  @@map("login_attempts")
 }
 
 model Lead {
@@ -315,6 +355,13 @@ enum BudgetRevisionType {
   CREATED
   CONTENT_EDIT
   STATUS_CHANGE
+}
+
+enum ClientActivityType {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
 }
 
 enum MeasureUnit {

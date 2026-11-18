@@ -9,8 +9,8 @@ export default function AlertasError({
   reset: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-red-200 bg-white p-8 text-center">
-      <h1 className="text-lg font-bold text-red-900">{texts.dashboard.alerts.errorTitle}</h1>
+    <div className="rounded-xl border border-red-200 bg-white p-8 text-center dark:border-red-900/60 dark:bg-slate-900">
+      <h1 className="text-lg font-bold text-red-900 dark:text-red-300">{texts.dashboard.alerts.errorTitle}</h1>
       <button
         type="button"
         onClick={reset}

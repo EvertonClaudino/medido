@@ -110,24 +110,24 @@ export function WorkLogForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs space-y-5 text-sm"
+      className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs space-y-5 text-sm dark:border-slate-800 dark:bg-slate-900"
     >
       {errorMsg && (
-        <div className="rounded-xl bg-red-50 p-3.5 text-xs font-semibold text-red-700 border border-red-200">
+        <div className="rounded-xl bg-red-50 p-3.5 text-xs font-semibold text-red-700 border border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900/60">
           {errorMsg}
         </div>
       )}
 
       {/* Obra */}
       <div>
-        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
           Obra / Empreitada *
         </label>
         <select
           value={projectId}
           onChange={(e) => setProjectId(e.target.value)}
           required
-          className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-slate-900 focus:border-amber-500 focus:outline-hidden bg-white text-base"
+          className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-slate-900 focus:border-amber-500 focus:outline-hidden bg-white text-base dark:border-slate-700 dark:text-white dark:bg-slate-900"
         >
           <option value="">Selecione a obra</option>
           {projects.map((p) => (
@@ -141,7 +141,7 @@ export function WorkLogForm({
       {/* Data e Horas em Linha */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
             Data do Trabalho *
           </label>
           <input
@@ -149,12 +149,12 @@ export function WorkLogForm({
             value={workDate}
             onChange={(e) => setWorkDate(e.target.value)}
             required
-            className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-slate-900 focus:border-amber-500 focus:outline-hidden text-base"
+            className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-slate-900 focus:border-amber-500 focus:outline-hidden text-base dark:border-slate-700 dark:text-white"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
             Horas de Trabalho (opcional)
           </label>
           <input
@@ -165,7 +165,7 @@ export function WorkLogForm({
             value={hours}
             onChange={(e) => setHours(e.target.value)}
             placeholder="Ex.: 8"
-            className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-slate-900 focus:border-amber-500 focus:outline-hidden font-mono text-base"
+            className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-slate-900 focus:border-amber-500 focus:outline-hidden font-mono text-base dark:border-slate-700 dark:text-white"
           />
           <p className="mt-1 text-[11px] text-slate-400">Passos de 0,25h (ex: 7,5 ou 8)</p>
         </div>
@@ -173,7 +173,7 @@ export function WorkLogForm({
 
       {/* Descrição geral */}
       <div>
-        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
           Descrição dos Trabalhos (opcional)
         </label>
         <textarea
@@ -182,33 +182,33 @@ export function WorkLogForm({
           rows={3}
           maxLength={1000}
           placeholder="Ex.: Aplicação de betonilha e preparação de armaduras para betonagem."
-          className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-slate-900 focus:border-amber-500 focus:outline-hidden text-base"
+          className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-slate-900 focus:border-amber-500 focus:outline-hidden text-base dark:border-slate-700 dark:text-white"
         />
       </div>
 
       {/* Secção de Medições de Obra */}
-      <div className="pt-2 border-t border-slate-100">
+      <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-100">
               Medições Executadas ({measurements.length}/20)
             </h3>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
               Adicione quantidades métricas concluídas no dia.
             </p>
           </div>
           <button
             type="button"
             onClick={addMeasurement}
-            className="inline-flex items-center gap-1 rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1.5 text-xs font-bold text-amber-800 hover:bg-amber-100 transition active:scale-95"
+            className="inline-flex items-center gap-1 rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1.5 text-xs font-bold text-amber-800 hover:bg-amber-100 transition active:scale-95 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300 dark:hover:bg-amber-950/40"
           >
-            <PlusCircleIcon className="h-4 w-4 text-amber-600" />
+            <PlusCircleIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             Adicionar Medição
           </button>
         </div>
 
         {measurements.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-400">
+          <div className="rounded-xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-400 dark:border-slate-800">
             Nenhuma medição adicionada. Pode registar apenas horas ou acrescentar medições aqui.
           </div>
         ) : (
@@ -216,10 +216,10 @@ export function WorkLogForm({
             {measurements.map((m, idx) => (
               <div
                 key={m.id}
-                className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3"
+                className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3 dark:border-slate-800 dark:bg-slate-800/40"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-600">
+                  <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
                     Medição #{idx + 1}
                   </span>
                   <button
@@ -239,7 +239,7 @@ export function WorkLogForm({
                     placeholder="Descrição do serviço (ex: Alvenaria de tijolo 15cm)"
                     value={m.description}
                     onChange={(e) => updateMeasurement(m.id, "description", e.target.value)}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 text-xs text-slate-900 bg-white focus:border-amber-500 focus:outline-hidden"
+                    className="w-full rounded-lg border border-slate-300 p-2.5 text-xs text-slate-900 bg-white focus:border-amber-500 focus:outline-hidden dark:border-slate-700 dark:text-white dark:bg-slate-900"
                   />
                 </div>
 
@@ -254,7 +254,7 @@ export function WorkLogForm({
                       placeholder="Qtd (ex: 24.500)"
                       value={m.quantity}
                       onChange={(e) => updateMeasurement(m.id, "quantity", e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 p-2.5 font-mono text-xs text-slate-900 bg-white focus:border-amber-500 focus:outline-hidden"
+                      className="w-full rounded-lg border border-slate-300 p-2.5 font-mono text-xs text-slate-900 bg-white focus:border-amber-500 focus:outline-hidden dark:border-slate-700 dark:text-white dark:bg-slate-900"
                     />
                   </div>
                   <div>
@@ -267,7 +267,7 @@ export function WorkLogForm({
                           e.target.value as MeasurementItem["unit"]
                         )
                       }
-                      className="w-full rounded-lg border border-slate-300 p-2.5 text-xs text-slate-900 bg-white focus:border-amber-500 focus:outline-hidden"
+                      className="w-full rounded-lg border border-slate-300 p-2.5 text-xs text-slate-900 bg-white focus:border-amber-500 focus:outline-hidden dark:border-slate-700 dark:text-white dark:bg-slate-900"
                     >
                       {MEASURE_UNITS.map((u) => (
                         <option key={u.value} value={u.value}>

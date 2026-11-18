@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
+import { computeClientStage } from "@/lib/client-record";
 import ClientsView from "./ClientsView";
 
 export const metadata = { title: "Clientes — Medido" };
@@ -18,20 +19,13 @@ export default async function ClientesPage() {
       phone: true,
       address: true,
       notes: true,
-      createdAt: true,
       projects: {
         where: { companyId: user.companyId },
-        select: {
-          id: true,
-          name: true,
-          code: true,
-          status: true,
-          serviceType: true,
-          startDate: true,
-          endDate: true,
-        },
+        select: { id: true, name: true, code: true, status: true },
         orderBy: { createdAt: "desc" },
       },
+      visitRequests: { where: { companyId: user.companyId }, select: { status: true } },
+      budgets: { where: { companyId: user.companyId }, select: { status: true } },
       _count: {
         select: {
           projects: true,
@@ -43,14 +37,9 @@ export default async function ClientesPage() {
     orderBy: { name: "asc" },
   });
 
-  const clients = rawClients.map((c) => ({
-    ...c,
-    createdAt: c.createdAt.toISOString(),
-    projects: c.projects.map((p) => ({
-      ...p,
-      startDate: p.startDate ? p.startDate.toISOString() : null,
-      endDate: p.endDate ? p.endDate.toISOString() : null,
-    })),
+  const clients = rawClients.map(({ visitRequests, budgets, ...client }) => ({
+    ...client,
+    stage: computeClientStage({ visits: visitRequests, budgets, projects: client.projects }),
   }));
 
   return <ClientsView clients={clients} />;

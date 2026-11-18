@@ -79,6 +79,22 @@ export async function requireUser(options?: { allowMustChangePassword?: boolean 
 }
 
 /**
+ * Indica se o browser tem uma sessão de um utilizador que ainda existe e está ativo.
+ * Uma sessão antiga (ex.: utilizador apagado ou desativado) conta como "sem sessão",
+ * para as páginas públicas mostrarem o formulário em vez de redirecionarem para o dashboard.
+ */
+export async function hasActiveSession(): Promise<boolean> {
+  const session = await auth();
+  if (!session?.user?.id) return false;
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { status: true },
+  });
+  return user?.status === "ACTIVE";
+}
+
+/**
  * Garante que apenas o perfil especificado (ex: OWNER) pode aceder.
  */
 export async function requireRole(allowedRoles: Role[]) {

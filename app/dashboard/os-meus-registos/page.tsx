@@ -20,10 +20,10 @@ export default async function OsMeusRegistosPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Os Meus Registos de Trabalho
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1 dark:text-slate-400">
             Histórico e estado de validação dos seus apontamentos diários e medições.
           </p>
         </div>
@@ -37,13 +37,13 @@ export default async function OsMeusRegistosPage() {
         </Link>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden dark:border-slate-800 dark:bg-slate-900">
         {logs.length === 0 ? (
-          <div className="p-12 text-center text-xs text-slate-500">
+          <div className="p-12 text-center text-xs text-slate-500 dark:text-slate-400">
             Ainda não submeteu nenhum registo de trabalho.
           </div>
         ) : (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {logs.map((log) => (
               <div
                 key={log.id}
@@ -51,18 +51,18 @@ export default async function OsMeusRegistosPage() {
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-900 text-sm">
+                    <span className="font-bold text-slate-900 text-sm dark:text-white">
                       {log.project.name}
                     </span>
                     <span className="text-slate-300">•</span>
-                    <span className="font-mono text-slate-500">
+                    <span className="font-mono text-slate-500 dark:text-slate-400">
                       {new Date(log.workDate).toLocaleDateString("pt-PT")}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-3">
                     {log.hours ? (
-                      <span className="font-mono font-bold text-sm text-slate-900">
+                      <span className="font-mono font-bold text-sm text-slate-900 dark:text-white">
                         {Number(log.hours)}h
                       </span>
                     ) : (
@@ -72,10 +72,10 @@ export default async function OsMeusRegistosPage() {
                     <span
                       className={`rounded px-2.5 py-1 text-[10px] font-bold ${
                         log.status === "VALIDATED"
-                          ? "bg-emerald-100 text-emerald-800"
+                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
                           : log.status === "REJECTED"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-amber-100 text-amber-800"
+                          ? "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300"
+                          : "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
                       }`}
                     >
                       {log.status === "VALIDATED"
@@ -88,7 +88,7 @@ export default async function OsMeusRegistosPage() {
                 </div>
 
                 {log.description && (
-                  <p className="text-slate-600">{log.description}</p>
+                  <p className="text-slate-600 dark:text-slate-400">{log.description}</p>
                 )}
 
                 {/* Medições associadas */}
@@ -97,7 +97,7 @@ export default async function OsMeusRegistosPage() {
                     {log.measurements.map((m) => (
                       <span
                         key={m.id}
-                        className="inline-flex items-center rounded-md bg-amber-50 border border-amber-200 px-2 py-0.5 text-[11px] text-amber-900 font-medium"
+                        className="inline-flex items-center rounded-md bg-amber-50 border border-amber-200 px-2 py-0.5 text-[11px] text-amber-900 font-medium dark:bg-amber-950/40 dark:border-amber-900/60 dark:text-amber-300"
                       >
                         {m.description}: {Number(m.quantity)} {m.unit}
                       </span>
@@ -106,7 +106,7 @@ export default async function OsMeusRegistosPage() {
                 )}
 
                 {log.rejectionReason && (
-                  <div className="rounded-lg bg-red-50 p-2.5 text-red-800 text-[11px] border border-red-200 mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="rounded-lg bg-red-50 p-2.5 text-red-800 text-[11px] border border-red-200 mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900/60">
                     <div>
                       <strong>Motivo de rejeição:</strong> {log.rejectionReason}
                     </div>

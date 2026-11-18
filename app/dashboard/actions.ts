@@ -2,17 +2,15 @@
 
 import { requireUser, requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { safeRevalidatePath } from "@/lib/revalidate";
 
-function safeRevalidatePath(path: string) {
-  try {
-    revalidatePath(path);
-  } catch {
-    // Silencia em contexto fora do Next.js Request (ex: testes automatizados)
-  }
+import { MeasureUnit, Prisma, ProjectStatus, Role, WorkLogStatus, TaskStatus } from "@prisma/client";
+
+/** Converte um valor monetário validado (até 2 casas decimais) para Decimal exato. */
+function toMoney(value: number | undefined): Prisma.Decimal | null {
+  return value === undefined ? null : new Prisma.Decimal(value.toFixed(2));
 }
-import { MeasureUnit, ProjectStatus, Role, WorkLogStatus, TaskStatus } from "@prisma/client";
 
 // ==========================================
 // ESQUEMAS DE VALIDAÇÃO — CLIENTES
@@ -48,7 +46,7 @@ export async function createClientAction(formData: FormData) {
 
   const { name, nif, email, phone, address, notes } = parsed.data;
 
-  await prisma.client.create({
+  const client = await prisma.client.create({
     data: {
       companyId: user.companyId,
       name,
@@ -58,10 +56,11 @@ export async function createClientAction(formData: FormData) {
       address: address || null,
       notes: notes || null,
     },
+    select: { id: true },
   });
 
   safeRevalidatePath("/dashboard/clientes");
-  return { success: true };
+  return { success: true, clientId: client.id };
 }
 
 export async function updateClientAction(clientId: string, formData: FormData) {
@@ -105,6 +104,7 @@ export async function updateClientAction(clientId: string, formData: FormData) {
   });
 
   safeRevalidatePath("/dashboard/clientes");
+  safeRevalidatePath(`/dashboard/clientes/${clientId}`);
   return { success: true };
 }
 
@@ -139,6 +139,7 @@ export async function deleteClientAction(clientId: string) {
   return { success: true };
 }
 
+import { parseLisbonDateTime } from "@/lib/budget-utils";
 import { projectSchema } from "@/lib/validations/project";
 import { getNextProjectCode } from "@/lib/project-utils";
 
@@ -196,16 +197,17 @@ export async function createProjectAction(formData: FormData) {
     }
   }
 
-  // Se o clientId foi fornecido, buscar o nome do cliente se clientName estiver em branco
+  // O cliente tem de pertencer à empresa (isolamento multi-tenant)
   let resolvedClientName = clientName;
-  if (clientId && !resolvedClientName) {
+  if (clientId) {
     const client = await prisma.client.findFirst({
       where: { id: clientId, companyId: user.companyId },
       select: { name: true },
     });
-    if (client) {
-      resolvedClientName = client.name;
+    if (!client) {
+      return { error: "O cliente selecionado é inválido ou não pertence à empresa." };
     }
+    resolvedClientName ||= client.name;
   }
 
   const isAutoCode = !code?.trim();
@@ -228,7 +230,7 @@ export async function createProjectAction(formData: FormData) {
           serviceType: serviceType || null,
           clientName: resolvedClientName || null,
           address: address || null,
-          budget: budget || null,
+          budget: toMoney(budget),
           startDate: startDate ? new Date(startDate) : null,
           endDate: endDate ? new Date(endDate) : null,
           status: ProjectStatus.ACTIVE,
@@ -236,11 +238,7 @@ export async function createProjectAction(formData: FormData) {
       });
       break;
     } catch (err: unknown) {
-      const isUniqueConstraint =
-        (typeof err === "object" && err !== null && "code" in err && (err as { code: string }).code === "P2002") ||
-        (err instanceof Error && (err.message.includes("Unique constraint failed") || err.message.includes("P2002")));
-
-      if (isUniqueConstraint) {
+      if (isUniqueConstraintError(err)) {
         if (!isAutoCode) {
           return { error: "Já existe uma obra com este código na empresa." };
         }
@@ -328,7 +326,7 @@ export async function inviteUserAction(formData: FormData) {
   // Se o Dono não forneceu uma senha forte, gera uma temporária aleatória segura de 12 carateres
   const tempPassword =
     customPassword ||
-    `Medido!${crypto.randomBytes(4).toString("hex")}${Math.floor(10 + Math.random() * 90)}`;
+    `Medido!${crypto.randomBytes(4).toString("hex")}${crypto.randomInt(10, 100)}`;
 
   const hashedPassword = await bcrypt.default.hash(tempPassword, 10);
 
@@ -347,8 +345,11 @@ export async function inviteUserAction(formData: FormData) {
 
     safeRevalidatePath("/dashboard/equipa");
     return { success: true, temporaryPassword: tempPassword };
-  } catch {
-    return { error: "Este endereço de email já se encontra registado." };
+  } catch (err) {
+    if (isUniqueConstraintError(err)) {
+      return { error: "Este endereço de email já se encontra registado." };
+    }
+    throw err;
   }
 }
 
@@ -372,7 +373,8 @@ export async function updateUserSpecialtyAction(userId: string, specialty: strin
   return { success: true };
 }
 
-export async function toggleUserStatusAction(userId: string, currentStatus: string) {
+// O estado atual é sempre lido da base de dados (nunca do cliente).
+export async function toggleUserStatusAction(userId: string) {
   const user = await requireRole([Role.OWNER]);
 
   // Regra (d): Owner não se pode desativar a si próprio
@@ -383,11 +385,14 @@ export async function toggleUserStatusAction(userId: string, currentStatus: stri
   // Regra (d): Garantir que a empresa não fica sem Owner ativo
   const targetUser = await prisma.user.findFirst({
     where: { id: userId, companyId: user.companyId },
+    select: { id: true, role: true, status: true },
   });
 
   if (!targetUser) {
     return { error: "Utilizador não encontrado." };
   }
+
+  const currentStatus = targetUser.status;
 
   if (targetUser.role === Role.OWNER && currentStatus === "ACTIVE") {
     const activeOwnersCount = await prisma.user.count({
@@ -405,7 +410,7 @@ export async function toggleUserStatusAction(userId: string, currentStatus: stri
   const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
 
   await prisma.user.updateMany({
-    where: { id: userId, companyId: user.companyId },
+    where: { id: userId, companyId: user.companyId, status: currentStatus },
     data: { status: newStatus },
   });
 
@@ -618,6 +623,15 @@ export async function editWorkLogAction(logId: string, formData: FormData) {
   return { success: true };
 }
 
+const reviewWorkLogSchema = z
+  .object({
+    status: z.enum(["VALIDATED", "REJECTED"]),
+    rejectionReason: z.string().trim().max(500, "O motivo não pode ter mais de 500 carateres.").optional(),
+  })
+  .refine((data) => data.status !== "REJECTED" || (data.rejectionReason?.length ?? 0) >= 3, {
+    message: "Para rejeitar um registo é obrigatório indicar o motivo.",
+  });
+
 export async function reviewWorkLogAction(
   logId: string,
   status: "VALIDATED" | "REJECTED",
@@ -625,10 +639,12 @@ export async function reviewWorkLogAction(
 ) {
   const user = await requireRole([Role.OWNER, Role.FOREMAN]);
 
-  // Rejeição exige motivo
-  if (status === "REJECTED" && (!rejectionReason || rejectionReason.trim().length < 3)) {
-    return { error: "Para rejeitar um registo é obrigatório indicar o motivo." };
+  // As Server Actions são endpoints públicos: o tipo TypeScript não protege em runtime
+  const parsedReview = reviewWorkLogSchema.safeParse({ status, rejectionReason });
+  if (!parsedReview.success) {
+    return { error: parsedReview.error.issues[0]?.message ?? "Dados inválidos." };
   }
+  const review = parsedReview.data;
 
   // Buscar o registo para verificar posse e autorização
   const log = await prisma.workLog.findFirst({
@@ -664,15 +680,18 @@ export async function reviewWorkLogAction(
     }
   }
 
-  await prisma.workLog.update({
-    where: { id: logId },
+  const reviewed = await prisma.workLog.updateMany({
+    where: { id: logId, companyId: user.companyId, status: WorkLogStatus.PENDING },
     data: {
-      status,
+      status: review.status,
       reviewedById: user.id,
       reviewedAt: new Date(),
-      rejectionReason: status === "REJECTED" ? rejectionReason!.trim() : null,
+      rejectionReason: review.status === "REJECTED" ? review.rejectionReason ?? null : null,
     },
   });
+  if (reviewed.count !== 1) {
+    return { error: "Este registo já foi validado ou rejeitado." };
+  }
 
   safeRevalidatePath("/dashboard/validar-registos");
   safeRevalidatePath("/dashboard/registos");
@@ -684,27 +703,48 @@ export async function reviewWorkLogAction(
 // 4. AÇÕES DE DEFINIÇÕES DA EMPRESA (DONO)
 // ==========================================
 
+const companySchema = z.object({
+  name: z.string().trim().min(2, "O nome da empresa é obrigatório.").max(150),
+  nif: z.string().trim().max(20, "NIF demasiado longo.").optional(),
+  address: z.string().trim().max(300).optional(),
+  phone: z.string().trim().max(30).optional(),
+});
+
+function isUniqueConstraintError(err: unknown): boolean {
+  return typeof err === "object" && err !== null && "code" in err && err.code === "P2002";
+}
+
 export async function updateCompanyAction(formData: FormData) {
   const user = await requireRole([Role.OWNER]);
 
-  const name = formData.get("name") as string;
-  const nif = formData.get("nif") as string;
-  const address = formData.get("address") as string;
-  const phone = formData.get("phone") as string;
-
-  if (!name || name.trim().length < 2) {
-    return { error: "O nome da empresa é obrigatório." };
+  const parsed = companySchema.safeParse({
+    name: formData.get("name") ?? "",
+    nif: formData.get("nif") || undefined,
+    address: formData.get("address") || undefined,
+    phone: formData.get("phone") || undefined,
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
   }
 
-  await prisma.company.update({
-    where: { id: user.companyId },
-    data: {
-      name,
-      nif: nif ? nif.trim() : null,
-      address: address ? address.trim() : null,
-      phone: phone ? phone.trim() : null,
-    },
-  });
+  const { name, nif, address, phone } = parsed.data;
+
+  try {
+    await prisma.company.update({
+      where: { id: user.companyId },
+      data: {
+        name,
+        nif: nif || null,
+        address: address || null,
+        phone: phone || null,
+      },
+    });
+  } catch (err) {
+    if (isUniqueConstraintError(err)) {
+      return { error: "Este NIF já está associado a outra empresa." };
+    }
+    throw err;
+  }
 
   safeRevalidatePath("/dashboard/definicoes");
   safeRevalidatePath("/dashboard");
@@ -738,7 +778,6 @@ export async function updateProjectAction(projectId: string, formData: FormData)
     name: formData.get("name") || project.name,
     code: formData.get("code") || undefined,
     serviceType: formData.get("serviceType") || undefined,
-    clientId: formData.get("clientId") || project.clientId || undefined,
     clientName: formData.get("clientName") || undefined,
     address: formData.get("address") || undefined,
     budget: formData.get("budget") || undefined,
@@ -749,6 +788,25 @@ export async function updateProjectAction(projectId: string, formData: FormData)
   const parsed = projectSchema.safeParse(rawData);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+  }
+
+  // Cliente associado: só alterado quando o formulário envia o campo; vazio remove a ligação
+  let clientId = project.clientId;
+  let clientName = parsed.data.clientName || null;
+  if (formData.has("clientId")) {
+    const requestedClientId = (formData.get("clientId") as string | null) || null;
+    clientId = null;
+    if (requestedClientId) {
+      const client = await prisma.client.findFirst({
+        where: { id: requestedClientId, companyId: user.companyId },
+        select: { id: true, name: true },
+      });
+      if (!client) {
+        return { error: "O cliente selecionado é inválido ou não pertence à empresa." };
+      }
+      clientId = client.id;
+      clientName ||= client.name;
+    }
   }
 
   try {
@@ -765,19 +823,16 @@ export async function updateProjectAction(projectId: string, formData: FormData)
             name: parsed.data.name,
             code: parsed.data.code?.trim() || null,
             serviceType: parsed.data.serviceType || null,
-            clientName: parsed.data.clientName || null,
+            clientId,
+            clientName,
             address: parsed.data.address || null,
-            budget: parsed.data.budget || null,
+            budget: toMoney(parsed.data.budget),
             startDate: parsed.data.startDate ? new Date(parsed.data.startDate) : null,
             endDate: parsed.data.endDate ? new Date(parsed.data.endDate) : null,
           },
     });
   } catch (err: unknown) {
-    const isUniqueConstraint =
-      (typeof err === "object" && err !== null && "code" in err && (err as { code: string }).code === "P2002") ||
-      (err instanceof Error && (err.message.includes("Unique constraint failed") || err.message.includes("P2002")));
-
-    if (isUniqueConstraint) {
+    if (isUniqueConstraintError(err)) {
       return { error: "Já existe uma obra com este código na empresa." };
     }
     throw err;
@@ -834,6 +889,22 @@ export async function assignUserToProjectAction(projectId: string, userId: strin
   // OWNER ao atribuir como isLead=true, o utilizador tem de ser FOREMAN
   if (isLead && targetUser.role !== Role.FOREMAN) {
     return { error: "Apenas um Encarregado pode ser atribuído como responsável da obra." };
+  }
+
+  // (c) Obra nunca fica sem responsável: despromover o único encarregado responsável é recusado
+  if (!isLead) {
+    const existingAssignment = await prisma.projectAssignment.findUnique({
+      where: { projectId_userId: { projectId, userId } },
+      select: { isLead: true },
+    });
+    if (existingAssignment?.isLead) {
+      const otherLeads = await prisma.projectAssignment.count({
+        where: { projectId, isLead: true, userId: { not: userId } },
+      });
+      if (otherLeads === 0) {
+        return { error: "Não pode retirar o único responsável da obra. Atribua outro encarregado primeiro." };
+      }
+    }
   }
 
   // (b) Restrição única (projectId, userId) através de upsert
@@ -1110,12 +1181,15 @@ export async function createTaskAction(formData: FormData) {
     }
   }
 
-  // Converter dueDate se fornecida
+  // A data limite é hora de parede em Europe/Lisbon (nunca no fuso do servidor);
+  // uma data sem hora vale até ao fim desse dia.
   let parsedDueDate: Date | null = null;
-  if (rawDueDate && rawDueDate.trim().length > 0) {
-    const d = new Date(rawDueDate);
-    if (!isNaN(d.getTime())) {
-      parsedDueDate = d;
+  const dueDateValue = rawDueDate?.trim() ?? "";
+  if (dueDateValue) {
+    const wallTime = /^\d{4}-\d{2}-\d{2}$/.test(dueDateValue) ? `${dueDateValue}T23:59` : dueDateValue.slice(0, 16);
+    parsedDueDate = parseLisbonDateTime(wallTime);
+    if (!parsedDueDate) {
+      return { error: "Indique uma data limite válida." };
     }
   }
 
@@ -1143,6 +1217,11 @@ export async function updateTaskStatusAction(
 ) {
   const user = await requireUser();
 
+  const parsedStatus = z.enum(["PENDING", "COMPLETED", "CANCELLED"]).safeParse(newStatus);
+  if (!parsedStatus.success) {
+    return { error: "Estado de tarefa inválido." };
+  }
+
   // Buscar tarefa garantindo isolamento por companyId
   const task = await prisma.task.findFirst({
     where: { id: taskId, companyId: user.companyId },
@@ -1169,6 +1248,10 @@ export async function updateTaskStatusAction(
     if (user.role !== Role.OWNER && task.createdById !== user.id) {
       return { error: "Apenas o Dono ou o criador da tarefa podem cancelar a tarefa." };
     }
+    // Máquina de estados: apenas PENDING -> CANCELLED (docs/permissions.md)
+    if (task.status !== TaskStatus.PENDING) {
+      return { error: "Apenas tarefas pendentes podem ser canceladas." };
+    }
   }
 
   // Regras para PENDING ou COMPLETED:
@@ -1184,10 +1267,13 @@ export async function updateTaskStatusAction(
     }
   }
 
-  await prisma.task.update({
-    where: { id: taskId },
-    data: { status: newStatus as TaskStatus },
+  const updated = await prisma.task.updateMany({
+    where: { id: taskId, companyId: user.companyId, status: task.status },
+    data: { status: parsedStatus.data },
   });
+  if (updated.count !== 1) {
+    return { error: "A tarefa foi alterada entretanto. Atualize a página." };
+  }
 
   safeRevalidatePath("/dashboard/tarefas");
   safeRevalidatePath("/dashboard");

@@ -41,10 +41,10 @@ export default async function TodosRegistosPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           Registos de Trabalho & Medições
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-500 mt-1 dark:text-slate-400">
           Visão consolidada de todas as horas e medições registadas em todas as
           obras da empresa.
         </p>
@@ -52,70 +52,70 @@ export default async function TodosRegistosPage() {
 
       {/* Cartões de Totais Segregados por Unidade */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Total Horas
           </span>
-          <div className="mt-1 font-mono text-xl font-black text-slate-900">
+          <div className="mt-1 font-mono text-xl font-black text-slate-900 dark:text-white">
             {totalHours.toFixed(1)}h
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Metros lineares (M)
           </span>
-          <div className="mt-1 font-mono text-xl font-black text-amber-700">
+          <div className="mt-1 font-mono text-xl font-black text-amber-700 dark:text-amber-300">
             {unitTotals.M.toFixed(2)} m
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Área (M²)
           </span>
-          <div className="mt-1 font-mono text-xl font-black text-amber-700">
+          <div className="mt-1 font-mono text-xl font-black text-amber-700 dark:text-amber-300">
             {unitTotals.M2.toFixed(2)} m²
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Volume (M³)
           </span>
-          <div className="mt-1 font-mono text-xl font-black text-amber-700">
+          <div className="mt-1 font-mono text-xl font-black text-amber-700 dark:text-amber-300">
             {unitTotals.M3.toFixed(2)} m³
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Unidades (UN)
           </span>
-          <div className="mt-1 font-mono text-xl font-black text-amber-700">
+          <div className="mt-1 font-mono text-xl font-black text-amber-700 dark:text-amber-300">
             {unitTotals.UN.toFixed(0)} un
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Peso (KG)
           </span>
-          <div className="mt-1 font-mono text-xl font-black text-amber-700">
+          <div className="mt-1 font-mono text-xl font-black text-amber-700 dark:text-amber-300">
             {unitTotals.KG.toFixed(1)} kg
           </div>
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden dark:border-slate-800 dark:bg-slate-900">
         {logs.length === 0 ? (
-          <div className="p-12 text-center text-xs text-slate-500">
+          <div className="p-12 text-center text-xs text-slate-500 dark:text-slate-400">
             Ainda não existem registos de trabalho submetidos na empresa.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="border-b border-slate-100 bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              <thead className="border-b border-slate-100 bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-400">
                 <tr>
                   <th className="px-5 py-3">Data</th>
                   <th className="px-5 py-3">Colaborador</th>
@@ -127,19 +127,19 @@ export default async function TodosRegistosPage() {
                   <th className="px-5 py-3">Revisor</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {logs.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-50/50 align-top">
-                    <td className="px-5 py-3 font-medium text-slate-700 whitespace-nowrap">
+                    <td className="px-5 py-3 font-medium text-slate-700 whitespace-nowrap dark:text-slate-300">
                       {new Date(log.workDate).toLocaleDateString("pt-PT")}
                     </td>
-                    <td className="px-5 py-3 font-bold text-slate-900 whitespace-nowrap">
+                    <td className="px-5 py-3 font-bold text-slate-900 whitespace-nowrap dark:text-white">
                       {log.author.name}
                     </td>
-                    <td className="px-5 py-3 font-medium text-slate-800 whitespace-nowrap">
+                    <td className="px-5 py-3 font-medium text-slate-800 whitespace-nowrap dark:text-slate-100">
                       {log.project.name}
                     </td>
-                    <td className="px-5 py-3 font-mono font-bold text-slate-900 whitespace-nowrap">
+                    <td className="px-5 py-3 font-mono font-bold text-slate-900 whitespace-nowrap dark:text-white">
                       {log.hours ? `${Number(log.hours)}h` : "-"}
                     </td>
                     <td className="px-5 py-3 max-w-xs">
@@ -150,7 +150,7 @@ export default async function TodosRegistosPage() {
                           {log.measurements.map((m) => (
                             <span
                               key={m.id}
-                              className="inline-block rounded-sm bg-amber-50 border border-amber-200 px-1.5 py-0.5 text-[10px] text-amber-900"
+                              className="inline-block rounded-sm bg-amber-50 border border-amber-200 px-1.5 py-0.5 text-[10px] text-amber-900 dark:bg-amber-950/40 dark:border-amber-900/60 dark:text-amber-300"
                             >
                               <strong>{m.description}:</strong>{" "}
                               {Number(m.quantity)} {m.unit}
@@ -159,10 +159,10 @@ export default async function TodosRegistosPage() {
                         </div>
                       )}
                     </td>
-                    <td className="px-5 py-3 text-slate-600 max-w-xs">
+                    <td className="px-5 py-3 text-slate-600 max-w-xs dark:text-slate-400">
                       {log.description || "-"}
                       {log.rejectionReason && (
-                        <div className="mt-1 text-[10px] text-red-700 bg-red-50 p-1 rounded-sm">
+                        <div className="mt-1 text-[10px] text-red-700 bg-red-50 p-1 rounded-sm dark:text-red-300 dark:bg-red-950/40">
                           Rejeitado: {log.rejectionReason}
                         </div>
                       )}
@@ -171,10 +171,10 @@ export default async function TodosRegistosPage() {
                       <span
                         className={`rounded px-2 py-0.5 text-[10px] font-bold ${
                           log.status === "VALIDATED"
-                            ? "bg-emerald-100 text-emerald-800"
+                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
                             : log.status === "REJECTED"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-amber-100 text-amber-800"
+                            ? "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300"
+                            : "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
                         }`}
                       >
                         {log.status === "VALIDATED"
@@ -184,7 +184,7 @@ export default async function TodosRegistosPage() {
                           : "Pendente"}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-slate-500 text-[11px] whitespace-nowrap">
+                    <td className="px-5 py-3 text-slate-500 text-[11px] whitespace-nowrap dark:text-slate-400">
                       {log.reviewedBy ? log.reviewedBy.name : "-"}
                     </td>
                   </tr>

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import {
+  ArrowUpRight,
   CheckCircle2,
   AlertTriangle,
   Clock,
-  ArrowUpRight,
-  Flame,
   CalendarDays,
+  Flame,
 } from "lucide-react";
 
 export interface ProjectUpdateItem {
@@ -14,7 +14,7 @@ export interface ProjectUpdateItem {
   description: string;
   authorName?: string;
   timeAgo: string;
-  statusType: "success" | "info" | "warning";
+  statusType: "success" | "warning" | "info";
 }
 
 export interface CriticalAlertItem {
@@ -47,18 +47,18 @@ export function OperationalGrid({
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
       {/* Painel 1: Últimas Atualizações de Obra */}
-      <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs">
+      <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900">
         <div>
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
                 Atualizações das Obras
               </h2>
-              <p className="text-[11px] text-slate-500">Últimos registos de trabalho</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Últimos registos de trabalho</p>
             </div>
             <Link
               href="/dashboard/registos"
-              className="inline-flex items-center gap-0.5 text-xs font-bold text-blue-700 hover:text-blue-900"
+              className="inline-flex items-center gap-0.5 text-xs font-bold text-blue-700 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
             >
               <span>Ver Todos</span>
               <ArrowUpRight className="h-3 w-3" />
@@ -67,31 +67,31 @@ export function OperationalGrid({
 
           <div className="mt-3.5 space-y-3">
             {recentUpdates.length === 0 ? (
-              <p className="text-xs text-slate-500 py-4 text-center">Sem registos recentes.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 py-4 text-center">Sem registos recentes.</p>
             ) : (
               recentUpdates.slice(0, 4).map((item) => (
                 <div key={item.id} className="flex items-start gap-3 text-xs">
                   <span
                     className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
                       item.statusType === "success"
-                        ? "bg-emerald-100 text-emerald-700"
+                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400"
                         : item.statusType === "warning"
-                        ? "bg-amber-100 text-amber-700"
-                        : "bg-blue-100 text-blue-700"
+                        ? "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400"
+                        : "bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400"
                     }`}
                   >
                     <CheckCircle2 className="h-3 w-3" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-1">
-                      <h3 className="truncate font-bold text-slate-900 text-xs">
+                      <h3 className="truncate font-bold text-slate-900 dark:text-white text-xs">
                         {item.projectName}
                       </h3>
                       <span className="text-[10px] font-medium text-slate-400 shrink-0">
                         {item.timeAgo}
                       </span>
                     </div>
-                    <p className="line-clamp-1 text-[11px] text-slate-600 mt-0.5">
+                    <p className="line-clamp-1 text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
                       {item.description}
                     </p>
                     {item.authorName && (
@@ -106,21 +106,21 @@ export function OperationalGrid({
       </article>
 
       {/* Painel 2: Alertas Críticos de Obra */}
-      <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs">
+      <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900">
         <div>
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-1.5">
-              <Flame className="h-4 w-4 text-rose-600" />
+              <Flame className="h-4 w-4 text-rose-600 dark:text-rose-400" />
               <div>
-                <h2 className="text-sm font-bold text-slate-900">
+                <h2 className="text-sm font-bold text-slate-900 dark:text-white">
                   Alertas Críticos
                 </h2>
-                <p className="text-[11px] text-slate-500">Incidentes e aprovações</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Incidentes e aprovações</p>
               </div>
             </div>
             <Link
               href="/dashboard/alertas"
-              className="inline-flex items-center gap-0.5 text-xs font-bold text-rose-700 hover:text-rose-900"
+              className="inline-flex items-center gap-0.5 text-xs font-bold text-rose-700 dark:text-rose-400 hover:text-rose-900 dark:hover:text-rose-300"
             >
               <span>Ver Todos</span>
               <ArrowUpRight className="h-3 w-3" />
@@ -129,36 +129,36 @@ export function OperationalGrid({
 
           <div className="mt-3.5 space-y-3">
             {criticalAlerts.length === 0 ? (
-              <p className="text-xs text-slate-500 py-4 text-center">Sem alertas críticos pendentes.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 py-4 text-center">Sem alertas críticos pendentes.</p>
             ) : (
               criticalAlerts.slice(0, 4).map((alert) => (
                 <div key={alert.id} className="flex items-start gap-3 text-xs">
                   <span
                     className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md ${
                       alert.severity === "high"
-                        ? "bg-rose-100 text-rose-700"
-                        : "bg-amber-100 text-amber-700"
+                        ? "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400"
+                        : "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400"
                     }`}
                   >
                     <AlertTriangle className="h-3 w-3" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-1">
-                      <h3 className="truncate font-bold text-slate-900 text-xs">
+                      <h3 className="truncate font-bold text-slate-900 dark:text-white text-xs">
                         {alert.title}
                       </h3>
                       <span
                         className={`rounded-sm px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider shrink-0 ${
                           alert.severity === "high"
-                            ? "bg-rose-100 text-rose-800"
-                            : "bg-amber-100 text-amber-800"
+                            ? "bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300"
+                            : "bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300"
                         }`}
                       >
                         {alert.severity === "high" ? "Alto" : "Médio"}
                       </span>
                     </div>
                     {alert.projectName && (
-                      <p className="truncate text-[11px] text-slate-600 mt-0.5">
+                      <p className="truncate text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
                         {alert.projectName}
                       </p>
                     )}
@@ -172,21 +172,21 @@ export function OperationalGrid({
       </article>
 
       {/* Painel 3: Próximos Prazos & Milestones */}
-      <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs">
+      <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900">
         <div>
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-1.5">
-              <CalendarDays className="h-4 w-4 text-amber-600" />
+              <CalendarDays className="h-4 w-4 text-amber-600 dark:text-amber-400" />
               <div>
-                <h2 className="text-sm font-bold text-slate-900">
+                <h2 className="text-sm font-bold text-slate-900 dark:text-white">
                   Próximos Prazos
                 </h2>
-                <p className="text-[11px] text-slate-500">Prazos de obra e entregas</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Prazos de obra e entregas</p>
               </div>
             </div>
             <Link
               href="/dashboard/tarefas"
-              className="inline-flex items-center gap-0.5 text-xs font-bold text-blue-700 hover:text-blue-900"
+              className="inline-flex items-center gap-0.5 text-xs font-bold text-blue-700 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
             >
               <span>Ver Todos</span>
               <ArrowUpRight className="h-3 w-3" />
@@ -195,31 +195,35 @@ export function OperationalGrid({
 
           <div className="mt-3.5 space-y-3">
             {upcomingDeadlines.length === 0 ? (
-              <p className="text-xs text-slate-500 py-4 text-center">Sem prazos imediatos agendados.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 py-4 text-center">Sem prazos imediatos agendados.</p>
             ) : (
               upcomingDeadlines.slice(0, 4).map((d) => (
                 <div key={d.id} className="flex items-start gap-3 text-xs">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-700">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400">
                     <Clock className="h-3 w-3" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-1">
-                      <h3 className="truncate font-bold text-slate-900 text-xs">
+                      <h3 className="truncate font-bold text-slate-900 dark:text-white text-xs">
                         {d.title}
                       </h3>
                       <span
                         className={`rounded-sm px-1.5 py-0.5 text-[10px] font-mono font-bold shrink-0 ${
                           d.daysLeft <= 8
-                            ? "bg-rose-50 text-rose-700 border border-rose-200"
+                            ? "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-900/50"
                             : d.daysLeft <= 16
-                            ? "bg-amber-50 text-amber-700 border border-amber-200"
-                            : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            ? "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-900/50"
+                            : "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-900/50"
                         }`}
                       >
-                        {d.daysLeft} dias restam
+                        {d.daysLeft < 0
+                          ? `Atrasada ${Math.abs(d.daysLeft)} ${Math.abs(d.daysLeft) === 1 ? "dia" : "dias"}`
+                          : d.daysLeft === 0
+                          ? "Termina hoje"
+                          : `${d.daysLeft} ${d.daysLeft === 1 ? "dia resta" : "dias restam"}`}
                       </span>
                     </div>
-                    <p className="truncate text-[11px] text-slate-600 mt-0.5">
+                    <p className="truncate text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
                       {d.projectName}
                     </p>
                     <span className="text-[10px] text-slate-400">{d.dueDateFormatted}</span>
@@ -233,4 +237,3 @@ export function OperationalGrid({
     </div>
   );
 }
-

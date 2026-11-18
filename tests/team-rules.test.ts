@@ -90,7 +90,7 @@ test("4. Regra de segurança: Dono não pode desativar o seu próprio perfil em 
   const owner = mockUser(Role.OWNER);
   __setMockUser(owner);
 
-  const result = await toggleUserStatusAction(owner.id, "ACTIVE");
+  const result = await toggleUserStatusAction(owner.id);
   assert.ok(result?.error, "Deve retornar erro ao tentar desativar o próprio utilizador");
   assert.strictEqual(result?.error, "Não pode desativar o seu próprio perfil.");
 });

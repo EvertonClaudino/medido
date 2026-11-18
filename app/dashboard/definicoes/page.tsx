@@ -20,20 +20,20 @@ export default async function DefinicoesPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           Definições da Empresa
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-500 mt-1 dark:text-slate-400">
           Atualize os dados institucionais, morada e NIF da sua organização.
         </p>
       </div>
 
       <form
         action={handleUpdate}
-        className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs space-y-4 text-xs"
+        className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs space-y-4 text-xs dark:border-slate-800 dark:bg-slate-900"
       >
         <div>
-          <label className="block font-semibold uppercase text-slate-700">
+          <label className="block font-semibold uppercase text-slate-700 dark:text-slate-300">
             Nome da Empresa / Razão Social *
           </label>
           <input
@@ -41,13 +41,13 @@ export default async function DefinicoesPage() {
             name="name"
             required
             defaultValue={company.name}
-            className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden"
+            className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden dark:border-slate-700 dark:text-white"
           />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block font-semibold uppercase text-slate-700">
+            <label className="block font-semibold uppercase text-slate-700 dark:text-slate-300">
               NIF da Empresa
             </label>
             <input
@@ -55,12 +55,12 @@ export default async function DefinicoesPage() {
               name="nif"
               defaultValue={company.nif || ""}
               placeholder="501234567"
-              className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden font-mono"
+              className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden font-mono dark:border-slate-700 dark:text-white"
             />
           </div>
 
           <div>
-            <label className="block font-semibold uppercase text-slate-700">
+            <label className="block font-semibold uppercase text-slate-700 dark:text-slate-300">
               Telefone / Contacto
             </label>
             <input
@@ -68,13 +68,13 @@ export default async function DefinicoesPage() {
               name="phone"
               defaultValue={company.phone || ""}
               placeholder="+351 210 000 000"
-              className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden"
+              className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden dark:border-slate-700 dark:text-white"
             />
           </div>
         </div>
 
         <div>
-          <label className="block font-semibold uppercase text-slate-700">
+          <label className="block font-semibold uppercase text-slate-700 dark:text-slate-300">
             Morada da Sede
           </label>
           <input
@@ -82,14 +82,14 @@ export default async function DefinicoesPage() {
             name="address"
             defaultValue={company.address || ""}
             placeholder="Avenida Central, Lisboa"
-            className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden"
+            className="mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden dark:border-slate-700 dark:text-white"
           />
         </div>
 
-        <div className="pt-4 border-t border-slate-100 flex justify-end">
+        <div className="pt-4 border-t border-slate-100 flex justify-end dark:border-slate-800">
           <button
             type="submit"
-            className="rounded-lg bg-slate-900 px-5 py-2.5 font-semibold text-white hover:bg-slate-800"
+            className="rounded-lg bg-slate-900 px-5 py-2.5 font-semibold text-white hover:bg-slate-800 dark:bg-amber-500 dark:text-slate-950 dark:hover:bg-amber-400"
           >
             Guardar Alterações
           </button>

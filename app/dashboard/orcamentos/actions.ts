@@ -8,7 +8,7 @@ import {
   Role,
   VisitStatus,
 } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { safeRevalidatePath } from "@/lib/revalidate";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -109,37 +109,55 @@ function toBudgetLineInput(item: {
 }
 
 function revalidateBudgetPaths() {
-  revalidatePath("/dashboard/visitas");
-  revalidatePath("/dashboard/orcamentos");
-  revalidatePath("/dashboard/obras");
-  revalidatePath("/dashboard");
+  safeRevalidatePath("/dashboard/clientes");
+  safeRevalidatePath("/dashboard/orcamentos");
+  safeRevalidatePath("/dashboard/obras");
+  safeRevalidatePath("/dashboard");
 }
 
-export async function createBudgetAction(visitRequestId: string, formData: FormData) {
+/**
+ * Cria um orçamento para um cliente. A visita é opcional (decisão 022); quando indicada,
+ * tem de pertencer ao mesmo cliente, estar realizada e ainda não ter orçamento.
+ */
+export async function createBudgetAction(
+  target: { clientId: string; visitRequestId?: string | null },
+  formData: FormData
+) {
   const user = await requireRole([Role.OWNER]);
   const parsed = parseBudgetContent(formData);
   if ("error" in parsed) return parsed;
 
   const { projectName, workAddress, notes, items } = parsed.data;
   const budgetLines: BudgetLineInput[] = items;
-  const budget = await prisma.$transaction(async (transaction) => {
-    const visit = await transaction.visitRequest.findFirst({
-      where: {
-        id: visitRequestId,
-        companyId: user.companyId,
-        status: VisitStatus.COMPLETED,
-        budget: null,
-      },
-      select: { id: true, clientId: true },
+  const result = await prisma.$transaction(async (transaction) => {
+    const client = await transaction.client.findFirst({
+      where: { id: target.clientId, companyId: user.companyId },
+      select: { id: true },
     });
-    if (!visit) return null;
+    if (!client) return { error: "Cliente não encontrado ou inacessível." } as const;
+
+    let visitRequestId: string | null = null;
+    if (target.visitRequestId) {
+      const visit = await transaction.visitRequest.findFirst({
+        where: {
+          id: target.visitRequestId,
+          companyId: user.companyId,
+          clientId: client.id,
+          status: VisitStatus.COMPLETED,
+          budget: null,
+        },
+        select: { id: true },
+      });
+      if (!visit) return { error: texts.dashboard.budgets.missingVisit } as const;
+      visitRequestId = visit.id;
+    }
 
     const snapshot = budgetSnapshot(BudgetStatus.DRAFT, projectName, workAddress, notes || null, budgetLines);
-    return transaction.budget.create({
+    const budget = await transaction.budget.create({
       data: {
         companyId: user.companyId,
-        clientId: visit.clientId,
-        visitRequestId: visit.id,
+        clientId: client.id,
+        visitRequestId,
         projectName,
         workAddress,
         notes: notes || null,
@@ -165,11 +183,13 @@ export async function createBudgetAction(visitRequestId: string, formData: FormD
       },
       select: { id: true },
     });
+    return { budgetId: budget.id, clientId: client.id } as const;
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
-  if (!budget) return { error: texts.dashboard.budgets.missingVisit };
+  if ("error" in result) return { error: result.error };
 
   revalidateBudgetPaths();
-  return { success: true, budgetId: budget.id };
+  safeRevalidatePath(`/dashboard/clientes/${result.clientId}`);
+  return { success: true, budgetId: result.budgetId };
 }
 
 export async function updateBudgetAction(budgetId: string, formData: FormData) {
@@ -235,7 +255,7 @@ export async function updateBudgetAction(budgetId: string, formData: FormData) {
           clientId: budget.clientId,
           clientName: budget.client.name,
           address: workAddress,
-          budget: totals.grossCents / 100,
+          budget: new Prisma.Decimal(totals.grossCents).div(100),
         },
       });
       if (updatedProject.count !== 1) {
@@ -366,7 +386,7 @@ export async function approveBudgetAndCreateProjectAction(input: ApproveBudgetIn
               status: ProjectStatus.ACTIVE,
               name: confirmedProjectName,
               address: confirmedAddress,
-              budget: totals.grossCents / 100,
+              budget: new Prisma.Decimal(totals.grossCents).div(100),
               clientId: budget.clientId,
               clientName: budget.client.name,
             },
@@ -411,7 +431,7 @@ export async function approveBudgetAndCreateProjectAction(input: ApproveBudgetIn
               name: confirmedProjectName,
               code: nextCode,
               address: confirmedAddress,
-              budget: totals.grossCents / 100,
+              budget: new Prisma.Decimal(totals.grossCents).div(100),
               status: ProjectStatus.ACTIVE,
             },
             select: { id: true },
@@ -540,7 +560,7 @@ export async function updateBudgetStatusAction(budgetId: string, statusValue: st
             name: budget.projectName,
             clientName: budget.client.name,
             address: budget.workAddress,
-            budget: totals.grossCents / 100,
+            budget: new Prisma.Decimal(totals.grossCents).div(100),
             status: ProjectStatus.ACTIVE,
           },
           select: { id: true },

@@ -56,10 +56,10 @@ export function TaskItem({ task, currentUserId, isOwner }: TaskItemProps) {
     <div
       className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border transition-all ${
         task.status === "COMPLETED"
-          ? "bg-slate-50 border-slate-200 opacity-75"
+          ? "bg-slate-50 border-slate-200 opacity-75 dark:bg-slate-800/50 dark:border-slate-800"
           : task.status === "CANCELLED"
-          ? "bg-slate-50 border-slate-200 opacity-60 line-through"
-          : "bg-white border-slate-200 shadow-xs hover:border-slate-300"
+          ? "bg-slate-50 border-slate-200 opacity-60 line-through dark:bg-slate-800/50 dark:border-slate-800"
+          : "bg-white border-slate-200 shadow-xs hover:border-slate-300 dark:bg-slate-900 dark:border-slate-800 dark:hover:border-slate-600"
       }`}
     >
       <div className="flex items-start gap-3 min-w-0 flex-1">
@@ -71,7 +71,7 @@ export function TaskItem({ task, currentUserId, isOwner }: TaskItemProps) {
             className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition ${
               task.status === "COMPLETED"
                 ? "bg-emerald-600 border-emerald-600 text-white"
-                : "border-slate-300 hover:border-amber-600 bg-white"
+                : "border-slate-300 hover:border-amber-600 bg-white dark:border-slate-700 dark:bg-slate-900"
             } ${isPending ? "opacity-50 cursor-wait" : ""}`}
             aria-label={
               task.status === "COMPLETED"
@@ -99,7 +99,7 @@ export function TaskItem({ task, currentUserId, isOwner }: TaskItemProps) {
             className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
               task.status === "COMPLETED"
                 ? "bg-emerald-600 border-emerald-600 text-white"
-                : "border-slate-300 bg-slate-100"
+                : "border-slate-300 bg-slate-100 dark:border-slate-700 dark:bg-slate-800"
             }`}
           >
             {task.status === "COMPLETED" && (
@@ -122,49 +122,49 @@ export function TaskItem({ task, currentUserId, isOwner }: TaskItemProps) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h4
-              className={`text-sm font-semibold text-slate-900 ${
-                task.status === "COMPLETED" ? "line-through text-slate-500" : ""
+              className={`text-sm font-semibold text-slate-900 dark:text-white ${
+                task.status === "COMPLETED" ? "line-through text-slate-500 dark:text-slate-400" : ""
               }`}
             >
               {task.title}
             </h4>
 
             {task.project && (
-              <span className="inline-flex items-center rounded-sm bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700">
+              <span className="inline-flex items-center rounded-sm bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                 {task.project.name}
               </span>
             )}
 
             {task.status === "CANCELLED" && (
-              <span className="inline-flex items-center rounded-sm bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-700">
+              <span className="inline-flex items-center rounded-sm bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300">
                 Cancelada
               </span>
             )}
           </div>
 
           {task.description && (
-            <p className="mt-1 text-xs text-slate-600 whitespace-pre-wrap">
+            <p className="mt-1 text-xs text-slate-600 whitespace-pre-wrap dark:text-slate-400">
               {task.description}
             </p>
           )}
 
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500">
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400">
             {isOwner && (
               <span>
                 Atribuído a:{" "}
-                <strong className="font-semibold text-slate-700">
+                <strong className="font-semibold text-slate-700 dark:text-slate-300">
                   {task.assignedTo.name}
                 </strong>
               </span>
             )}
             <span>
               Criado por:{" "}
-              <span className="text-slate-600">{task.createdBy.name}</span>
+              <span className="text-slate-600 dark:text-slate-400">{task.createdBy.name}</span>
             </span>
             {formattedDueDate && (
               <span className="inline-flex items-center gap-1">
                 <span>Prazo:</span>
-                <strong className="font-medium text-slate-700">
+                <strong className="font-medium text-slate-700 dark:text-slate-300">
                   {formattedDueDate}
                 </strong>
               </span>
@@ -179,7 +179,7 @@ export function TaskItem({ task, currentUserId, isOwner }: TaskItemProps) {
             type="button"
             onClick={handleCancel}
             disabled={isPending}
-            className="rounded-sm border border-slate-200 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 hover:border-red-200 transition"
+            className="rounded-sm border border-slate-200 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 hover:border-red-200 transition dark:border-slate-800 dark:text-red-400 dark:hover:bg-red-950/40"
           >
             Cancelar
           </button>

@@ -205,7 +205,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
     setToggleError(null);
     setTogglingId(memberId);
 
-    const res = await toggleUserStatusAction(memberId, currentStatus);
+    const res = await toggleUserStatusAction(memberId);
     setTogglingId(null);
 
     if (res?.error) {
@@ -258,17 +258,17 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
       {/* Cabeçalho da Página */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Equipa & Colaboradores
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1 dark:text-slate-400">
             Gestão de encarregados, colaboradores operacionais, especialidades e alocações a obras.
           </p>
         </div>
 
         <Button
           onClick={handleOpenInvite}
-          className="h-11 min-h-[44px] gap-2 bg-slate-900 text-white hover:bg-slate-800 px-5 text-sm font-semibold shadow-xs"
+          className="h-11 min-h-[44px] gap-2 bg-slate-900 text-white hover:bg-slate-800 px-5 text-sm font-semibold shadow-xs dark:bg-amber-500 dark:text-slate-950 dark:hover:bg-amber-400"
         >
           <UserPlus className="h-4 w-4" />
           Convidar Colaborador
@@ -277,43 +277,43 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
 
       {/* Cards de Métricas Resumidas */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 shadow-xs">
+          <div className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Total da Equipa
           </div>
-          <div className="mt-1 text-2xl font-bold text-slate-900">{totalCount}</div>
-          <div className="mt-0.5 text-[11px] text-slate-400">
+          <div className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{totalCount}</div>
+          <div className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
             {activeCount} ativos • {inactiveCount} inativos
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-amber-700">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 shadow-xs">
+          <div className="text-[11px] font-medium uppercase tracking-wider text-amber-700 dark:text-amber-500">
             Encarregados
           </div>
-          <div className="mt-1 text-2xl font-bold text-amber-900">{foremanCount}</div>
-          <div className="mt-0.5 text-[11px] text-amber-700/80">Gestão e validação em obra</div>
+          <div className="mt-1 text-2xl font-bold text-amber-900 dark:text-amber-400">{foremanCount}</div>
+          <div className="mt-0.5 text-[11px] text-amber-700/80 dark:text-amber-500/80">Gestão e validação em obra</div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-blue-700">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 shadow-xs">
+          <div className="text-[11px] font-medium uppercase tracking-wider text-blue-700 dark:text-blue-400">
             Funcionários
           </div>
-          <div className="mt-1 text-2xl font-bold text-blue-900">{workerCount}</div>
-          <div className="mt-0.5 text-[11px] text-blue-700/80">Trabalho de campo</div>
+          <div className="mt-1 text-2xl font-bold text-blue-900 dark:text-blue-300">{workerCount}</div>
+          <div className="mt-0.5 text-[11px] text-blue-700/80 dark:text-blue-400/80">Trabalho de campo</div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-emerald-700">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 shadow-xs">
+          <div className="text-[11px] font-medium uppercase tracking-wider text-emerald-700 dark:text-emerald-500">
             Em Atividade
           </div>
-          <div className="mt-1 text-2xl font-bold text-emerald-900">{activeCount}</div>
-          <div className="mt-0.5 text-[11px] text-emerald-700/80">Com acesso ao sistema</div>
+          <div className="mt-1 text-2xl font-bold text-emerald-900 dark:text-emerald-400">{activeCount}</div>
+          <div className="mt-0.5 text-[11px] text-emerald-700/80 dark:text-emerald-500/80">Com acesso ao sistema</div>
         </div>
       </div>
 
       {/* Barra de Filtros e Pesquisa */}
-      <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs space-y-3">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 shadow-xs space-y-3">
         <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
           {/* Campo de Pesquisa */}
           <div className="relative flex-1">
@@ -339,14 +339,14 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
           {/* Filtros em Pills */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Filtro Perfil */}
-            <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-0.5 text-xs">
+            <div className="flex rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-0.5 text-xs">
               <button
                 type="button"
                 onClick={() => setRoleFilter("ALL")}
                 className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
                   roleFilter === "ALL"
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Todos
@@ -356,8 +356,8 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                 onClick={() => setRoleFilter("FOREMAN")}
                 className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
                   roleFilter === "FOREMAN"
-                    ? "bg-white text-amber-800 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-700 text-amber-800 dark:text-amber-400 shadow-xs font-semibold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Encarregados
@@ -367,8 +367,8 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                 onClick={() => setRoleFilter("WORKER")}
                 className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
                   roleFilter === "WORKER"
-                    ? "bg-white text-blue-800 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-700 text-blue-800 dark:text-blue-400 shadow-xs font-semibold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Funcionários
@@ -376,14 +376,14 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
             </div>
 
             {/* Filtro Estado */}
-            <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-0.5 text-xs">
+            <div className="flex rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-0.5 text-xs">
               <button
                 type="button"
                 onClick={() => setStatusFilter("ALL")}
                 className={`rounded-md px-2 py-1 font-medium transition-colors ${
                   statusFilter === "ALL"
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Todos
@@ -393,8 +393,8 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                 onClick={() => setStatusFilter("ACTIVE")}
                 className={`rounded-md px-2 py-1 font-medium transition-colors ${
                   statusFilter === "ACTIVE"
-                    ? "bg-white text-emerald-800 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-700 text-emerald-800 dark:text-emerald-400 shadow-xs font-semibold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Ativos
@@ -404,8 +404,8 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                 onClick={() => setStatusFilter("INACTIVE")}
                 className={`rounded-md px-2 py-1 font-medium transition-colors ${
                   statusFilter === "INACTIVE"
-                    ? "bg-white text-red-800 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-700 text-red-800 dark:text-red-400 shadow-xs font-semibold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Inativos
@@ -415,26 +415,26 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
         </div>
 
         {toggleError && (
-          <div className="rounded-lg bg-red-50 p-2.5 text-xs font-medium text-red-700">
+          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-2.5 text-xs font-medium text-red-700 dark:text-red-400">
             {toggleError}
           </div>
         )}
       </div>
 
       {/* Dica para o utilizador */}
-      <div className="flex items-center justify-between text-xs text-slate-500 px-1">
+      <div className="flex items-center justify-between text-xs text-slate-500 px-1 dark:text-slate-400">
         <span>A mostrar {filteredTeam.length} de {team.length} colaboradores</span>
         <span className="hidden sm:inline text-slate-400">Clique num cartão para ver os detalhes completos do colaborador</span>
       </div>
 
       {/* Grelha de Cards de Colaboradores */}
       {filteredTeam.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-12 text-center">
+        <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-12 text-center">
           <Briefcase className="mx-auto h-8 w-8 text-slate-400" />
-          <h3 className="mt-2 text-sm font-semibold text-slate-900">
+          <h3 className="mt-2 text-sm font-semibold text-slate-900 dark:text-white">
             Nenhum colaborador encontrado
           </h3>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
             Não foram encontrados membros da equipa com os filtros selecionados.
           </p>
           {(searchQuery || roleFilter !== "ALL" || statusFilter !== "ALL") && (
@@ -462,10 +462,10 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
 
             // Paleta de cores para o avatar por perfil
             const avatarBg = isOwner
-              ? "bg-purple-100 text-purple-900 border-purple-200"
+              ? "bg-purple-100 text-purple-900 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-900/60"
               : isForeman
-              ? "bg-amber-100 text-amber-900 border-amber-200"
-              : "bg-blue-100 text-blue-900 border-blue-200";
+              ? "bg-amber-100 text-amber-900 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-900/60"
+              : "bg-blue-100 text-blue-900 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-900/60";
 
             return (
               <div
@@ -479,10 +479,10 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                     setSelectedMember(member);
                   }
                 }}
-                className={`group relative flex flex-col justify-between rounded-xl border bg-white p-5 shadow-xs transition-all hover:shadow-md hover:border-slate-300 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-amber-500/40 text-left ${
+                className={`group relative flex flex-col justify-between rounded-xl border bg-white dark:bg-slate-900 p-5 shadow-xs transition-all hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-amber-500/40 text-left ${
                   member.status === "INACTIVE"
-                    ? "border-slate-200 bg-slate-50/60 opacity-80"
-                    : "border-slate-200"
+                    ? "border-slate-200 dark:border-slate-700/60 bg-slate-50/60 dark:bg-slate-900/60 opacity-80"
+                    : "border-slate-200 dark:border-slate-700"
                 }`}
               >
                 {/* Topo do Card: Avatar + Info + Badges */}
@@ -524,18 +524,18 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                       {/* Nome, Especialidade e Email */}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
-                          <h2 className="truncate font-bold text-slate-900 text-sm group-hover:text-amber-800 transition-colors">
+                          <h2 className="truncate font-bold text-slate-900 dark:text-white text-sm group-hover:text-amber-800 dark:group-hover:text-amber-400 transition-colors">
                             {member.name}
                           </h2>
                           {isSelf && (
-                            <span className="rounded bg-slate-100 px-1 py-0.2 text-[9px] font-semibold text-slate-600">
+                            <span className="rounded bg-slate-100 px-1 py-0.2 text-[9px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-400">
                               Você
                             </span>
                           )}
                         </div>
 
                         {/* Especialidade / Cargo */}
-                        <div className="mt-0.5 flex items-center gap-1 text-xs text-slate-700">
+                        <div className="mt-0.5 flex items-center gap-1 text-xs text-slate-700 dark:text-slate-300">
                           <Briefcase className="h-3 w-3 shrink-0 text-slate-400" />
                           <span className="truncate font-medium">
                             {member.specialty ||
@@ -548,7 +548,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                         </div>
 
                         {/* Email */}
-                        <div className="mt-0.5 truncate font-mono text-[11px] text-slate-500">
+                        <div className="mt-0.5 truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
                           {member.email}
                         </div>
                       </div>
@@ -557,12 +557,12 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                     {/* Badge de Estado (Ativo/Inativo) */}
                     <div className="shrink-0">
                       {member.status === "ACTIVE" ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900/60">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                           Ativo
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-700 border border-red-200">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-700 border border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900/60">
                           <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
                           Inativo
                         </span>
@@ -571,16 +571,16 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                   </div>
 
                   {/* Informação do Perfil (Dono, Encarregado, Funcionário) */}
-                  <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-[11px]">
-                    <span className="text-slate-500">Função no Sistema</span>
+                  <div className="mt-3 flex items-center justify-between border-t border-slate-100 dark:border-slate-700/60 pt-3 text-[11px]">
+                    <span className="text-slate-500 dark:text-slate-400">Função no Sistema</span>
                     <Badge
                       variant="outline"
                       className={`text-[10px] font-bold uppercase tracking-wider ${
                         isOwner
-                          ? "border-purple-200 bg-purple-50 text-purple-800"
+                          ? "border-purple-200 bg-purple-50 text-purple-800 dark:border-purple-900/60 dark:bg-purple-950/40 dark:text-purple-300"
                           : isForeman
-                          ? "border-amber-200 bg-amber-50 text-amber-800"
-                          : "border-blue-200 bg-blue-50 text-blue-800"
+                          ? "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300"
+                          : "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300"
                       }`}
                     >
                       {isOwner
@@ -592,35 +592,35 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                   </div>
 
                   {/* Secção de Obras Alocadas */}
-                  <div className="mt-3 rounded-lg bg-slate-50 p-2.5 border border-slate-100">
+                  <div className="mt-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 p-2.5 border border-slate-100 dark:border-slate-700/60">
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="font-semibold text-slate-700 flex items-center gap-1">
+                      <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
                         <Building2 className="h-3 w-3 text-slate-400" />
                         Obras Atribuídas
                       </span>
-                      <span className="font-bold text-slate-500">
+                      <span className="font-bold text-slate-500 dark:text-slate-400">
                         {isOwner ? "Global" : member.assignments.length}
                       </span>
                     </div>
 
                     <div className="mt-2 space-y-1.5">
                       {isOwner ? (
-                        <div className="text-[11px] text-purple-700 font-medium">
+                        <div className="text-[11px] text-purple-700 dark:text-purple-400 font-medium">
                           Acesso global a todas as obras da empresa
                         </div>
                       ) : member.assignments.length === 0 ? (
-                        <div className="text-[11px] text-slate-400 italic">
+                        <div className="text-[11px] text-slate-400 dark:text-slate-500 italic">
                           Nenhuma obra ativa atribuída no momento
                         </div>
                       ) : (
                         member.assignments.map((assignment) => (
                           <div
                             key={assignment.project.id}
-                            className="flex items-center justify-between gap-2 text-xs rounded bg-white px-2 py-1 border border-slate-200/80 shadow-2xs"
+                            className="flex items-center justify-between gap-2 text-xs rounded bg-white dark:bg-slate-800 px-2 py-1 border border-slate-200/80 dark:border-slate-700 shadow-2xs"
                           >
-                            <span className="truncate font-medium text-slate-800 text-[11px]">
+                            <span className="truncate font-medium text-slate-800 dark:text-slate-200 text-[11px]">
                               {assignment.project.code && (
-                                <span className="font-mono text-[10px] text-slate-500 mr-1">
+                                <span className="font-mono text-[10px] text-slate-500 dark:text-slate-400 mr-1">
                                   [{assignment.project.code}]
                                 </span>
                               )}
@@ -629,8 +629,8 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                             <span
                               className={`shrink-0 rounded px-1.5 py-0.2 text-[9px] font-bold ${
                                 assignment.isLead
-                                  ? "bg-amber-100 text-amber-900 border border-amber-200"
-                                  : "bg-slate-100 text-slate-600"
+                                  ? "bg-amber-100 text-amber-900 border border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-900/60"
+                                  : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                               }`}
                             >
                               {assignment.isLead ? "Responsável" : "Equipa"}
@@ -643,8 +643,8 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                 </div>
 
                 {/* Rodapé do Card: Ações com alvo de toque acessível (44px) */}
-                <div className="mt-4 border-t border-slate-100 pt-3 flex items-center justify-between">
-                  <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 group-hover:text-amber-800 transition-colors">
+                <div className="mt-4 border-t border-slate-100 dark:border-slate-700/60 pt-3 flex items-center justify-between">
+                  <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400 group-hover:text-amber-800 dark:group-hover:text-amber-400 transition-colors">
                     <span>Ver detalhes</span>
                     <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </div>
@@ -660,8 +660,8 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                       disabled={togglingId === member.id}
                       className={`h-9 min-h-[36px] sm:min-h-[44px] text-xs font-semibold px-3 z-10 ${
                         member.status === "ACTIVE"
-                          ? "text-slate-600 hover:text-red-700 hover:bg-red-50"
-                          : "text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50"
+                          ? "text-slate-600 hover:text-red-700 hover:bg-red-50 dark:text-slate-400 dark:hover:text-red-300 dark:hover:bg-red-950/40"
+                          : "text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 dark:text-emerald-300 dark:hover:text-emerald-300 dark:hover:bg-emerald-950/40"
                       }`}
                     >
                       {togglingId === member.id ? (
@@ -710,26 +710,26 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
           {createdPassword ? (
             /* Ecrã de Sucesso com Palavra-passe Temporária */
             <div className="space-y-4 py-2">
-              <div className="flex items-center gap-3 text-emerald-800">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100">
-                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+              <div className="flex items-center gap-3 text-emerald-800 dark:text-emerald-300">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+                  <CheckCircle2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <DialogTitle className="text-base font-bold text-slate-900">
+                  <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
                     Colaborador Criado com Sucesso!
                   </DialogTitle>
-                  <DialogDescription className="text-xs text-slate-500">
+                  <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">
                     {createdMemberName} foi adicionado à equipa da sua empresa.
                   </DialogDescription>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 space-y-2">
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-amber-900">
+              <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 space-y-2 dark:border-amber-900/60 dark:bg-amber-950/40">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-amber-900 dark:text-amber-300">
                   Palavra-passe Temporária
                 </div>
-                <div className="flex items-center justify-between gap-2 rounded-lg bg-white p-2.5 border border-amber-200">
-                  <span className="font-mono text-sm font-bold text-slate-900 tracking-wide">
+                <div className="flex items-center justify-between gap-2 rounded-lg bg-white p-2.5 border border-amber-200 dark:bg-slate-900 dark:border-amber-900/60">
+                  <span className="font-mono text-sm font-bold text-slate-900 tracking-wide dark:text-white">
                     {createdPassword}
                   </span>
                   <Button
@@ -741,7 +741,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                   >
                     {hasCopiedPassword ? (
                       <>
-                        <Check className="h-3.5 w-3.5 text-emerald-600" />
+                        <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                         Copiada!
                       </>
                     ) : (
@@ -752,7 +752,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                     )}
                   </Button>
                 </div>
-                <p className="text-[11px] text-amber-800 leading-relaxed">
+                <p className="text-[11px] text-amber-800 leading-relaxed dark:text-amber-300">
                   Entregue esta palavra-passe ao colaborador. No primeiro acesso, o sistema exigirá
                   obrigatoriamente que defina uma nova palavra-passe pessoal.
                 </p>
@@ -761,7 +761,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
               <DialogFooter className="sm:justify-end">
                 <Button
                   onClick={() => setIsInviteOpen(false)}
-                  className="w-full sm:w-auto bg-slate-900 text-white hover:bg-slate-800 h-10 min-h-[44px]"
+                  className="w-full sm:w-auto bg-slate-900 text-white hover:bg-slate-800 h-10 min-h-[44px] dark:bg-amber-500 dark:text-slate-950 dark:hover:bg-amber-400"
                 >
                   Concluir
                 </Button>
@@ -771,16 +771,16 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
             /* Formulário de Registo / Convite */
             <form onSubmit={handleInviteSubmit} className="space-y-4">
               <DialogHeader>
-                <DialogTitle className="text-lg font-bold text-slate-900">
+                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
                   Convidar Novo Colaborador
                 </DialogTitle>
-                <DialogDescription className="text-xs text-slate-500">
+                <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">
                   Preencha os dados do encarregado ou funcionário para atribuir credenciais de acesso.
                 </DialogDescription>
               </DialogHeader>
 
               {inviteError && (
-                <div className="rounded-lg bg-red-50 p-3 text-xs font-medium text-red-700">
+                <div className="rounded-lg bg-red-50 p-3 text-xs font-medium text-red-700 dark:bg-red-950/40 dark:text-red-300">
                   {inviteError}
                 </div>
               )}
@@ -788,7 +788,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
               <div className="space-y-4 text-xs">
                 {/* 1. Nome Completo */}
                 <div>
-                  <Label htmlFor="member-name" className="text-xs font-semibold uppercase text-slate-700">
+                  <Label htmlFor="member-name" className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300">
                     Nome Completo *
                   </Label>
                   <Input
@@ -804,7 +804,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
 
                 {/* 2. Email */}
                 <div>
-                  <Label htmlFor="member-email" className="text-xs font-semibold uppercase text-slate-700">
+                  <Label htmlFor="member-email" className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300">
                     Email de Acesso *
                   </Label>
                   <Input
@@ -820,7 +820,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
 
                 {/* 3. Seleção de Perfil de Acesso Visual (Radio Cards) */}
                 <div>
-                  <Label className="text-xs font-semibold uppercase text-slate-700 block mb-1.5">
+                  <Label className="text-xs font-semibold uppercase text-slate-700 block mb-1.5 dark:text-slate-300">
                     Perfil de Acesso *
                   </Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -837,27 +837,27 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                       }}
                       className={`relative flex items-start gap-3 rounded-xl border p-3 cursor-pointer transition-all ${
                         role === "WORKER"
-                          ? "border-blue-600 bg-blue-50/60 ring-2 ring-blue-500/20"
-                          : "border-slate-200 bg-white hover:border-slate-300"
+                          ? "border-blue-600 bg-blue-50/60 ring-2 ring-blue-500/20 dark:bg-blue-950/40"
+                          : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-600"
                       }`}
                     >
                       <div
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                           role === "WORKER"
                             ? "bg-blue-600 text-white"
-                            : "bg-slate-100 text-slate-600"
+                            : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                         }`}
                       >
                         <Briefcase className="h-4 w-4" />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                        <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5 dark:text-white">
                           Funcionário
                           {role === "WORKER" && (
-                            <Check className="h-3.5 w-3.5 text-blue-600 ml-auto" />
+                            <Check className="h-3.5 w-3.5 text-blue-600 ml-auto dark:text-blue-400" />
                           )}
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                        <p className="text-[11px] text-slate-500 mt-0.5 leading-snug dark:text-slate-400">
                           Registo diário de medições e tarefas em obra.
                         </p>
                       </div>
@@ -876,27 +876,27 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                       }}
                       className={`relative flex items-start gap-3 rounded-xl border p-3 cursor-pointer transition-all ${
                         role === "FOREMAN"
-                          ? "border-amber-600 bg-amber-50/60 ring-2 ring-amber-500/20"
-                          : "border-slate-200 bg-white hover:border-slate-300"
+                          ? "border-amber-600 bg-amber-50/60 ring-2 ring-amber-500/20 dark:bg-amber-950/40"
+                          : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-600"
                       }`}
                     >
                       <div
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                           role === "FOREMAN"
                             ? "bg-amber-600 text-white"
-                            : "bg-slate-100 text-slate-600"
+                            : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                         }`}
                       >
                         <HardHat className="h-4 w-4" />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                        <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5 dark:text-white">
                           Encarregado
                           {role === "FOREMAN" && (
-                            <Check className="h-3.5 w-3.5 text-amber-600 ml-auto" />
+                            <Check className="h-3.5 w-3.5 text-amber-600 ml-auto dark:text-amber-400" />
                           )}
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                        <p className="text-[11px] text-slate-500 mt-0.5 leading-snug dark:text-slate-400">
                           Gestão de equipas e validação de registos.
                         </p>
                       </div>
@@ -906,7 +906,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
 
                 {/* 4. Especialidade / Cargo com Pills Rápidas */}
                 <div>
-                  <Label htmlFor="member-specialty" className="text-xs font-semibold uppercase text-slate-700">
+                  <Label htmlFor="member-specialty" className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300">
                     Cargo / Especialidade Técnica
                   </Label>
                   <Input
@@ -915,7 +915,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                     value={specialty}
                     onChange={(e) => setSpecialty(e.target.value)}
                     placeholder="Ex.: Pedreiro de 1.ª, Eletricista, Pintor..."
-                    className="mt-1 h-9 text-xs bg-white"
+                    className="mt-1 h-9 text-xs bg-white dark:bg-slate-900"
                   />
 
                   {/* Pills de seleção rápida */}
@@ -932,7 +932,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                           className={`rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${
                             specialty === item
                               ? "bg-slate-900 text-white font-semibold"
-                              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                              : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400"
                           }`}
                         >
                           {item}
@@ -943,12 +943,12 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                 </div>
 
                 {/* 5. Palavra-passe Temporária (Opcional) */}
-                <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-3 space-y-2">
+                <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-3 space-y-2 dark:border-slate-800 dark:bg-slate-800/40">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="member-password" className="text-xs font-semibold uppercase text-slate-700">
+                    <Label htmlFor="member-password" className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300">
                       Palavra-passe Inicial
                     </Label>
-                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 dark:text-emerald-300 dark:bg-emerald-950/40 dark:border-emerald-900/60">
                       Automática
                     </span>
                   </div>
@@ -958,9 +958,9 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                     value={customPassword}
                     onChange={(e) => setCustomPassword(e.target.value)}
                     placeholder="Deixe em branco para gerar senha temporária segura"
-                    className="h-8 font-mono text-xs bg-white"
+                    className="h-8 font-mono text-xs bg-white dark:bg-slate-900"
                   />
-                  <p className="text-[11px] text-slate-500 leading-tight">
+                  <p className="text-[11px] text-slate-500 leading-tight dark:text-slate-400">
                     Se deixar em branco, o Medido gera automaticamente uma senha segura e exibe-a
                     após a criação para copiar e entregar ao colaborador.
                   </p>
@@ -980,7 +980,7 @@ export function EquipaView({ initialTeam, currentUserId }: EquipaViewProps) {
                 <Button
                   type="submit"
                   disabled={isPending}
-                  className="h-10 min-h-[44px] bg-slate-900 text-white hover:bg-slate-800 text-xs font-semibold"
+                  className="h-10 min-h-[44px] bg-slate-900 text-white hover:bg-slate-800 text-xs font-semibold dark:bg-amber-500 dark:text-slate-950 dark:hover:bg-amber-400"
                 >
                   {isPending ? "A convidar..." : "Convidar Colaborador"}
                 </Button>

@@ -9,6 +9,7 @@ import {
 import { getCompanyAlertsData } from "@/lib/alert-data";
 import { getAlertSeverityCounts } from "@/lib/alerts";
 import { texts } from "@/lib/texts";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function DashboardLayout({
   children,
@@ -99,10 +100,10 @@ export default async function DashboardLayout({
 
   const roleBadgeColor =
     user.role === "OWNER"
-      ? "bg-purple-100 text-purple-800 border-purple-200"
+      ? "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-900/60"
       : user.role === "FOREMAN"
-      ? "bg-amber-100 text-amber-800 border-amber-200"
-      : "bg-blue-100 text-blue-800 border-blue-200";
+      ? "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-900/60"
+      : "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-900/60";
 
   const sidebarGroups = getSidebarNavigation(user.role, {
     foremanPendingLogsCount: foremanPendingCount,
@@ -121,35 +122,35 @@ export default async function DashboardLayout({
   });
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-900 pb-16 lg:pb-0">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pb-16 lg:pb-0 transition-colors duration-200">
       {/* Sidebar Lateral para Desktop (oculto até 768x1024, visível e compacto em ecrãs >= 1024px) */}
-      <aside className="hidden w-52 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex">
-        <div className="flex h-16 items-center border-b border-slate-200 px-4">
+      <aside className="hidden w-52 shrink-0 flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 lg:flex">
+        <div className="flex h-16 items-center border-b border-slate-200 dark:border-slate-800 px-4">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <span className="text-xl font-black tracking-tight text-slate-900">
+            <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
               Medido
             </span>
-            <span className="rounded-sm bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-800">
+            <span className="rounded-sm bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 text-[10px] font-bold text-amber-800 dark:text-amber-400">
               PRO
             </span>
           </Link>
         </div>
 
-        <div className="border-b border-slate-100 p-3">
+        <div className="border-b border-slate-100 dark:border-slate-800/80 p-3">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
             Empresa
           </div>
-          <div className="mt-0.5 truncate text-xs font-bold text-slate-800" title={user.company.name}>
+          <div className="mt-0.5 truncate text-xs font-bold text-slate-800 dark:text-slate-200" title={user.company.name}>
             {user.company.name}
           </div>
           {user.company.nif && (
-            <div className="text-[10px] text-slate-500 font-mono">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
               NIF: {user.company.nif}
             </div>
           )}
         </div>
 
-        <nav className="flex-1 space-y-3 p-3 text-xs font-medium text-slate-600">
+        <nav className="flex-1 space-y-3 p-3 text-xs font-medium text-slate-600 dark:text-slate-300">
           {sidebarGroups.map((group, groupIdx) => (
             <div key={groupIdx} className="space-y-1">
               <div className="pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2">
@@ -161,10 +162,10 @@ export default async function DashboardLayout({
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="flex items-center justify-between rounded-lg px-2.5 py-1.5 text-slate-700 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 text-xs"
+                    className="flex items-center justify-between rounded-lg px-2.5 py-1.5 text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 text-xs"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <Icon className="h-4 w-4 shrink-0 text-slate-500" />
+                      <Icon className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
                       <span className="truncate">{item.name}</span>
                     </div>
                     {item.alertCounts ? (
@@ -206,11 +207,11 @@ export default async function DashboardLayout({
           ))}
         </nav>
 
-        <div className="border-t border-slate-200 p-3">
+        <div className="border-t border-slate-200 dark:border-slate-800 p-3">
           <form action={logoutAction}>
             <button
               type="submit"
-              className="w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-red-50 hover:text-red-700 hover:border-red-200 text-left"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-2.5 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400 transition hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-700 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-900/50 text-left"
             >
               Terminar Sessão
             </button>
@@ -221,9 +222,9 @@ export default async function DashboardLayout({
       {/* Conteúdo Principal */}
       <div className="flex flex-1 flex-col min-w-0">
         {/* Barra Superior */}
-        <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6 lg:px-8">
+        <header className="flex h-16 items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-slate-900">
+            <span className="text-sm font-semibold text-slate-900 dark:text-white">
               {user.name}
             </span>
             <span
@@ -233,15 +234,17 @@ export default async function DashboardLayout({
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:inline text-xs text-slate-500">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400">
               {user.company.name}
             </span>
+            {/* Dark Mode Toggle no Dashboard */}
+            <ThemeToggle />
             {/* Botão de Terminar Sessão Mobile / Tablet (até 768x1024) */}
             <form action={logoutAction} className="lg:hidden">
               <button
                 type="submit"
-                className="rounded-sm border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50"
+                className="rounded-sm border border-slate-200 dark:border-slate-800 px-2 py-1 text-[11px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 Sair
               </button>
@@ -254,7 +257,7 @@ export default async function DashboardLayout({
       </div>
 
       {/* Barra de Navegação Inferior Mobile e Tablet (visível até 768x1024 / < 1024px) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-around border-t border-slate-200 bg-white px-2 lg:hidden shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-around border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 lg:hidden shadow-lg transition-colors duration-200">
         {mobileNavItems.map((item) => {
           const Icon = item.icon;
           if (item.mobileHighlight) {
@@ -262,12 +265,12 @@ export default async function DashboardLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center justify-center rounded-md text-amber-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+                className="flex flex-col items-center justify-center rounded-md text-amber-700 dark:text-amber-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-600 text-white shadow-sm">
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className="text-[9px] font-bold mt-0.5 text-amber-700">
+                <span className="text-[9px] font-bold mt-0.5 text-amber-700 dark:text-amber-400">
                   {item.name}
                 </span>
               </Link>
@@ -278,7 +281,7 @@ export default async function DashboardLayout({
             <Link
               key={item.href}
               href={item.href}
-              className="relative flex flex-col items-center justify-center rounded-md text-slate-700 hover:text-amber-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+              className="relative flex flex-col items-center justify-center rounded-md text-slate-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
             >
               <Icon className="h-5 w-5" />
               {item.badgeCount !== undefined && item.badgeCount > 0 && (

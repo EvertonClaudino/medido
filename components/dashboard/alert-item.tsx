@@ -10,9 +10,9 @@ import { formatAlertDateInLisbon, type DashboardAlert } from "@/lib/alerts";
 import { texts } from "@/lib/texts";
 
 const severityStyles = {
-  CRITICAL: "border-red-200 bg-red-50 text-red-900",
-  WARNING: "border-amber-200 bg-amber-50 text-amber-900",
-  INFO: "border-blue-200 bg-blue-50 text-blue-900",
+  CRITICAL: "border-red-200 bg-red-50 text-red-900 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200",
+  WARNING: "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-200",
+  INFO: "border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-200",
 } as const;
 
 const severityIcons = {
@@ -44,8 +44,8 @@ export function AlertItem({
         {severityLabels[alert.severity]}
       </Badge>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold leading-5 text-slate-900">{alert.title}</p>
-        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-600">
+        <p className="text-xs font-semibold leading-5 text-slate-900 dark:text-white">{alert.title}</p>
+        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-600 dark:text-slate-400">
           {alert.project && (
             <span>
               {texts.dashboard.alerts.projectLabel}: {alert.project.name}
@@ -57,7 +57,7 @@ export function AlertItem({
         </div>
         <Link
           href={alert.action.href}
-          className="mt-2 inline-flex items-center gap-1 rounded-sm text-xs font-semibold text-amber-800 underline underline-offset-2 hover:text-amber-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+          className="mt-2 inline-flex items-center gap-1 rounded-sm text-xs font-semibold text-amber-800 underline underline-offset-2 hover:text-amber-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 dark:text-amber-300"
         >
           {alert.action.label}
           <span aria-hidden="true">→</span>
@@ -69,7 +69,7 @@ export function AlertItem({
 
 export function AlertsEmptyState() {
   return (
-    <div className="flex items-center gap-2 p-5 text-sm text-emerald-900">
+    <div className="flex items-center gap-2 p-5 text-sm text-emerald-900 dark:text-emerald-300">
       <CheckCircleIcon className="h-5 w-5 shrink-0" aria-hidden="true" />
       <span>{texts.dashboard.alerts.noAlerts}</span>
     </div>

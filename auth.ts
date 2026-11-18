@@ -1,9 +1,31 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { authConfig } from "./auth.config";
 import { prisma } from "./lib/prisma";
+import {
+  MAX_FAILURES_PER_EMAIL,
+  MAX_FAILURES_PER_IP,
+  emailRateLimitKey,
+  getClientIp,
+  getLoginBlockMinutes,
+  ipRateLimitKey,
+  registerLoginFailure,
+  resetLoginFailures,
+} from "./lib/login-rate-limit";
+
+/** Erro devolvido ao formulário quando o email ou o IP estão temporariamente bloqueados. */
+export class LoginRateLimitedError extends CredentialsSignin {
+  code = "rate_limited";
+}
+
+// Hash usado quando o utilizador não existe, para que o tempo de resposta não revele se o email existe
+let dummyHashPromise: Promise<string> | null = null;
+function getDummyHash() {
+  dummyHashPromise ??= bcrypt.hash("medido-dummy-password", 10);
+  return dummyHashPromise;
+}
 
 const loginSchema = z.object({
   email: z.string().email("Endereço de email inválido."),
@@ -14,105 +36,58 @@ const loginSchema = z.object({
     .regex(/[0-9]/, "A palavra-passe tem de conter pelo menos um algarismo."),
 });
 
-// Rate limiting de autenticação em memória por IP/Email
-// Regra: Máximo de 5 tentativas falhadas por janela de 15 minutos
-interface LoginAttempt {
-  attempts: number;
-  blockedUntil?: number;
-}
-const loginRateLimitMap = new Map<string, LoginAttempt>();
-
-function checkRateLimit(key: string): { allowed: boolean; waitMinutes?: number } {
-  const now = Date.now();
-  const entry = loginRateLimitMap.get(key);
-
-  if (!entry) return { allowed: true };
-
-  if (entry.blockedUntil && entry.blockedUntil > now) {
-    const waitMinutes = Math.ceil((entry.blockedUntil - now) / 60000);
-    return { allowed: false, waitMinutes };
-  }
-
-  // Se o bloqueio expirou, limpa
-  if (entry.blockedUntil && entry.blockedUntil <= now) {
-    loginRateLimitMap.delete(key);
-    return { allowed: true };
-  }
-
-  return { allowed: true };
-}
-
-function registerFailedAttempt(key: string) {
-  const now = Date.now();
-  const entry = loginRateLimitMap.get(key) || { attempts: 0 };
-  entry.attempts += 1;
-
-  if (entry.attempts >= 5) {
-    entry.blockedUntil = now + 15 * 60 * 1000; // bloqueado 15 minutos
-  }
-
-  loginRateLimitMap.set(key, entry);
-}
-
-function resetRateLimit(key: string) {
-  loginRateLimitMap.delete(key);
-}
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   secret: process.env.AUTH_SECRET,
   trustHost: true,
   providers: [
     Credentials({
-      async authorize(credentials) {
-        try {
-          const parsed = loginSchema.safeParse(credentials);
-          if (!parsed.success) {
-            console.error("Validação de credenciais falhou:", parsed.error);
-            return null;
-          }
+      // Os logs nunca incluem email nem IP (dados pessoais / RGPD)
+      async authorize(credentials, request) {
+        const rawEmail = typeof credentials?.email === "string" ? credentials.email : "";
+        const emailKey = rawEmail ? emailRateLimitKey(rawEmail) : null;
+        const ip = getClientIp(request);
+        const ipKey = ip ? ipRateLimitKey(ip) : null;
+        const keys = [emailKey, ipKey].filter((key): key is string => key !== null);
 
-          const { email, password } = parsed.data;
-          const rateLimitKey = email.toLowerCase().trim();
+        const registerFailure = async (includeEmail: boolean) => {
+          if (ipKey) await registerLoginFailure(ipKey, MAX_FAILURES_PER_IP);
+          if (includeEmail && emailKey) await registerLoginFailure(emailKey, MAX_FAILURES_PER_EMAIL);
+        };
 
-          const rateLimit = checkRateLimit(rateLimitKey);
-          if (!rateLimit.allowed) {
-            console.warn(`Tentativas excessivas de login para ${rateLimitKey}. Bloqueado por ${rateLimit.waitMinutes}m.`);
-            throw new Error(`Demasiadas tentativas de início de sessão. Aguarde ${rateLimit.waitMinutes} minutos.`);
-          }
-
-          const user = await prisma.user.findUnique({
-            where: { email: rateLimitKey },
-            include: { company: true },
-          });
-
-          if (!user || user.status !== "ACTIVE") {
-            registerFailedAttempt(rateLimitKey);
-            console.error("Utilizador não encontrado ou inativo:", email);
-            return null;
-          }
-
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-          if (!passwordsMatch) {
-            registerFailedAttempt(rateLimitKey);
-            console.error("Palavra-passe incorreta para:", email);
-            return null;
-          }
-
-          // Sucesso: limpar contador de falhas
-          resetRateLimit(rateLimitKey);
-
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            companyId: user.companyId,
-          };
-        } catch (error) {
-          console.error("Erro no authorize:", error);
-          throw error;
+        if (keys.length > 0 && (await getLoginBlockMinutes(keys)) !== null) {
+          console.warn("Início de sessão recusado: limite de tentativas atingido.");
+          throw new LoginRateLimitedError();
         }
+
+        const parsed = loginSchema.safeParse(credentials);
+        if (!parsed.success) {
+          await registerFailure(false);
+          return null;
+        }
+
+        const { email, password } = parsed.data;
+        const user = await prisma.user.findUnique({
+          where: { email: email.toLowerCase().trim() },
+          select: { id: true, name: true, email: true, role: true, companyId: true, status: true, password: true },
+        });
+
+        const passwordsMatch = await bcrypt.compare(password, user?.password ?? (await getDummyHash()));
+        if (!user || user.status !== "ACTIVE" || !passwordsMatch) {
+          await registerFailure(true);
+          console.warn("Início de sessão recusado: credenciais inválidas ou utilizador inativo.");
+          return null;
+        }
+
+        if (emailKey) await resetLoginFailures(emailKey);
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          companyId: user.companyId,
+        };
       },
     }),
   ],

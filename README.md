@@ -88,7 +88,8 @@ Aplique as migrações existentes e execute o seed de dados demonstrativos:
 # Aplicar as migrações Prisma
 npx prisma migrate dev
 
-# Executar o seed de demonstração (contas e dados de teste)
+# Opcional, só numa base de dados local: dados de demonstração
+# (nunca na base de dados com dados reais)
 npx prisma db seed
 ```
 
@@ -119,6 +120,10 @@ npm run lint
 npx tsx tests/alerts.test.ts
 npx tsx tests/dashboard-metrics.test.ts
 npx tsx tests/validation-rules.test.ts
+
+# Testes de integração (criam e apagam as suas próprias empresas de teste)
+npx tsx tests/authorization-rules.test.ts
+npx tsx tests/client-record-rules.test.ts
 
 # Compilação de produção
 npm run build

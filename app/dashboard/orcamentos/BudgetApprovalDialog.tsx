@@ -134,19 +134,19 @@ export default function BudgetApprovalDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-black text-slate-900 flex items-center gap-2">
-            <FileCheck2 className="h-5 w-5 text-emerald-600" />
+          <DialogTitle className="text-xl font-black text-slate-900 flex items-center gap-2 dark:text-white">
+            <FileCheck2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             <span>Pré-visualização e Aprovação de Orçamento</span>
           </DialogTitle>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Reveja os detalhes comerciais e confirme a localização do estaleiro antes de criar a obra associada.
           </p>
         </DialogHeader>
 
         {error && (
-          <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-800">
+          <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600 mt-0.5" />
+              <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600 mt-0.5 dark:text-rose-400" />
               <div className="space-y-1">
                 <p className="font-semibold">{error}</p>
                 {isRevisionMismatch && (
@@ -168,15 +168,15 @@ export default function BudgetApprovalDialog({
 
         <div className="space-y-5 text-xs">
           {/* 1. Dados do Cliente (Apenas Informativos) */}
-          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-800/40">
             <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-slate-400 text-[10px] mb-2">
-              <User className="h-3.5 w-3.5 text-slate-500" />
+              <User className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
               <span>Dados do Cliente (Registo Comercial)</span>
             </div>
-            <div className="grid gap-2 sm:grid-cols-2 text-slate-700">
+            <div className="grid gap-2 sm:grid-cols-2 text-slate-700 dark:text-slate-300">
               <div>
                 <span className="text-slate-400 block text-[10px]">Nome / Razão Social:</span>
-                <span className="font-bold text-slate-900 text-sm">{client.name}</span>
+                <span className="font-bold text-slate-900 text-sm dark:text-white">{client.name}</span>
               </div>
               <div>
                 <span className="text-slate-400 block text-[10px]">NIF:</span>
@@ -200,11 +200,11 @@ export default function BudgetApprovalDialog({
           {/* 2. Identificação da Futura Obra */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 Nome da Futura Obra *
               </label>
               {suggestedCode && (
-                <span className="font-mono text-[10px] text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded font-semibold">
+                <span className="font-mono text-[10px] text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded font-semibold dark:text-blue-300 dark:bg-blue-950/40">
                   Código Previsto: {suggestedCode}
                 </span>
               )}
@@ -213,21 +213,21 @@ export default function BudgetApprovalDialog({
               type="text"
               value={confirmedProjectName}
               onChange={(e) => setConfirmedProjectName(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 p-2.5 text-xs font-semibold text-slate-900 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 p-2.5 text-xs font-semibold text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:text-white"
               placeholder="Ex.: Reabilitação de Telhado e Alvenarias"
             />
             {notes && (
-              <div className="rounded-lg bg-slate-50 p-2.5 border border-slate-200/80 text-[11px] text-slate-600">
-                <span className="font-bold text-slate-700 block mb-0.5">Notas do Orçamento:</span>
+              <div className="rounded-lg bg-slate-50 p-2.5 border border-slate-200/80 text-[11px] text-slate-600 dark:bg-slate-800/50 dark:border-slate-800 dark:text-slate-400">
+                <span className="font-bold text-slate-700 block mb-0.5 dark:text-slate-300">Notas do Orçamento:</span>
                 <p className="whitespace-pre-line">{notes}</p>
               </div>
             )}
           </div>
 
           {/* 3. Localização da Obra / Estaleiro (Confirmação Explícita Obrigatória) */}
-          <div className="rounded-xl border border-amber-200/90 bg-amber-50/50 p-4 space-y-3">
-            <div className="flex items-center gap-1.5 text-amber-900 font-bold text-xs">
-              <MapPin className="h-4 w-4 text-amber-600" />
+          <div className="rounded-xl border border-amber-200/90 bg-amber-50/50 p-4 space-y-3 dark:bg-amber-950/40">
+            <div className="flex items-center gap-1.5 text-amber-900 font-bold text-xs dark:text-amber-300">
+              <MapPin className="h-4 w-4 text-amber-600 dark:text-amber-400" />
               <span>Localização Efetiva da Obra / Estaleiro *</span>
             </div>
             <p className="text-[11px] text-amber-800/90 leading-relaxed">
@@ -239,7 +239,7 @@ export default function BudgetApprovalDialog({
               type="text"
               value={confirmedAddress}
               onChange={(e) => setConfirmedAddress(e.target.value)}
-              className="w-full rounded-lg border border-amber-300 bg-white p-2.5 text-xs text-slate-900 focus:border-amber-600 focus:outline-none"
+              className="w-full rounded-lg border border-amber-300 bg-white p-2.5 text-xs text-slate-900 focus:border-amber-600 focus:outline-none dark:border-amber-900/60 dark:bg-slate-900 dark:text-white"
               placeholder="Ex.: Rua das Flores 12, Lisboa"
             />
 
@@ -248,7 +248,7 @@ export default function BudgetApprovalDialog({
                 type="checkbox"
                 checked={locationConfirmed}
                 onChange={(e) => setLocationConfirmed(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-amber-400 text-amber-600 focus:ring-amber-500"
+                className="mt-0.5 h-4 w-4 rounded border-amber-400 text-amber-600 focus:ring-amber-500 dark:text-amber-400"
               />
               <span className="text-xs font-bold text-amber-950">
                 Confirmo que esta é a localização correta da obra.
@@ -258,7 +258,7 @@ export default function BudgetApprovalDialog({
 
           {/* 4. Linhas Comerciais do Orçamento */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-700">
+            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
               <div className="flex items-center gap-1.5">
                 <Receipt className="h-3.5 w-3.5 text-slate-400" />
                 <span>Trabalhos & Artigos Orçamentados ({items.length})</span>
@@ -266,9 +266,9 @@ export default function BudgetApprovalDialog({
               <span className="text-[10px] text-slate-400 font-normal">Valores unitários e IVA</span>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-2xs">
-              <table className="w-full text-left text-[11px] divide-y divide-slate-100">
-                <thead className="bg-slate-50 text-[10px] font-bold uppercase text-slate-400">
+            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
+              <table className="w-full text-left text-[11px] divide-y divide-slate-100 dark:divide-slate-800">
+                <thead className="bg-slate-50 text-[10px] font-bold uppercase text-slate-400 dark:bg-slate-800/50">
                   <tr>
                     <th className="px-3 py-2">Descrição dos Trabalhos</th>
                     <th className="px-2 py-2 text-right">Qtd</th>
@@ -278,7 +278,7 @@ export default function BudgetApprovalDialog({
                     <th className="px-3 py-2 text-right">Total c/ IVA</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700">
+                <tbody className="divide-y divide-slate-100 text-slate-700 dark:divide-slate-800 dark:text-slate-300">
                   {items.map((line, index) => {
                     const lineNet = line.quantity * line.unitPrice;
                     const lineVat = lineNet * (line.vatRate / 100);
@@ -286,16 +286,16 @@ export default function BudgetApprovalDialog({
 
                     return (
                       <tr key={index} className="hover:bg-slate-50/50">
-                        <td className="px-3 py-2 font-medium text-slate-900 max-w-xs truncate" title={line.description}>
+                        <td className="px-3 py-2 font-medium text-slate-900 max-w-xs truncate dark:text-white" title={line.description}>
                           {line.description}
                         </td>
                         <td className="px-2 py-2 text-right font-mono">{line.quantity}</td>
-                        <td className="px-2 py-2 text-center text-slate-500">{line.unit}</td>
+                        <td className="px-2 py-2 text-center text-slate-500 dark:text-slate-400">{line.unit}</td>
                         <td className="px-3 py-2 text-right font-mono">
                           {formatBudgetAmount(Math.round(line.unitPrice * 100))}
                         </td>
-                        <td className="px-2 py-2 text-right text-slate-500 font-mono">{line.vatRate}%</td>
-                        <td className="px-3 py-2 text-right font-mono font-bold text-slate-900">
+                        <td className="px-2 py-2 text-right text-slate-500 font-mono dark:text-slate-400">{line.vatRate}%</td>
+                        <td className="px-3 py-2 text-right font-mono font-bold text-slate-900 dark:text-white">
                           {formatBudgetAmount(Math.round(lineGross * 100))}
                         </td>
                       </tr>
@@ -307,18 +307,18 @@ export default function BudgetApprovalDialog({
           </div>
 
           {/* 5. Resumo Financeiro Rigoroso */}
-          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-1.5 text-xs">
-            <div className="flex items-center justify-between text-slate-500">
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-1.5 text-xs dark:border-slate-800 dark:bg-slate-800/40">
+            <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
               <span>Total sem IVA:</span>
-              <span className="font-mono font-semibold text-slate-800">{formatBudgetAmount(totals.netCents)}</span>
+              <span className="font-mono font-semibold text-slate-800 dark:text-slate-100">{formatBudgetAmount(totals.netCents)}</span>
             </div>
-            <div className="flex items-center justify-between text-slate-500">
+            <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
               <span>IVA Total:</span>
-              <span className="font-mono font-semibold text-slate-800">{formatBudgetAmount(totals.vatCents)}</span>
+              <span className="font-mono font-semibold text-slate-800 dark:text-slate-100">{formatBudgetAmount(totals.vatCents)}</span>
             </div>
-            <div className="flex items-center justify-between border-t border-slate-200 pt-2 text-sm">
-              <span className="font-black text-slate-900">Valor Total da Empreitada (com IVA):</span>
-              <span className="font-mono text-base font-black text-emerald-700">
+            <div className="flex items-center justify-between border-t border-slate-200 pt-2 text-sm dark:border-slate-800">
+              <span className="font-black text-slate-900 dark:text-white">Valor Total da Empreitada (com IVA):</span>
+              <span className="font-mono text-base font-black text-emerald-700 dark:text-emerald-300">
                 {formatBudgetAmount(totals.grossCents)}
               </span>
             </div>
@@ -326,12 +326,12 @@ export default function BudgetApprovalDialog({
         </div>
 
         {/* Rodapé do Modal: Cancelar / Confirmar */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
           <DialogClose asChild>
             <button
               type="button"
               disabled={isPending}
-              className="rounded-xl border border-slate-300 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition disabled:opacity-50"
+              className="rounded-xl border border-slate-300 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               Cancelar
             </button>

@@ -31,17 +31,17 @@ export default async function EquipaObraPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           Equipa das Obras (Leitura)
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-500 mt-1 dark:text-slate-400">
           Colaboradores operacionais associados às frentes de trabalho sob a sua
           coordenação.
         </p>
       </div>
 
       {assignments.length === 0 ? (
-        <div className="p-8 text-center text-xs text-slate-500">
+        <div className="p-8 text-center text-xs text-slate-500 dark:text-slate-400">
           Sem obras atribuídas.
         </div>
       ) : (
@@ -49,30 +49,30 @@ export default async function EquipaObraPage() {
           {assignments.map((a) => (
             <div
               key={a.id}
-              className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs space-y-4"
+              className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs space-y-4 dark:border-slate-800 dark:bg-slate-900"
             >
-              <h2 className="text-base font-bold text-slate-900">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">
                 Obra: {a.project.name}
               </h2>
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-slate-100 dark:divide-slate-800">
                 {a.project.assignments.map((member) => (
                   <div
                     key={member.id}
                     className="flex items-center justify-between py-2.5 text-xs"
                   >
                     <div>
-                      <span className="font-bold text-slate-800">
+                      <span className="font-bold text-slate-800 dark:text-slate-100">
                         {member.user.name}
                       </span>
-                      <span className="ml-2 font-mono text-[11px] text-slate-500">
+                      <span className="ml-2 font-mono text-[11px] text-slate-500 dark:text-slate-400">
                         {member.user.email}
                       </span>
                     </div>
                     <span
                       className={`rounded px-2 py-0.5 text-[10px] font-bold ${
                         member.user.role === "FOREMAN"
-                          ? "bg-amber-100 text-amber-800"
-                          : "bg-blue-100 text-blue-800"
+                          ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+                          : "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300"
                       }`}
                     >
                       {member.user.role === "FOREMAN"

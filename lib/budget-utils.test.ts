@@ -28,6 +28,8 @@ test("calcula IVA por linha e total com arredondamento a cêntimos", () => {
 test("permite apenas o fluxo de visita acordado e cancelamento", () => {
   assert.equal(canTransitionVisitStatus(VisitStatus.REQUESTED, VisitStatus.SCHEDULED), true);
   assert.equal(canTransitionVisitStatus(VisitStatus.SCHEDULED, VisitStatus.COMPLETED), true);
+  assert.equal(canTransitionVisitStatus(VisitStatus.SCHEDULED, VisitStatus.SCHEDULED), true);
+  assert.equal(canTransitionVisitStatus(VisitStatus.COMPLETED, VisitStatus.SCHEDULED), false);
   assert.equal(canTransitionVisitStatus(VisitStatus.REQUESTED, VisitStatus.COMPLETED), false);
   assert.equal(canTransitionVisitStatus(VisitStatus.CANCELLED, VisitStatus.SCHEDULED), false);
 });

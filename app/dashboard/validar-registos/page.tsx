@@ -66,10 +66,10 @@ export default async function ValidarRegistosPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           Validação de Registos de Obra
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-500 mt-1 dark:text-slate-400">
           Valide ou rejeite os apontamentos de horas e medições submetidos pelos
           colaboradores nas obras sob a sua responsabilidade.
         </p>

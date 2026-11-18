@@ -1,10 +1,17 @@
 import { Suspense } from "react";
-import { ProjectStatus, Role, TaskStatus, WorkLogStatus } from "@prisma/client";
+import { ProjectStatus, Role, TaskStatus, VisitStatus, WorkLogStatus } from "@prisma/client";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getCompanyAlertsData } from "@/lib/alert-data";
 import { getDashboardNotifications } from "@/lib/dashboard-notifications";
-import { getLisbonMonthKey, getLisbonStartOfDay } from "@/lib/dashboard-utils";
+import {
+  getAdjacentMonthKey,
+  getLisbonDateKey,
+  getLisbonMonthKey,
+  getLisbonStartOfDay,
+  getMonthCalendarDays,
+} from "@/lib/dashboard-utils";
+import { calculateProjectProgress } from "@/lib/project-utils";
 
 import { OwnerHeroBanner } from "@/components/dashboard/owner-hero-banner";
 import { OwnerKpiRow } from "@/components/dashboard/owner-kpi-row";
@@ -22,6 +29,8 @@ import {
   OwnerSidebarColumn,
   type SidebarTaskItem,
   type SidebarNotificationItem,
+  type SidebarCalendarCell,
+  type SidebarAgendaVisit,
 } from "@/components/dashboard/owner-sidebar-column";
 
 function DashboardLoadingSkeleton() {
@@ -68,6 +77,26 @@ export default async function OwnerDashboard({
   const companyId = user.companyId;
   const now = new Date();
   const startOfToday = getLisbonStartOfDay(now);
+  const todayKey = getLisbonDateKey(now);
+  const currentMonthKey = todayKey.slice(0, 7);
+
+  // workDate e endDate são datas civis guardadas a 00:00 UTC
+  const todayCivilDate = new Date(`${todayKey}T00:00:00.000Z`);
+  const todayWeekdayOffset = (todayCivilDate.getUTCDay() + 6) % 7;
+  const weekStartCivilDate = new Date(todayCivilDate.getTime() - todayWeekdayOffset * 86_400_000);
+  const startOfCurrentMonth = getLisbonStartOfDay(new Date(`${currentMonthKey}-01T12:00:00.000Z`));
+
+  // Diferença em dias civis de Lisboa (negativo = já passou)
+  const getCivilDaysUntil = (date: Date) =>
+    Math.round(
+      (new Date(`${getLisbonDateKey(date)}T00:00:00.000Z`).getTime() - todayCivilDate.getTime()) / 86_400_000
+    );
+
+  const nextMonthKey = getAdjacentMonthKey(monthKey, 1);
+  const calendarCivilStart = new Date(`${monthKey}-01T00:00:00.000Z`);
+  const calendarCivilEnd = new Date(`${nextMonthKey}-01T00:00:00.000Z`);
+  const calendarStart = getLisbonStartOfDay(new Date(`${monthKey}-01T12:00:00.000Z`));
+  const calendarEnd = getLisbonStartOfDay(new Date(`${nextMonthKey}-01T12:00:00.000Z`));
 
   // Consultas agregadas e eficientes em paralelo
   const [
@@ -82,6 +111,13 @@ export default async function OwnerDashboard({
     alertsData,
     upcomingTasks,
     rawNotifications,
+    activeBudgetAggregate,
+    projectsCreatedThisMonth,
+    workLogsThisWeek,
+    workersWithLogToday,
+    calendarTasks,
+    calendarProjectDeadlines,
+    calendarVisits,
   ] = await Promise.all([
     // 1. Obras Ativas
     prisma.project.count({
@@ -118,9 +154,11 @@ export default async function OwnerDashboard({
         id: true,
         name: true,
         address: true,
-        budget: true,
-        startDate: true,
-        endDate: true,
+        status: true,
+        tasks: {
+          where: { status: { not: TaskStatus.CANCELLED } },
+          select: { status: true },
+        },
       },
       take: 5,
       orderBy: { createdAt: "desc" },
@@ -158,29 +196,120 @@ export default async function OwnerDashboard({
     }),
     // 11. Notificações Recentes
     getDashboardNotifications(companyId, { limit: 5 }),
+    // 12. Orçamento total das obras ativas
+    prisma.project.aggregate({
+      where: { companyId, status: ProjectStatus.ACTIVE },
+      _sum: { budget: true },
+    }),
+    // 13. Obras criadas no mês corrente
+    prisma.project.count({
+      where: { companyId, createdAt: { gte: startOfCurrentMonth } },
+    }),
+    // 14. Apontamentos da semana corrente (segunda a domingo)
+    prisma.workLog.count({
+      where: { companyId, workDate: { gte: weekStartCivilDate } },
+    }),
+    // 15. Funcionários ativos com registo hoje
+    prisma.workLog.findMany({
+      where: {
+        companyId,
+        workDate: todayCivilDate,
+        author: { role: Role.WORKER, status: "ACTIVE" },
+      },
+      distinct: ["authorId"],
+      select: { authorId: true },
+    }),
+    // 16. Tarefas pendentes com prazo no mês do calendário
+    prisma.task.findMany({
+      where: {
+        companyId,
+        status: TaskStatus.PENDING,
+        dueDate: { gte: calendarStart, lt: calendarEnd },
+      },
+      select: { dueDate: true },
+    }),
+    // 17. Obras ativas com data de conclusão no mês do calendário
+    prisma.project.findMany({
+      where: {
+        companyId,
+        status: ProjectStatus.ACTIVE,
+        endDate: { gte: calendarCivilStart, lt: calendarCivilEnd },
+      },
+      select: { endDate: true },
+    }),
+    // 18. Visitas agendadas no mês do calendário
+    prisma.visitRequest.findMany({
+      where: {
+        companyId,
+        status: VisitStatus.SCHEDULED,
+        scheduledAt: { gte: calendarStart, lt: calendarEnd },
+      },
+      orderBy: { scheduledAt: "asc" },
+      select: {
+        id: true,
+        scheduledAt: true,
+        requestedAddress: true,
+        client: { select: { id: true, name: true } },
+        assignedTo: { select: { name: true } },
+      },
+    }),
   ]);
 
-  // Cálculos de Orçamento (com valores realistas baseados na BD ou dados exemplares)
-  const totalBudgetCalculated = projectsWithBudget.reduce(
-    (acc, p) => acc + (p.budget ?? 0),
-    0
-  );
-  const totalBudget = totalBudgetCalculated > 0 ? totalBudgetCalculated : 185000;
-  const utilizedBudget = Math.round(totalBudget * 0.68);
-  const committedBudget = Math.round(totalBudget * 0.18);
-  const balanceBudget = Math.max(0, totalBudget - utilizedBudget - committedBudget);
+  // Só o orçamento total existe na BD; executado, comprometido e saldo
+  // ficam indisponíveis até haver registo de custos.
+  const totalBudget = activeBudgetAggregate._sum.budget?.toNumber() ?? 0;
 
-  // Mapeamento de Obras para Desempenho (Site-wise Performance)
-  const sitePerformance = projectsWithBudget.map((p, index) => {
-    // Estimativa de percentagem de avanço para exibição
-    const progressList = [72, 58, 65, 41, 84];
+  const sitePerformance = projectsWithBudget.map((p) => {
+    const completedTasks = p.tasks.filter((t) => t.status === TaskStatus.COMPLETED).length;
     return {
       id: p.id,
       name: p.name,
       address: p.address,
-      progressPercent: progressList[index % progressList.length],
+      progressPercent: calculateProjectProgress(p.tasks.length, completedTasks, p.status),
     };
   });
+
+  const calendarDays = getMonthCalendarDays(monthKey, todayKey);
+  const taskDateKeys = new Set(
+    calendarTasks.flatMap((t) => (t.dueDate ? [getLisbonDateKey(t.dueDate)] : []))
+  );
+  const deadlineDateKeys = new Set(
+    calendarProjectDeadlines.flatMap((p) => (p.endDate ? [p.endDate.toISOString().slice(0, 10)] : []))
+  );
+  const visitDateKeys = new Set(
+    calendarVisits.flatMap((v) => (v.scheduledAt ? [getLisbonDateKey(v.scheduledAt)] : []))
+  );
+  const calendarCells: SidebarCalendarCell[] = calendarDays.map((day) => ({
+    ...day,
+    hasTask: taskDateKeys.has(day.dateKey),
+    hasDeadline: deadlineDateKeys.has(day.dateKey),
+    hasVisit: visitDateKeys.has(day.dateKey),
+  }));
+
+  // Agenda do dia selecionado (por defeito, hoje se estiver no mês apresentado)
+  const agendaDateKey = selectedDateKey ?? (todayKey.startsWith(monthKey) ? todayKey : undefined);
+  const agendaTimeFormatter = new Intl.DateTimeFormat("pt-PT", {
+    timeZone: "Europe/Lisbon",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const agendaVisits: SidebarAgendaVisit[] = agendaDateKey
+    ? calendarVisits
+        .filter((v) => v.scheduledAt && getLisbonDateKey(v.scheduledAt) === agendaDateKey)
+        .map((v) => ({
+          id: v.id,
+          time: agendaTimeFormatter.format(v.scheduledAt!),
+          clientId: v.client.id,
+          clientName: v.client.name,
+          address: v.requestedAddress,
+          assigneeName: v.assignedTo?.name ?? null,
+        }))
+    : [];
+  const agendaLabel = agendaDateKey
+    ? new Intl.DateTimeFormat("pt-PT", { timeZone: "Europe/Lisbon", weekday: "long", day: "numeric", month: "long" })
+        .format(new Date(`${agendaDateKey}T12:00:00.000Z`))
+        .replace(/^\w/, (c) => c.toUpperCase())
+    : null;
 
   // Mapeamento de Atualizações Recentes (Recent Project Updates)
   const recentUpdates: ProjectUpdateItem[] = recentWorkLogs.map((log) => {
@@ -216,8 +345,7 @@ export default async function OwnerDashboard({
     .filter((t) => t.dueDate !== null)
     .map((task) => {
       const due = new Date(task.dueDate!);
-      const diffTime = due.getTime() - now.getTime();
-      const daysLeft = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      const daysLeft = getCivilDaysUntil(due);
 
       return {
         id: task.id,
@@ -234,13 +362,17 @@ export default async function OwnerDashboard({
     });
 
   // Mapeamento de Tarefas para a Sidebar
-  const sidebarTasks: SidebarTaskItem[] = upcomingTasks.slice(0, 4).map((task, idx) => ({
-    id: task.id,
-    title: task.title,
-    projectName: task.project?.name,
-    priority: idx === 0 ? "high" : idx === 1 ? "medium" : "low",
-    completed: task.status === TaskStatus.COMPLETED,
-  }));
+  // Prioridade derivada do prazo: atrasada ou até amanhã = Alta; até 7 dias = Média
+  const sidebarTasks: SidebarTaskItem[] = upcomingTasks.slice(0, 4).map((task) => {
+    const daysLeft = task.dueDate ? getCivilDaysUntil(task.dueDate) : null;
+    return {
+      id: task.id,
+      title: task.title,
+      projectName: task.project?.name,
+      priority: daysLeft === null ? "low" : daysLeft <= 1 ? "high" : daysLeft <= 7 ? "medium" : "low",
+      completed: task.status === TaskStatus.COMPLETED,
+    };
+  });
 
   // Mapeamento de Notificações para a Sidebar
   const sidebarNotifications: SidebarNotificationItem[] = rawNotifications.slice(0, 4).map((n) => {
@@ -274,14 +406,16 @@ export default async function OwnerDashboard({
         .format(now)
         .replace(/^\w/, (c) => c.toUpperCase());
 
-  // Rácio de assiduidade
-  const laborAttendanceRate = totalWorkersCount > 0 ? 88 : 92;
+  // Assiduidade: funcionários ativos com registo de trabalho hoje
+  const workersPresentToday = workersWithLogToday.length;
+  const laborAttendanceRate =
+    totalWorkersCount > 0 ? Math.round((workersPresentToday / totalWorkersCount) * 100) : null;
 
   return (
     <Suspense fallback={<DashboardLoadingSkeleton />}>
       <div className="space-y-5 lg:space-y-6">
-        {/* 1. Banner de Boas-Vindas Operacional */}
-        <OwnerHeroBanner userName={user.name} />
+        {/* 1. Banner de Boas-Vindas Operacional com Cards de Saldo Livre e Orçamento Total */}
+        <OwnerHeroBanner userName={user.name} totalBudget={totalBudget} balanceBudget={null} />
 
         {/* 2. Grelha de 6 Cartões KPI Compactos Multi-Cor */}
         <OwnerKpiRow
@@ -290,7 +424,11 @@ export default async function OwnerDashboard({
           delayedProjects={overdueProjectsCount}
           ongoingActivities={ongoingActivitiesCount}
           pendingApprovals={pendingWorkLogsCount}
+          projectsCreatedThisMonth={projectsCreatedThisMonth}
+          workLogsThisWeek={workLogsThisWeek}
           laborAttendanceRate={laborAttendanceRate}
+          workersPresentToday={workersPresentToday}
+          totalWorkers={totalWorkersCount}
         />
 
         {/* 3. Estrutura Principal: Canvas 2/3 à Esquerda + Coluna 1/3 à Direita */}
@@ -301,11 +439,11 @@ export default async function OwnerDashboard({
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
               <BudgetOverviewChart
                 totalBudget={totalBudget}
-                utilizedBudget={utilizedBudget}
-                committedBudget={committedBudget}
-                balanceBudget={balanceBudget}
+                utilizedBudget={null}
+                committedBudget={null}
+                balanceBudget={null}
               />
-              <TimelineProgressChart />
+              <TimelineProgressChart currentMonthKey={currentMonthKey} />
               <SitePerformanceList projects={sitePerformance} />
             </div>
 
@@ -325,8 +463,12 @@ export default async function OwnerDashboard({
             <OwnerSidebarColumn
               tasks={sidebarTasks}
               notifications={sidebarNotifications}
-              selectedDate={selectedDateKey}
               monthLabel={monthLabel}
+              monthKey={monthKey}
+              selectedDate={selectedDateKey}
+              calendarCells={calendarCells}
+              agendaLabel={agendaLabel}
+              agendaVisits={agendaVisits}
             />
           </div>
         </div>

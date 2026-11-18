@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import {
+  createProjectAction,
   createWorkLogAction,
   reviewWorkLogAction,
   inviteUserAction,
@@ -9,94 +10,38 @@ import {
   createTaskAction,
   updateTaskStatusAction,
 } from "@/app/dashboard/actions";
+import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { __setMockUser } from "@/lib/auth";
+import { createTestTenant, createTestUser, destroyTestTenants, type TestTenant } from "./helpers/test-tenant";
 
 /**
- * Suite de Testes de Autorização invocando as Server Actions REAIS
+ * Suite de Testes de Autorização invocando as Server Actions REAIS.
+ * Usa duas empresas de teste isoladas (A e B), apagadas por completo no fim.
  */
 
 function setTestUser(user: Parameters<typeof __setMockUser>[0]) {
   __setMockUser(user);
 }
 
-async function runRealActionTests() {
+async function runRealActionTests(tenantA: TestTenant, tenantB: TestTenant) {
   console.log("=== EXECUTANDO TESTES COM AS SERVER ACTIONS REAIS ===\n");
   let passed = 0;
+  const runId = tenantA.runId;
 
-  // Obter empresas e utilizadores reais ou criar contexto na BD
-  const companyA = await prisma.company.findFirst({ where: { nif: "501234567" } });
-  if (!companyA) {
-    throw new Error("Empresa principal do seed não encontrada na base de dados.");
-  }
+  const companyA = tenantA.company;
+  const companyB = tenantB.company;
+  const fullCompanyA = companyA;
+  const fullCompanyB = companyB;
 
-  // Criar ou obter uma segunda empresa B para testar isolamento multi-tenant
-  const companyB = await prisma.company.upsert({
-    where: { nif: "509999999" },
-    update: {},
-    create: {
-      name: "Construtora B, Lda.",
-      nif: "509999999",
-    },
-  });
+  const ownerAUser = tenantA.owner;
+  const foremanAUser = tenantA.foreman;
+  const workerAUser = tenantA.worker;
+  const projectChiado = tenantA.project;
+  const ownerBUser = tenantB.owner;
 
-  const fullCompanyA = {
-    id: companyA.id,
-    name: companyA.name,
-    nif: companyA.nif,
-    address: companyA.address,
-    phone: companyA.phone,
-    createdAt: companyA.createdAt,
-    updatedAt: companyA.updatedAt,
-  };
-
-  const fullCompanyB = {
-    id: companyB.id,
-    name: companyB.name,
-    nif: companyB.nif,
-    address: companyB.address,
-    phone: companyB.phone,
-    createdAt: companyB.createdAt,
-    updatedAt: companyB.updatedAt,
-  };
-
-  // Obter utilizadores da empresa A
-  const ownerAUser = await prisma.user.findFirst({ where: { companyId: companyA.id, role: "OWNER" } });
-  const foremanAUser = await prisma.user.findFirst({ where: { companyId: companyA.id, role: "FOREMAN" } });
-  const workerAUser = await prisma.user.findFirst({ where: { companyId: companyA.id, role: "WORKER" } });
-  const projectChiado = await prisma.project.findFirst({ where: { companyId: companyA.id } });
-
-  if (!ownerAUser || !foremanAUser || !workerAUser || !projectChiado) {
-    throw new Error("Dados de teste de seed incompletos na BD.");
-  }
-
-  // Criar utilizador de outra empresa B
-  const ownerBUser = await prisma.user.upsert({
-    where: { email: "dono_empresa_b@teste.pt" },
-    update: { companyId: companyB.id, role: "OWNER", status: "ACTIVE" },
-    create: {
-      name: "Dono Empresa B",
-      email: "dono_empresa_b@teste.pt",
-      password: "HashPassword123!",
-      role: "OWNER",
-      status: "ACTIVE",
-      companyId: companyB.id,
-    },
-  });
-
-  // Criar um segundo encarregado na Empresa A mas NÃO atribuído à obra Chiado
-  const unassignedForeman = await prisma.user.upsert({
-    where: { email: "encarregado_sem_obra@medido.pt" },
-    update: { companyId: companyA.id, role: "FOREMAN", status: "ACTIVE" },
-    create: {
-      name: "Encarregado Sem Obra",
-      email: "encarregado_sem_obra@medido.pt",
-      password: "HashPassword123!",
-      role: "FOREMAN",
-      status: "ACTIVE",
-      companyId: companyA.id,
-    },
-  });
+  // Segundo encarregado na Empresa A, NÃO atribuído à obra
+  const unassignedForeman = await createTestUser(companyA.id, Role.FOREMAN, "encarregado-sem-obra", runId);
 
   // -------------------------------------------------------------------------
   // TESTE 1: Encarregado NÃO cria registo em obra onde NÃO está atribuído
@@ -303,18 +248,7 @@ async function runRealActionTests() {
   // TESTE 10: Alocação - Utilizador inativo da mesma empresa é rejeitado
   // -------------------------------------------------------------------------
   {
-    const inactiveUser = await prisma.user.upsert({
-      where: { email: "inativo_empresa_a@medido.pt" },
-      update: { status: "INACTIVE" },
-      create: {
-        name: "Inativo A",
-        email: "inativo_empresa_a@medido.pt",
-        password: "HashPassword123!",
-        role: "WORKER",
-        status: "INACTIVE",
-        companyId: companyA.id,
-      },
-    });
+    const inactiveUser = await createTestUser(companyA.id, Role.WORKER, "inativo-alocacao", runId, "INACTIVE");
 
     setTestUser({
       ...ownerAUser,
@@ -566,18 +500,7 @@ async function runRealActionTests() {
     assert.ok(resCrossCompany?.error);
 
     // Utilizador inativo
-    const inactiveUser = await prisma.user.upsert({
-      where: { email: "inativo-task@construtora-silva.pt" },
-      update: { status: "INACTIVE" },
-      create: {
-        companyId: companyA.id,
-        email: "inativo-task@construtora-silva.pt",
-        name: "Trabalhador Inativo",
-        role: "WORKER",
-        status: "INACTIVE",
-        password: "HashPassword123!",
-      },
-    });
+    const inactiveUser = await createTestUser(companyA.id, Role.WORKER, "inativo-tarefa", runId, "INACTIVE");
 
     const formDataInactive = new FormData();
     formDataInactive.set("title", "Tarefa para Inativo");
@@ -723,14 +646,221 @@ async function runRealActionTests() {
     console.log("✔ Teste 24: Utilizador de outra empresa tem acesso recusado (isolamento multi-tenant)");
   }
 
+  // -------------------------------------------------------------------------
+  // TESTE 25: Não é possível criar obra ligada a cliente de outra empresa
+  // -------------------------------------------------------------------------
+  {
+    const companyAClient = await prisma.client.create({
+      data: { companyId: companyA.id, name: "Cliente Privado Empresa A", nif: "999888777" },
+    });
+
+    setTestUser({
+      ...ownerBUser,
+      company: fullCompanyB,
+    });
+
+    const projectName = `Obra Cruzada ${Date.now()}`;
+    const formData = new FormData();
+    formData.set("name", projectName);
+    formData.set("clientId", companyAClient.id);
+    formData.set("clientName", "Nome qualquer");
+
+    try {
+      const res = await createProjectAction(formData);
+      assert.ok(res?.error, "Devia recusar cliente de outra empresa");
+
+      const leaked = await prisma.project.count({ where: { name: projectName } });
+      assert.strictEqual(leaked, 0);
+    } finally {
+      await prisma.client.delete({ where: { id: companyAClient.id } });
+    }
+
+    passed++;
+    console.log("✔ Teste 25: Obra não pode ser ligada a cliente de outra empresa (isolamento multi-tenant)");
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTE 26: Não é possível despromover o único responsável através da alocação (upsert)
+  // -------------------------------------------------------------------------
+  {
+    setTestUser({ ...ownerAUser, company: fullCompanyA });
+
+    const leadsBefore = await prisma.projectAssignment.count({ where: { projectId: projectChiado.id, isLead: true } });
+    assert.strictEqual(leadsBefore, 1, "A obra Chiado devia ter exatamente um responsável no seed");
+
+    const res = await assignUserToProjectAction(projectChiado.id, foremanAUser.id, false);
+    assert.ok(res?.error, "Devia recusar retirar o único responsável");
+
+    const stillLead = await prisma.projectAssignment.findUnique({
+      where: { projectId_userId: { projectId: projectChiado.id, userId: foremanAUser.id } },
+      select: { isLead: true },
+    });
+    assert.strictEqual(stillLead?.isLead, true);
+
+    passed++;
+    console.log("✔ Teste 26: assignUserToProjectAction não deixa a obra sem responsável");
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTE 27: Tarefa concluída não pode ser cancelada; estado inválido é recusado
+  // -------------------------------------------------------------------------
+  {
+    const completedTask = await prisma.task.create({
+      data: {
+        companyId: companyA.id,
+        createdById: ownerAUser.id,
+        assignedToId: workerAUser.id,
+        title: "Tarefa Concluída Teste 27",
+        status: "COMPLETED",
+      },
+    });
+
+    setTestUser({ ...ownerAUser, company: fullCompanyA });
+
+    try {
+      const resCancel = await updateTaskStatusAction(completedTask.id, "CANCELLED");
+      assert.ok(resCancel?.error, "COMPLETED -> CANCELLED devia ser recusado");
+
+      const resInvalid = await updateTaskStatusAction(completedTask.id, "ARCHIVED" as unknown as "PENDING");
+      assert.ok(resInvalid?.error, "Estado inválido devia ser recusado");
+
+      const after = await prisma.task.findUnique({ where: { id: completedTask.id }, select: { status: true } });
+      assert.strictEqual(after?.status, "COMPLETED");
+    } finally {
+      await prisma.task.delete({ where: { id: completedTask.id } });
+    }
+
+    passed++;
+    console.log("✔ Teste 27: Máquina de estados de tarefas validada em runtime (só PENDING -> CANCELLED)");
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTE 28: Revisão de registo recusa estado inválido e motivo demasiado longo
+  // -------------------------------------------------------------------------
+  {
+    setTestUser({ ...ownerAUser, company: fullCompanyA });
+
+    const pendingLog = await prisma.workLog.create({
+      data: {
+        companyId: companyA.id,
+        projectId: projectChiado.id,
+        authorId: workerAUser.id,
+        workDate: new Date("2026-11-10T00:00:00.000Z"),
+        hours: 4,
+        status: "PENDING",
+      },
+    });
+
+    try {
+      const resInvalid = await reviewWorkLogAction(pendingLog.id, "PENDING" as unknown as "VALIDATED");
+      assert.ok(resInvalid?.error, "Estado PENDING não é uma decisão de revisão válida");
+
+      const resLong = await reviewWorkLogAction(pendingLog.id, "REJECTED", "x".repeat(501));
+      assert.ok(resLong?.error, "Motivo com mais de 500 carateres devia ser recusado");
+
+      const after = await prisma.workLog.findUnique({ where: { id: pendingLog.id }, select: { status: true } });
+      assert.strictEqual(after?.status, "PENDING");
+    } finally {
+      await prisma.workLog.delete({ where: { id: pendingLog.id } });
+    }
+
+    passed++;
+    console.log("✔ Teste 28: reviewWorkLogAction valida estado e motivo em runtime");
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTE 29: Data limite da tarefa é interpretada no fuso Europe/Lisbon
+  // -------------------------------------------------------------------------
+  {
+    setTestUser({ ...ownerAUser, company: fullCompanyA });
+
+    const title = `Tarefa Fuso ${Date.now()}`;
+    const formData = new FormData();
+    formData.set("title", title);
+    formData.set("assignedToId", workerAUser.id);
+    formData.set("dueDate", "2026-07-15T10:00"); // Verão: Lisboa = UTC+1
+
+    const res = await createTaskAction(formData);
+    assert.ok(res?.success, res?.error);
+
+    const created = await prisma.task.findFirst({ where: { title }, select: { id: true, dueDate: true } });
+    try {
+      assert.strictEqual(created?.dueDate?.toISOString(), "2026-07-15T09:00:00.000Z");
+
+      const invalid = new FormData();
+      invalid.set("title", `${title} inválida`);
+      invalid.set("assignedToId", workerAUser.id);
+      invalid.set("dueDate", "2026-02-31T10:00");
+      const resInvalid = await createTaskAction(invalid);
+      assert.ok(resInvalid?.error, "Data inexistente devia ser recusada");
+    } finally {
+      if (created) await prisma.task.delete({ where: { id: created.id } });
+    }
+
+    passed++;
+    console.log("✔ Teste 29: Data limite de tarefa convertida a partir de Europe/Lisbon");
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTE 30: Editar obra grava o cliente associado e recusa cliente de outra empresa
+  // -------------------------------------------------------------------------
+  {
+    const editableProject = await prisma.project.create({
+      data: { companyId: companyA.id, name: `Obra Editável ${Date.now()}` },
+    });
+    const ownClient = await prisma.client.create({ data: { companyId: companyA.id, name: "Cliente Próprio A" } });
+    const foreignClient = await prisma.client.create({ data: { companyId: companyB.id, name: "Cliente Empresa B" } });
+
+    setTestUser({ ...ownerAUser, company: fullCompanyA });
+
+    try {
+      const valid = new FormData();
+      valid.set("name", editableProject.name);
+      valid.set("clientId", ownClient.id);
+      valid.set("budget", "1234.56");
+      const resValid = await updateProjectAction(editableProject.id, valid);
+      assert.ok(resValid?.success, resValid?.error);
+
+      const saved = await prisma.project.findUnique({
+        where: { id: editableProject.id },
+        select: { clientId: true, clientName: true, budget: true },
+      });
+      assert.strictEqual(saved?.clientId, ownClient.id);
+      assert.strictEqual(saved?.clientName, "Cliente Próprio A");
+      assert.strictEqual(saved?.budget?.toString(), "1234.56");
+
+      const foreign = new FormData();
+      foreign.set("name", editableProject.name);
+      foreign.set("clientId", foreignClient.id);
+      const resForeign = await updateProjectAction(editableProject.id, foreign);
+      assert.ok(resForeign?.error, "Cliente de outra empresa devia ser recusado");
+
+      const afterForeign = await prisma.project.findUnique({ where: { id: editableProject.id }, select: { clientId: true } });
+      assert.strictEqual(afterForeign?.clientId, ownClient.id);
+    } finally {
+      await prisma.project.delete({ where: { id: editableProject.id } });
+      await prisma.client.deleteMany({ where: { id: { in: [ownClient.id, foreignClient.id] } } });
+    }
+
+    passed++;
+    console.log("✔ Teste 30: updateProjectAction grava cliente (validado por empresa) e orçamento em Decimal");
+  }
+
   console.log(`\n🎉 Todos os ${passed} testes das Server Actions reais passaram com sucesso!`);
 }
 
-runRealActionTests()
-  .catch((err) => {
+async function main() {
+  const tenantA = await createTestTenant("a");
+  const tenantB = await createTestTenant("b");
+  try {
+    await runRealActionTests(tenantA, tenantB);
+  } catch (err) {
     console.error("Falha nos testes:", err);
-    process.exit(1);
-  })
-  .finally(async () => {
+    process.exitCode = 1;
+  } finally {
+    await destroyTestTenants([tenantA.company.id, tenantB.company.id]);
     await prisma.$disconnect();
-  });
+  }
+}
+
+main();

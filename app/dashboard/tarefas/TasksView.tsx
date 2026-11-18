@@ -202,16 +202,16 @@ export function TasksView({
   return (
     <div className="space-y-5">
       {/* Barra de Controlo: Alternador Vista Calendário / Lista + Navegação de Mês */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs dark:bg-slate-900 dark:border-slate-800">
         {/* Alternador de Vista */}
-        <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1 text-xs font-semibold">
+        <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1 text-xs font-semibold dark:border-slate-800 dark:bg-slate-800/50">
           <button
             type="button"
             onClick={() => setViewMode("calendar")}
             className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 transition ${
               viewMode === "calendar"
-                ? "bg-white text-slate-900 shadow-2xs"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-white"
+                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
             <svg
@@ -235,8 +235,8 @@ export function TasksView({
             onClick={() => setViewMode("list")}
             className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 transition ${
               viewMode === "list"
-                ? "bg-white text-slate-900 shadow-2xs"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-white"
+                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
             <svg
@@ -259,7 +259,7 @@ export function TasksView({
         {/* Controlos do Mês (apenas no modo calendário) */}
         {viewMode === "calendar" && (
           <div className="flex items-center justify-between sm:justify-end gap-2">
-            <h2 className="text-sm font-bold text-slate-900 min-w-36">
+            <h2 className="text-sm font-bold text-slate-900 min-w-36 dark:text-white">
               {capitalizedMonthName}
             </h2>
 
@@ -267,7 +267,7 @@ export function TasksView({
               <button
                 type="button"
                 onClick={handleToday}
-                className="rounded-sm border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
+                className="rounded-sm border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 transition dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 Hoje
               </button>
@@ -275,7 +275,7 @@ export function TasksView({
                 type="button"
                 onClick={handlePrevMonth}
                 aria-label="Mês anterior"
-                className="rounded-sm border border-slate-200 p-1 text-slate-600 hover:bg-slate-50 transition"
+                className="rounded-sm border border-slate-200 p-1 text-slate-600 hover:bg-slate-50 transition dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -285,7 +285,7 @@ export function TasksView({
                 type="button"
                 onClick={handleNextMonth}
                 aria-label="Mês seguinte"
-                className="rounded-sm border border-slate-200 p-1 text-slate-600 hover:bg-slate-50 transition"
+                className="rounded-sm border border-slate-200 p-1 text-slate-600 hover:bg-slate-50 transition dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -301,20 +301,20 @@ export function TasksView({
       {/* ========================================================================= */}
       {viewMode === "calendar" && (
         <div className="space-y-4">
-          <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+          <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden dark:border-slate-800 dark:bg-slate-900">
             {/* Cabeçalho dos dias da semana (Segunda a Domingo) */}
-            <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500 py-2.5">
+            <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500 py-2.5 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-400">
               <span>Seg</span>
               <span>Ter</span>
               <span>Qua</span>
               <span>Qui</span>
               <span>Sex</span>
-              <span className="text-amber-800">Sáb</span>
-              <span className="text-amber-800">Dom</span>
+              <span className="text-amber-800 dark:text-amber-300">Sáb</span>
+              <span className="text-amber-800 dark:text-amber-300">Dom</span>
             </div>
 
             {/* Grelha dos dias */}
-            <div className="grid grid-cols-7 divide-x divide-y divide-slate-200">
+            <div className="grid grid-cols-7 divide-x divide-y divide-slate-200 dark:divide-slate-800">
               {calendarDays.map((calDay, idx) => {
                 const pendingCount = calDay.tasks.filter((t) => t.status === "PENDING").length;
                 const completedCount = calDay.tasks.filter((t) => t.status === "COMPLETED").length;
@@ -330,10 +330,10 @@ export function TasksView({
                     }}
                     className={`min-h-24 sm:min-h-28 p-1.5 sm:p-2 transition flex flex-col justify-between ${
                       !calDay.isCurrentMonth
-                        ? "bg-slate-50/60 text-slate-400"
-                        : "bg-white text-slate-800"
+                        ? "bg-slate-50/60 text-slate-400 dark:bg-slate-800/40"
+                        : "bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100"
                     } ${calDay.tasks.length > 0 ? "cursor-pointer hover:bg-amber-50/50" : ""} ${
-                      isSelected ? "ring-2 ring-amber-500 bg-amber-50/30" : ""
+                      isSelected ? "ring-2 ring-amber-500 bg-amber-50/30 dark:bg-amber-950/40" : ""
                     }`}
                   >
                     {/* Topo do dia: número e indicador de hoje */}
@@ -350,7 +350,7 @@ export function TasksView({
 
                       {/* Contador total no telemóvel */}
                       {calDay.tasks.length > 0 && (
-                        <span className="sm:hidden text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                        <span className="sm:hidden text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                           {calDay.tasks.length}
                         </span>
                       )}
@@ -363,10 +363,10 @@ export function TasksView({
                           key={task.id}
                           className={`truncate rounded px-1.5 py-0.5 text-[10px] font-medium leading-tight ${
                             task.status === "COMPLETED"
-                              ? "bg-emerald-50 text-emerald-800 line-through opacity-75"
+                              ? "bg-emerald-50 text-emerald-800 line-through opacity-75 dark:bg-emerald-950/40 dark:text-emerald-300"
                               : task.status === "CANCELLED"
-                              ? "bg-slate-100 text-slate-500 line-through"
-                              : "bg-amber-100 text-amber-900 border border-amber-200"
+                              ? "bg-slate-100 text-slate-500 line-through dark:bg-slate-800 dark:text-slate-400"
+                              : "bg-amber-100 text-amber-900 border border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-900/60"
                           }`}
                           title={`${task.title} (${task.assignedTo.name})`}
                         >
@@ -375,7 +375,7 @@ export function TasksView({
                       ))}
 
                       {calDay.tasks.length > 3 && (
-                        <span className="text-[10px] font-semibold text-slate-500 pl-1">
+                        <span className="text-[10px] font-semibold text-slate-500 pl-1 dark:text-slate-400">
                           +{calDay.tasks.length - 3} mais
                         </span>
                       )}
@@ -398,10 +398,10 @@ export function TasksView({
 
           {/* Secção de Tarefas Sem Data Limite (se existirem) */}
           {tasksWithoutDueDate.length > 0 && (
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
+            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-2xs dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-center gap-2 mb-3">
                 <span className="flex h-2 w-2 rounded-full bg-blue-500" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                   Tarefas Gerais Sem Data Limite ({tasksWithoutDueDate.length})
                 </h3>
               </div>
@@ -420,20 +420,20 @@ export function TasksView({
 
           {/* Painel de Tarefas do Dia Selecionado */}
           {selectedDateKey && (
-            <div className="rounded-xl border-2 border-amber-400 bg-white p-5 shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="rounded-xl border-2 border-amber-400 bg-white p-5 shadow-xs space-y-4 dark:bg-slate-900">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">
                     Tarefas do Dia
                   </span>
-                  <h3 className="text-base font-bold text-slate-900 capitalize">
+                  <h3 className="text-base font-bold text-slate-900 capitalize dark:text-white">
                     {selectedDateFormatted}
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedDateKey(null)}
-                  className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs text-slate-500 hover:bg-slate-50"
+                  className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs text-slate-500 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
                 >
                   Fechar
                 </button>
@@ -464,7 +464,7 @@ export function TasksView({
             <section className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="flex h-2.5 w-2.5 rounded-full bg-red-500" />
-                <h2 className="text-sm font-bold uppercase tracking-wider text-red-700">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-red-700 dark:text-red-300">
                   Atrasadas ({overdueTasks.length})
                 </h2>
               </div>
@@ -485,12 +485,12 @@ export function TasksView({
           <section className="space-y-3">
             <div className="flex items-center gap-2">
               <span className="flex h-2.5 w-2.5 rounded-full bg-amber-500" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-amber-800">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
                 Hoje ({todayTasks.length})
               </h2>
             </div>
             {todayTasks.length === 0 ? (
-              <p className="text-xs text-slate-400 italic bg-white p-4 rounded-xl border border-slate-200">
+              <p className="text-xs text-slate-400 italic bg-white p-4 rounded-xl border border-slate-200 dark:bg-slate-900 dark:border-slate-800">
                 Nenhuma tarefa com prazo para hoje.
               </p>
             ) : (
@@ -511,12 +511,12 @@ export function TasksView({
           <section className="space-y-3">
             <div className="flex items-center gap-2">
               <span className="flex h-2.5 w-2.5 rounded-full bg-blue-500" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 Próximas & Sem Data ({upcomingTasks.length})
               </h2>
             </div>
             {upcomingTasks.length === 0 ? (
-              <p className="text-xs text-slate-400 italic bg-white p-4 rounded-xl border border-slate-200">
+              <p className="text-xs text-slate-400 italic bg-white p-4 rounded-xl border border-slate-200 dark:bg-slate-900 dark:border-slate-800">
                 Sem outras tarefas pendentes.
               </p>
             ) : (
@@ -535,9 +535,9 @@ export function TasksView({
 
           {/* Concluídas / Canceladas */}
           {completedOrCancelledTasks.length > 0 && (
-            <section className="space-y-3 pt-4 border-t border-slate-200">
+            <section className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-800">
               <details className="group">
-                <summary className="flex cursor-pointer items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-800">
+                <summary className="flex cursor-pointer items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white">
                   <span>Concluídas e Canceladas ({completedOrCancelledTasks.length})</span>
                   <span className="transition group-open:rotate-180">▼</span>
                 </summary>

@@ -8,7 +8,12 @@ export const projectSchema = z
     clientId: z.string().optional(),
     clientName: z.string().max(120).optional(),
     address: z.string().max(200).optional(),
-    budget: z.coerce.number().positive().optional(),
+    budget: z.coerce
+      .number()
+      .positive("O orçamento tem de ser maior que zero.")
+      .max(999_999_999_999.99, "Orçamento demasiado elevado.")
+      .refine((value) => Math.abs(Math.round(value * 100) - value * 100) < 1e-6, "O orçamento só pode ter até 2 casas decimais.")
+      .optional(),
     foremanId: z.string().optional(),
     startDate: z.string().optional(),
     endDate: z.string().optional(),

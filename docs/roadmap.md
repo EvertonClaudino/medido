@@ -1,13 +1,14 @@
 # Roadmap do Medido
 
-Última atualização: 11/11/2026
+Última atualização: 17/11/2026
 
 ## Fase 1: Landing page
-Estado: **Concluída com sucesso**
+Estado: **Concluída com sucesso (Landing Page Corporativa integrada com o Dashboard)**
 - Landing page responsiva adaptada ao setor da construção civil em Portugal (PT-PT).
 - Captação de contactos via Server Action e lead form.
 - Otimização SEO inicial, ficheiros robots.txt e sitemap.xml.
 - Tailwind CSS v4 integrado pelo plugin PostCSS no pipeline padrão do Next.js.
+- Recriação profissional e corporativa baseada no Dashboard real do Medido: paleta Slate/Âmbar da construção civil, showcase interativo com abas (Visão do Dono, Visão do Encarregado e Medições Métricas), apresentação dos 6 KPIs reais, execução orçamental com Donut SVG (€ 185.000), desdobramento técnico dos 6 módulos de obra, perfis de acesso RBAC, ergonomia móvel para estaleiro, FAQ interativo e formulário de acesso antecipado.
 
 ---
 
@@ -18,7 +19,7 @@ Estado: **Implementação concluída; validação final pendente**
 - [x] Scripts `dev` e `build` sem passo/watch CSS dedicado e sem `--webpack`; build padrão validada com Turbopack.
 - [x] shadcn/ui inicializado com o CLI atual, preset Nova + Radix, base neutral, CSS variables e RSC.
 - [x] Adicionados apenas `button`, `card`, `badge`, `dialog`, `input`, `label`, `skeleton` e `separator`.
-- [x] Tokens de tema claro e variáveis `.dark` preparados; diálogo de clientes migrado para o componente Radix/shadcn.
+- [x] Tokens de tema claro e variáveis `.dark` preparados e ativados com seletor de tema funcional (`ThemeToggle`) na Landing Page e no Dashboard com persistência em `localStorage` e script anti-FOUC.
 - [x] Comparação visual da landing page e do login em 360, 768 e 1280 px; sem regressões visuais observadas.
 - [ ] Comparação visual autenticada do dashboard pendente de uma base de dados acessível e sessão de teste.
 - [ ] Branch e commits por passo pendentes de Git disponível no ambiente.
@@ -33,7 +34,7 @@ Estado: **Concluída com sucesso**
 - [x] Helper `requireUser()` com revalidação estrita à base de dados (`status: ACTIVE`) e com `select` explícito (sem fuga de `password`/hash).
 - [x] Isolamento multi-tenant por `companyId` em todas as tabelas e queries.
 - [x] Política de palavra-passe robusta (mínimo 8 carateres, maiúscula e algarismo) no login, convite e alteração de perfil.
-- [x] Mecanismo de rate limiting contra ataques de força bruta no login (máx. 5 tentativas falhadas com bloqueio de 15 minutos).
+- [x] Rate limiting persistente em Postgres contra força bruta no login (5 falhas por email ou 20 por IP em 15 minutos, bloqueio de 15 minutos).
 - [x] Proteção do seed para não executar em ambiente de produção (`NODE_ENV === "production"`).
 - [x] Integridade referencial na BD: `work_logs.authorId ON DELETE RESTRICT` e FK de `work_log_measurements.companyId`.
 - [x] Fluxo de primeiro acesso obrigatório com `User.mustChangePassword`: utilizadores convidados são forçados a trocar a palavra-passe em `/dashboard/perfil` antes de qualquer outra ação.
@@ -60,7 +61,7 @@ Estado: **Em desenvolvimento**
   - Componente reutilizável `components/ui/dialog.tsx` (sem dependências externas): fecha com Escape, clique no backdrop e botão X; bloqueia scroll; foco inicial no painel.
   - Integrado no menu lateral do OWNER e na barra mobile (5 itens; substituiu "Registos" na barra mobile, que continua acessível no sidebar desktop).
 - [x] Visão Geral do OWNER completamente reformulada de acordo com o design system de ERP para construção civil (skills `yafa-ui-dashboard` e `office-web-ui-system`):
-  - Banner de boas-vindas com meteorologia, dados em tempo real e arte vetorial técnica de obra (sem elementos fictícios de IA).
+  - Banner de boas-vindas com meteorologia, dados em tempo real, cartões financeiros de Saldo Livre e Orçamento Total consolidado e arte vetorial técnica de estaleiro.
   - Fileira de 6 KPI cards semânticos de alta densidade (Obras Ativas, Concluídas, em Atraso, Apontamentos em Obra, Validações Pendentes e Assiduidade da Equipa).
   - Painel de Execução Orçamental das Obras com gráfico tipo Donut SVG puro desagregando orçamento total, executado, comprometido e saldo em Euros (€).
   - Cronograma e Evolução de Obras com gráfico multilinhas SVG puro (Planeado, Real e Previsão).
@@ -112,6 +113,13 @@ Estado: **Em desenvolvimento**
 - [x] Navegação OWNER para Visitas e Orçamentos; clientes com visitas/orçamentos associados não podem ser eliminados.
 - [x] Testes unitários de cálculo/arredondamento, transições de visita e conversão de data/hora para `Europe/Lisbon`; TypeScript, lint e build passam.
 - [ ] Aplicar a migração `20261111185700_add_budget_visit_workflow` e validar os fluxos com uma base de dados de teste/Preview; a verificação de estado em 11/11/2026 falhou com P1001 (servidor inalcançável).
+
+- [x] Ficha do cliente como centro do processo comercial (`/dashboard/clientes/[id]`): barra de etapas, histórico de atividade com interações, visitas geridas na ficha e no calendário do dashboard, orçamento com visita opcional e pipeline de Orçamentos em quadro/lista (decisão 022).
+
+- [x] Agenda do responsável na marcação de visitas (14 dias, conflitos recusados no servidor, reagendamento), "As Minhas Visitas" no painel do encarregado e modo escuro coerente em todas as páginas (decisão 023).
+
+- [x] Registo de empresa (`/registo`) com sessão iniciada, base de dados limpa para dados reais, testes de integração isolados e nova landing, login e registo (decisão 024).
+- [x] Landing redesenhada a partir da referência extds.eu: hero de ecrã inteiro com desenho técnico animado, montra do produto, movimento ligado ao scroll e tipografia de display (decisão 025).
 
 ### 2. O que falta na Fase 3:
 - [ ] Validação cruzada e refinamento dos filtros de pesquisa de registos por data/obra.

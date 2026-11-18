@@ -243,10 +243,10 @@ export default function ObrasView({
       {/* 1. Cabeçalho Principal com Botão de Ação */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900">
+          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
             Gestão de Obras & Empreitadas
           </h1>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
             Acompanhe o estado de execução, prazos, tarefas e equipas de cada obra da empresa.
           </p>
         </div>
@@ -266,81 +266,81 @@ export default function ObrasView({
 
       {/* 2. Fileira de 4 Cartões de Resumo KPI com Cores Específicas */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
-        {/* Total de Obras: Neutro (slate) -> #475569 | Fundo ícone #F1F5F9 | Subtítulo #64748B */}
-        <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 border-l-4 border-l-[#475569] bg-white p-3.5 shadow-2xs">
+        {/* Total de Obras */}
+        <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 dark:border-slate-700 border-l-4 border-l-[#475569] bg-white dark:bg-slate-900 p-3.5 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] dark:text-slate-400">
               Total de Obras
             </span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F1F5F9] text-[#475569]">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F1F5F9] dark:bg-slate-800 text-[#475569] dark:text-slate-400">
               <Building2 className="h-4 w-4" />
             </span>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black tracking-tight text-slate-900 leading-none">
+            <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
               {metrics.total}
             </span>
-            <span className="text-[11px] font-medium text-[#64748B]">
+            <span className="text-[11px] font-medium text-[#64748B] dark:text-slate-400">
               registadas
             </span>
           </div>
         </div>
 
-        {/* Obras Ativas: Azul -> #2563EB | Fundo ícone #EFF6FF | Subtítulo #1D4ED8 */}
-        <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 border-l-4 border-l-[#2563EB] bg-white p-3.5 shadow-2xs">
+        {/* Obras Ativas */}
+        <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 dark:border-slate-700 border-l-4 border-l-[#2563EB] bg-white dark:bg-slate-900 p-3.5 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#1D4ED8]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#1D4ED8] dark:text-blue-400">
               Obras Ativas
             </span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#2563EB]">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EFF6FF] dark:bg-blue-900/20 text-[#2563EB] dark:text-blue-400">
               <PlayCircle className="h-4 w-4" />
             </span>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black tracking-tight text-slate-900 leading-none">
+            <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
               {metrics.active}
             </span>
-            <span className="text-[11px] font-semibold text-[#1D4ED8]">
+            <span className="text-[11px] font-semibold text-[#1D4ED8] dark:text-blue-400">
               em execução
             </span>
           </div>
         </div>
 
-        {/* Obras Terminadas: Verde -> #16A34A | Fundo ícone #F0FDF4 | Subtítulo #15803D */}
-        <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 border-l-4 border-l-[#16A34A] bg-white p-3.5 shadow-2xs">
+        {/* Obras Terminadas */}
+        <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 dark:border-slate-700 border-l-4 border-l-[#16A34A] bg-white dark:bg-slate-900 p-3.5 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#15803D]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#15803D] dark:text-emerald-400">
               Obras Terminadas
             </span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F0FDF4] text-[#16A34A]">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F0FDF4] dark:bg-emerald-900/20 text-[#16A34A] dark:text-emerald-400">
               <CheckCircle2 className="h-4 w-4" />
             </span>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black tracking-tight text-slate-900 leading-none">
+            <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
               {metrics.completed}
             </span>
-            <span className="text-[11px] font-semibold text-[#15803D]">
+            <span className="text-[11px] font-semibold text-[#15803D] dark:text-emerald-400">
               concluídas
             </span>
           </div>
         </div>
 
-        {/* Obras em Atraso: Vermelho -> #DC2626 | Fundo ícone #FEF2F2 | Subtítulo #B91C1C */}
-        <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 border-l-4 border-l-[#DC2626] bg-white p-3.5 shadow-2xs">
+        {/* Obras em Atraso */}
+        <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 dark:border-slate-700 border-l-4 border-l-[#DC2626] bg-white dark:bg-slate-900 p-3.5 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#B91C1C]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#B91C1C] dark:text-red-400">
               Obras em Atraso
             </span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#FEF2F2] text-[#DC2626]">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#FEF2F2] dark:bg-red-900/20 text-[#DC2626] dark:text-red-400">
               <ClockAlert className="h-4 w-4" />
             </span>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black tracking-tight text-slate-900 leading-none">
+            <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
               {metrics.delayed}
             </span>
-            <span className="text-[11px] font-semibold text-[#B91C1C]">
+            <span className="text-[11px] font-semibold text-[#B91C1C] dark:text-red-400">
               prazo ultrapassado
             </span>
           </div>
@@ -348,7 +348,7 @@ export default function ObrasView({
       </div>
 
       {/* 3. Painel de Controlo: Pesquisa, Filtros Avançados e Ordenação */}
-      <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
+      <div className="space-y-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs">
         {/* Linha Superior: Pesquisa e Pílulas de Estado */}
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           {/* Campo de Pesquisa Textual */}
@@ -359,7 +359,7 @@ export default function ObrasView({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Pesquisar por nome, código, cliente, tipo de serviço ou morada..."
-              className="w-full rounded-lg border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 py-2 pl-9 pr-3 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none"
             />
           </div>
 
@@ -375,8 +375,8 @@ export default function ObrasView({
               onClick={() => setStatusFilter("ALL")}
               className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
                 statusFilter === "ALL"
-                  ? "bg-slate-900 text-white shadow-2xs"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-2xs"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
               Todas ({metrics.total})
@@ -388,7 +388,7 @@ export default function ObrasView({
               className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
                 statusFilter === "ACTIVE"
                   ? "bg-emerald-700 text-white shadow-2xs"
-                  : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+                  : "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
               }`}
             >
               Ativas ({metrics.active})
@@ -400,7 +400,7 @@ export default function ObrasView({
               className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
                 statusFilter === "COMPLETED"
                   ? "bg-purple-700 text-white shadow-2xs"
-                  : "bg-purple-50 text-purple-800 hover:bg-purple-100"
+                  : "bg-purple-50 dark:bg-purple-900/20 text-purple-800 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30"
               }`}
             >
               Terminadas ({metrics.completed})
@@ -412,7 +412,7 @@ export default function ObrasView({
               className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
                 statusFilter === "DELAYED"
                   ? "bg-rose-700 text-white shadow-2xs"
-                  : "bg-rose-50 text-rose-800 hover:bg-rose-100"
+                  : "bg-rose-50 dark:bg-rose-900/20 text-rose-800 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/30"
               }`}
             >
               Em Atraso ({metrics.delayed})
@@ -421,7 +421,7 @@ export default function ObrasView({
         </div>
 
         {/* Linha Inferior: Filtros de Encarregado, Cliente, Prazo e Ordenação */}
-        <div className="grid grid-cols-1 gap-2.5 border-t border-slate-100 pt-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-2.5 border-t border-slate-100 dark:border-slate-800 pt-3 sm:grid-cols-2 lg:grid-cols-4">
           {/* Filtro por Encarregado */}
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
@@ -430,7 +430,7 @@ export default function ObrasView({
             <select
               value={foremanFilter}
               onChange={(e) => setForemanFilter(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-1.5 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 p-1.5 text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none"
             >
               <option value="ALL">Todos os encarregados</option>
               {foremen.map((f) => (
@@ -449,7 +449,7 @@ export default function ObrasView({
             <select
               value={clientFilter}
               onChange={(e) => setClientFilter(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-1.5 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 p-1.5 text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none"
             >
               <option value="ALL">Todos os clientes</option>
               {clients.map((c) => (
@@ -468,7 +468,7 @@ export default function ObrasView({
             <select
               value={deadlineFilter}
               onChange={(e) => setDeadlineFilter(e.target.value as DeadlineFilterType)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-1.5 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 p-1.5 text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none"
             >
               <option value="ALL">Todos os prazos</option>
               <option value="THIS_MONTH">Entrega este mês</option>
@@ -486,7 +486,7 @@ export default function ObrasView({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOptionType)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-1.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 p-1.5 text-xs font-medium text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none"
             >
               <option value="NEWEST">Mais recentes (criação)</option>
               <option value="DEADLINE">Prazo mais próximo</option>
@@ -499,9 +499,9 @@ export default function ObrasView({
 
         {/* Resumo de resultados quando há filtros ativos */}
         {(searchQuery || statusFilter !== "ALL" || foremanFilter !== "ALL" || clientFilter !== "ALL" || deadlineFilter !== "ALL") && (
-          <div className="flex items-center justify-between border-t border-slate-100 pt-2 text-[11px] text-slate-500">
+          <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-2 text-[11px] text-slate-500 dark:text-slate-400">
             <span>
-              A apresentar <strong className="text-slate-800">{filteredAndSortedProjects.length}</strong> de {projects.length} obras.
+              A apresentar <strong className="text-slate-800 dark:text-slate-200">{filteredAndSortedProjects.length}</strong> de {projects.length} obras.
             </span>
             <button
               type="button"
@@ -512,7 +512,7 @@ export default function ObrasView({
                 setClientFilter("ALL");
                 setDeadlineFilter("ALL");
               }}
-              className="font-semibold text-blue-600 hover:underline"
+              className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
             >
               Limpar filtros
             </button>
@@ -522,12 +522,12 @@ export default function ObrasView({
 
       {/* 4. Grelha de Cards Operacionais (Inspirada no Layout da Referência) */}
       {filteredAndSortedProjects.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-12 text-center shadow-2xs">
+        <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-12 text-center shadow-2xs">
           <Building2 className="mx-auto h-10 w-10 text-slate-300" />
-          <h2 className="mt-3 text-sm font-bold text-slate-800">
+          <h2 className="mt-3 text-sm font-bold text-slate-800 dark:text-slate-100">
             Nenhuma obra encontrada
           </h2>
-          <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
+          <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto dark:text-slate-400">
             {searchQuery || statusFilter !== "ALL" || foremanFilter !== "ALL" || clientFilter !== "ALL" || deadlineFilter !== "ALL"
               ? "Não foram encontradas obras com a combinação de filtros selecionada."
               : "Comece por registar a primeira empreitada da sua construtora para começar a atribuir equipas e registos."}
@@ -591,7 +591,7 @@ export default function ObrasView({
             return (
               <div
                 key={project.id}
-                className={`group relative flex flex-col justify-between rounded-2xl border ${cardBorder} bg-white p-5 shadow-xs transition hover:shadow-md`}
+                className={`group relative flex flex-col justify-between rounded-2xl border ${cardBorder} bg-white dark:bg-slate-900 p-5 shadow-xs transition hover:shadow-md`}
               >
                 <div>
                   {/* Linha 1: Ícone Circular Temático + Título da Obra + Badge de Estado Suave */}
@@ -604,7 +604,7 @@ export default function ObrasView({
                         <button
                           type="button"
                           onClick={() => setSelectedProjectForDetails(project)}
-                          className={`font-bold text-slate-900 ${titleHoverColor} transition line-clamp-1 text-[14px] text-left w-full`}
+                          className={`font-bold text-slate-900 dark:text-white ${titleHoverColor} transition line-clamp-1 text-[14px] text-left w-full`}
                           title={project.name}
                         >
                           {project.name}
@@ -627,21 +627,21 @@ export default function ObrasView({
                   </div>
 
                   {/* Linha 2: Grelha Bipartida (PIC / Encarregado e Departamento / Cliente & Tipo) */}
-                  <div className="mt-5 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4 text-xs">
+                  <div className="mt-5 grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-700/60 pt-4 text-xs">
                     {/* PIC / Encarregado Responsável */}
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                         PIC:
                       </span>
                       <div className="flex items-center gap-2">
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-700 border border-slate-200">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                           {foremanInitials}
                         </div>
                         <div className="min-w-0">
-                          <span className="font-bold text-slate-900 text-xs truncate block" title={foremanName}>
+                          <span className="font-bold text-slate-900 dark:text-white text-xs truncate block" title={foremanName}>
                             {foremanName}
                           </span>
-                          <span className="text-[10px] text-slate-400 block">
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500 block">
                             {hasForeman ? "Encarregado" : "Não atribuído"}
                           </span>
                         </div>
@@ -654,10 +654,10 @@ export default function ObrasView({
                         Cliente / Tipo:
                       </span>
                       <div className="min-w-0">
-                        <span className="font-bold text-slate-900 text-xs truncate block" title={clientDisplayName}>
+                        <span className="font-bold text-slate-900 dark:text-white text-xs truncate block" title={clientDisplayName}>
                           {clientDisplayName}
                         </span>
-                        <span className="text-[10px] text-slate-500 truncate block mt-0.5" title={project.serviceType || "Geral"}>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate block mt-0.5" title={project.serviceType || "Geral"}>
                           {project.serviceType || "Construção Civil"}
                         </span>
                       </div>
@@ -672,14 +672,14 @@ export default function ObrasView({
                         Tarefas Concluídas:
                       </span>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-sm font-extrabold text-slate-900">
+                        <span className="text-sm font-extrabold text-slate-900 dark:text-white">
                           {project.completedTasksCount}
                         </span>
                         <span className="text-xs font-semibold text-slate-400">
                           / {project.totalTasksCount}
                         </span>
                         {project.delayedTasksCount > 0 && (
-                          <span className="ml-1 text-[10px] font-bold text-rose-600 bg-rose-50 px-1 py-0.2 rounded">
+                          <span className="ml-1 text-[10px] font-bold text-rose-600 bg-rose-50 dark:bg-rose-900/20 dark:text-rose-400 px-1 py-0.2 rounded">
                             {project.delayedTasksCount} atrasadas
                           </span>
                         )}
@@ -693,7 +693,7 @@ export default function ObrasView({
                       </span>
                       <span
                         className={`text-xs font-bold block ${
-                          project.isDelayed ? "text-rose-600" : project.endDate ? "text-slate-800" : "text-slate-400 font-normal"
+                          project.isDelayed ? "text-rose-600 dark:text-rose-400" : project.endDate ? "text-slate-800 dark:text-slate-200" : "text-slate-400 font-normal"
                         }`}
                       >
                         {project.endDate
@@ -714,7 +714,7 @@ export default function ObrasView({
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                         Progresso:
                       </span>
-                      <span className="text-xs font-extrabold text-slate-800">
+                      <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
                         {project.totalTasksCount > 0 || project.status === "COMPLETED"
                           ? `${project.progressPercentage}%`
                           : "Sem tarefas"}
@@ -722,7 +722,7 @@ export default function ObrasView({
                     </div>
 
                     {/* Barra Visual com fundo suave */}
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700/60">
                       <div
                         className={`h-full rounded-full transition-all duration-300 ${progressBarColor}`}
                         style={{ width: `${project.progressPercentage}%` }}
@@ -732,25 +732,25 @@ export default function ObrasView({
                 </div>
 
                 {/* Linha 5 (Rodapé): 3 Botões de Ação */}
-                <div className="mt-5 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4">
+                <div className="mt-5 grid grid-cols-3 gap-2 border-t border-slate-100 dark:border-slate-700/60 pt-4">
                   <button
                     type="button"
                     onClick={() => setSelectedProjectForDetails(project)}
-                    className="flex items-center justify-center rounded-xl border border-slate-200/90 bg-white py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs"
+                    className="flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-2xs"
                   >
                     Ver Detalhes
                   </button>
 
                   <Link
                     href={`/dashboard/obras/${project.id}/equipa`}
-                    className="flex items-center justify-center rounded-xl border border-slate-200/90 bg-white py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs"
+                    className="flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-2xs"
                   >
                     Gerir Equipa
                   </Link>
 
                   <Link
                     href={`/dashboard/obras/${project.id}/editar`}
-                    className="flex items-center justify-center rounded-xl border border-slate-200/90 bg-white py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs"
+                    className="flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-2xs"
                   >
                     Editar Obra
                   </Link>
@@ -763,17 +763,17 @@ export default function ObrasView({
 
       {/* 5. Modal / Dialog para Registar Nova Obra */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0">
-          <DialogHeader className="p-6 pb-4 border-b border-slate-100 bg-slate-50/50">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 dark:bg-slate-900 dark:border-slate-800">
+          <DialogHeader className="p-6 pb-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
                 <Building2 className="h-5 w-5" />
               </div>
               <div>
-                <DialogTitle className="text-lg font-black text-slate-900">
+                <DialogTitle className="text-lg font-black text-slate-900 dark:text-white">
                   Registar Nova Obra
                 </DialogTitle>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Introduza os dados da empreitada para iniciar o acompanhamento operacional.
                 </p>
               </div>
@@ -781,7 +781,7 @@ export default function ObrasView({
           </DialogHeader>
 
           {error && (
-            <div className="mx-6 mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700 font-medium">
+            <div className="mx-6 mt-4 rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-900/20 p-3 text-xs text-rose-700 dark:text-rose-400 font-medium">
               {error}
             </div>
           )}
@@ -794,7 +794,7 @@ export default function ObrasView({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                   Nome da Obra / Empreitada *
                 </label>
                 <input
@@ -802,7 +802,7 @@ export default function ObrasView({
                   name="name"
                   required
                   placeholder="Ex.: Reabilitação Edifício Chiado"
-                  className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                  className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                 />
               </div>
 
@@ -810,10 +810,10 @@ export default function ObrasView({
                 {/* Código Interno */}
                 <div>
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold text-slate-700">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                       Código Interno
                     </label>
-                    <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700">
+                    <span className="inline-flex items-center gap-1 rounded bg-blue-50 dark:bg-blue-900/20 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 dark:text-blue-400">
                       <Sparkles className="h-2.5 w-2.5" />
                       Automático
                     </span>
@@ -823,7 +823,7 @@ export default function ObrasView({
                     name="code"
                     defaultValue={nextCodeSuggestion}
                     placeholder="Ex.: OBR-2026-001"
-                    className="mt-1.5 w-full rounded-xl border border-blue-200 bg-blue-50/30 px-3.5 py-2.5 font-mono text-xs font-bold text-blue-900 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                    className="mt-1.5 w-full rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/10 px-3.5 py-2.5 font-mono text-xs font-bold text-blue-900 dark:text-blue-300 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                   />
                   <p className="mt-1 text-[11px] text-slate-400">
                     Sugerido pelo sistema. Pode personalizar.
@@ -832,7 +832,7 @@ export default function ObrasView({
 
                 {/* Tipo de Serviço */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     Tipo de Serviço *
                   </label>
                   {!customServiceType ? (
@@ -844,7 +844,7 @@ export default function ObrasView({
                             setCustomServiceType(true);
                           }
                         }}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                        className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                       >
                         <option value="">Selecione o tipo de trabalho...</option>
                         {SERVICE_TYPE_SUGGESTIONS.map((st) => (
@@ -862,12 +862,12 @@ export default function ObrasView({
                         name="serviceType"
                         placeholder="Ex.: Isolamento Acústico"
                         autoFocus
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                        className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-xs text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                       />
                       <button
                         type="button"
                         onClick={() => setCustomServiceType(false)}
-                        className="shrink-0 text-xs font-bold text-blue-600 hover:underline px-1"
+                        className="shrink-0 text-xs font-bold text-blue-600 hover:underline px-1 dark:text-blue-400"
                       >
                         Lista
                       </button>
@@ -881,21 +881,21 @@ export default function ObrasView({
             </div>
 
             {/* Secção 2: Cliente & Localização */}
-            <div className="space-y-4 border-t border-slate-100 pt-5">
+            <div className="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-5">
               <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 2. Cliente & Localização
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     Cliente Registado
                   </label>
                   <select
                     name="clientId"
                     value={selectedClientId}
                     onChange={(e) => setSelectedClientId(e.target.value)}
-                    className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                   >
                     <option value="">Nenhum / Não associado</option>
                     {clients.map((c) => (
@@ -907,7 +907,7 @@ export default function ObrasView({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     Nome do Cliente / Entidade
                   </label>
                   <input
@@ -915,38 +915,38 @@ export default function ObrasView({
                     name="clientName"
                     placeholder={selectedClientId ? "Associado ao cliente selecionado" : "Ex.: Pedro Silva ou Empresa XYZ"}
                     disabled={Boolean(selectedClientId)}
-                    className="mt-1.5 w-full rounded-xl border border-slate-200 p-2.5 text-xs text-slate-900 disabled:bg-slate-50 disabled:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 p-2.5 text-xs text-slate-900 dark:text-white disabled:bg-slate-50 dark:disabled:bg-slate-800/50 disabled:text-slate-400 dark:disabled:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                   Morada / Localização do Estaleiro
                 </label>
                 <input
                   type="text"
                   name="address"
                   placeholder="Ex.: Rua das Flores 12, Lisboa"
-                  className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                  className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-xs text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                 />
               </div>
             </div>
 
             {/* Secção 3: Equipa, Prazo & Orçamento */}
-            <div className="space-y-4 border-t border-slate-100 pt-5">
+            <div className="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-5">
               <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 3. Equipa, Prazos & Orçamento
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     Encarregado Responsável
                   </label>
                   <select
                     name="foremanId"
-                    className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                   >
                     <option value="">Por atribuir mais tarde</option>
                     {foremen.map((f) => (
@@ -958,7 +958,7 @@ export default function ObrasView({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     Orçamento Previsto (€)
                   </label>
                   <input
@@ -967,42 +967,42 @@ export default function ObrasView({
                     min="0"
                     name="budget"
                     placeholder="Ex.: 145000"
-                    className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 font-mono text-xs font-bold text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 font-mono text-xs font-bold text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                   />
                 </div>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     Data de Início
                   </label>
                   <input
                     type="date"
                     name="startDate"
-                    className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     Data Limite / Conclusão
                   </label>
                   <input
                     type="date"
                     name="endDate"
-                    className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                   />
                 </div>
               </div>
             </div>
 
             {/* Rodapé do Modal */}
-            <div className="flex items-center justify-end gap-3 pt-5 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-3 pt-5 border-t border-slate-100 dark:border-slate-800">
               <DialogClose asChild>
                 <button
                   type="button"
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                  className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                 >
                   Cancelar
                 </button>

@@ -56,14 +56,14 @@ export default async function EquipaObraPage({
       <div>
         <Link
           href="/dashboard/obras"
-          className="text-xs text-slate-500 hover:text-slate-900 underline"
+          className="text-xs text-slate-500 hover:text-slate-900 underline dark:text-slate-400 dark:hover:text-white"
         >
           ← Voltar a Obras
         </Link>
-        <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           Equipa da Obra
         </h1>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
           Obra:{" "}
           <span className="font-semibold">{project.name}</span>
           {project.code && (
@@ -76,15 +76,15 @@ export default async function EquipaObraPage({
 
       {/* Adicionar membro */}
       {availableUsers.length > 0 && (
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <h2 className="mb-3 text-sm font-bold text-slate-900">
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+          <h2 className="mb-3 text-sm font-bold text-slate-900 dark:text-white">
             Adicionar à Equipa
           </h2>
           <form action={handleAssign} className="flex flex-wrap gap-3 text-xs">
             <select
               name="userId"
               required
-              className="flex-1 rounded-lg border border-slate-300 bg-white p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden"
+              className="flex-1 rounded-lg border border-slate-300 bg-white p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             >
               <option value="">Selecione um colaborador…</option>
               {availableUsers.map((u) => (
@@ -96,7 +96,7 @@ export default async function EquipaObraPage({
             </select>
             <select
               name="isLead"
-              className="rounded-lg border border-slate-300 bg-white p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden"
+              className="rounded-lg border border-slate-300 bg-white p-2.5 text-slate-900 focus:border-amber-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             >
               <option value="false">Colaborador</option>
               <option value="true">Encarregado Responsável</option>
@@ -112,40 +112,40 @@ export default async function EquipaObraPage({
       )}
 
       {/* Lista de membros */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="text-sm font-bold text-slate-900">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden dark:border-slate-800 dark:bg-slate-900">
+        <div className="border-b border-slate-100 px-6 py-4 dark:border-slate-800">
+          <h2 className="text-sm font-bold text-slate-900 dark:text-white">
             Membros Atribuídos ({project.assignments.length})
           </h2>
         </div>
 
         {project.assignments.length === 0 ? (
-          <p className="p-6 text-center text-xs text-slate-500">
+          <p className="p-6 text-center text-xs text-slate-500 dark:text-slate-400">
             Nenhum colaborador atribuído a esta obra.
           </p>
         ) : (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {project.assignments.map((assignment) => (
               <div
                 key={assignment.id}
                 className="flex items-center justify-between px-6 py-4 text-xs"
               >
                 <div>
-                  <div className="font-bold text-slate-900">
+                  <div className="font-bold text-slate-900 dark:text-white">
                     {assignment.user.name}
                   </div>
-                  <div className="font-mono text-[11px] text-slate-500">
+                  <div className="font-mono text-[11px] text-slate-500 dark:text-slate-400">
                     {assignment.user.email}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                   {assignment.isLead ? (
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
                       Responsável
                     </span>
                   ) : (
-                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800">
+                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
                       Colaborador
                     </span>
                   )}
@@ -158,7 +158,7 @@ export default async function EquipaObraPage({
                   >
                     <button
                       type="submit"
-                      className="text-[11px] font-semibold text-slate-500 hover:text-red-700 underline"
+                      className="text-[11px] font-semibold text-slate-500 hover:text-red-700 underline dark:text-slate-400 dark:hover:text-red-300"
                     >
                       Remover
                     </button>

@@ -20,7 +20,8 @@ export interface BudgetTotals extends BudgetLineTotals {
 
 const visitStatusTransitions: Record<VisitStatus, readonly VisitStatus[]> = {
   REQUESTED: [VisitStatus.SCHEDULED, VisitStatus.CANCELLED],
-  SCHEDULED: [VisitStatus.COMPLETED, VisitStatus.CANCELLED],
+  // SCHEDULED -> SCHEDULED = reagendar (nova data e/ou responsável)
+  SCHEDULED: [VisitStatus.SCHEDULED, VisitStatus.COMPLETED, VisitStatus.CANCELLED],
   COMPLETED: [VisitStatus.CANCELLED],
   CANCELLED: [],
 };

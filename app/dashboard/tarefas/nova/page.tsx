@@ -82,10 +82,10 @@ export default async function NovaTarefaPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             Criar Nova Tarefa
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1 dark:text-slate-400">
             {isOwner
               ? "Defina uma tarefa para encarregados ou funcionários (visitas técnicas, verificações, etc.)."
               : "Atribua uma tarefa aos trabalhadores das suas obras sob responsabilidade."}
@@ -93,7 +93,7 @@ export default async function NovaTarefaPage() {
         </div>
         <Link
           href="/dashboard/tarefas"
-          className="text-xs font-semibold text-slate-600 hover:text-slate-900"
+          className="text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
         >
           Cancelar
         </Link>
@@ -101,10 +101,10 @@ export default async function NovaTarefaPage() {
 
       <form
         action={handleCreate}
-        className="space-y-5 rounded-xl border border-slate-200 bg-white p-6 shadow-xs"
+        className="space-y-5 rounded-xl border border-slate-200 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900"
       >
         <div>
-          <label className="block text-xs font-semibold text-slate-700">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
             Título da Tarefa *
           </label>
           <input
@@ -112,32 +112,32 @@ export default async function NovaTarefaPage() {
             type="text"
             required
             placeholder="Ex.: Visita técnica preliminar, verificação de cimento"
-            className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+            className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:text-white"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
             Descrição / Instruções Detalhadas
           </label>
           <textarea
             name="description"
             rows={3}
             placeholder="Descreva o que deve ser inspecionado ou realizado..."
-            className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+            className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:text-white"
           />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
               Atribuir a *
             </label>
             <select
               name="assignedToId"
               required
               defaultValue=""
-              className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+              className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             >
               <option value="" disabled>
                 Selecione um colaborador...
@@ -156,14 +156,14 @@ export default async function NovaTarefaPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
               Obra Associada {isOwner ? "(Opcional)" : "*"}
             </label>
             <select
               name="projectId"
               required={!isOwner}
               defaultValue=""
-              className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+              className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             >
               <option value="">
                 {isOwner ? "Sem obra (Geral / Pré-obra)" : "Selecione a obra..."}
@@ -178,23 +178,23 @@ export default async function NovaTarefaPage() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
             Data e Hora Limite (Opcional - Fuso Europe/Lisbon)
           </label>
           <input
             name="dueDate"
             type="datetime-local"
-            className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+            className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-amber-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:text-white"
           />
-          <p className="mt-1 text-[11px] text-slate-500">
+          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
             Deixe em branco caso a tarefa não tenha uma data limite estrita.
           </p>
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
           <Link
             href="/dashboard/tarefas"
-            className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             Cancelar
           </Link>

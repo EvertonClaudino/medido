@@ -238,3 +238,167 @@ Regras e estrutura:
 2. **Redução da Largura do Sidebar Lateral:**
    - Em ecrãs `>= 1024px`, o sidebar passa de `w-64` (256px) para `w-52` (208px, `shrink-0`), com espaçamentos otimizados (`px-2.5 py-1.5` nos links).
    - O padding do `<main>` passa de `md:p-8` para `sm:p-6 lg:p-6`, concedendo uma área útil substancialmente maior para que a grelha de cards respire confortavelmente em desktop e não fique reduzida.
+
+
+## 017: Landing Page Corporativa Integrada com o Dashboard do Medido (17/11/2026)
+
+**Decisão:** Reconstruir integralmente a landing page (`app/page.tsx`) espelhando fielmente os dados, indicadores e ferramentas do dashboard real do Medido, aplicando uma paleta de cores corporativa de alta precisão (Slate grafite industrial com acentos em Âmbar da construção e semânticas de ERP).
+
+**Princípios e Implementação:**
+1. **Identidade Visual e Cores Condizentes:**
+   - Base escura corporativa de alto contraste (`slate-950` / `slate-900`) evocando robustez e tecnologia industrial.
+   - Cor primária institucional em Âmbar (`amber-500` / `amber-400`), a cor dos capacetes e máquinas de obra.
+   - Acentos semânticos do ERP: Esmeralda para obras concluídas e saldo livre, Azul para obras ativas e planeamento, e Vermelho vivo para atrasos e alertas críticos.
+2. **Showcase Interativo do Dashboard (`LandingDashboardPreview`):**
+   - Abas dinâmicas permitindo ao visitante explorar:
+     - *Visão do Dono (Estratégico):* Saudação contextualizada, KPIs semânticos, gráfico Donut de execução orçamental (€ 185 000,00) e alertas operacionais.
+     - *Visão do Encarregado (Terreno):* Obras atribuídas, aprovação de registos com 1 toque no telemóvel e checklist de tarefas diárias.
+     - *Ficha Oficial de Medições:* As 5 unidades métricas oficiais da construção em Portugal (M, M², M³, UN, KG) com garantia de não-somatório de unidades heterogéneas.
+3. **Os 6 KPIs Reais do ERP (`OwnerKpiRow`):**
+   - Obras Ativas (12), Concluídas (28), Em Atraso (2), Apontamentos em Obra (47), Validações Pendentes (5) e Assiduidade da Equipa (94%).
+4. **Desdobramento dos 6 Módulos do Sistema:**
+   - Ficha de Obra e Códigos Sequenciais (`OBR-AAAA-NNN`), Medições Métricas, Equipas e Ofícios, Orçamentos com taxas de IVA, Tarefas com prazos em Lisboa e Motor de Alertas Preventivos.
+5. **Ergonomia Móvel e Perfis RBAC:**
+   - Destaque ao suporte de ecrãs de estaleiro (barra inferior até 768x1024, botões com área de toque mínima de 44 px).
+   - Divisão rigorosa de perfis: Dono, Encarregado e Funcionário.
+6. **Formulário de Conversão e Perguntas Frequentes:**
+   - `LeadForm` e `LandingFaq` harmonizados no tema corporativo, com foco em acessibilidade e semântica estrita.
+
+
+## 018: Integração de Cards Financeiros de Saldo Livre e Orçamento Total no Banner do Dono (17/11/2026)
+
+**Decisão:** Integrar diretamente no banner de topo da Visão Geral do Dono (`OwnerHeroBanner`) dois cartões financeiros destacados apresentando o **Saldo Livre** e o **Orçamento Total** em carteira.
+
+**Princípios e Implementação:**
+1. **Hierarquia Visual e Acesso Imediato:**
+   - O Dono da Empresa passa a visualizar no primeiro segundo, logo ao lado da saudação diária ("Bom dia, Carlos! 👋"), da meteorologia de estaleiro e dos dados ao vivo de Lisboa, a liquidez e a escala financeira consolidada das suas obras ativas.
+2. **Card de Saldo Livre:**
+   - Destaque em verde esmeralda com ícone de carteira (`Wallet`), indicação de margem disponível e valor monetário formatado em Euros (€) com precisão decimal no padrão português (ex.: `26 800,00 €`).
+3. **Card de Orçamento Total:**
+   - Destaque sóbrio em slate/azul com ícone de tendência (`TrendingUp`), indicação de empreitadas ativas e valor consolidado em Euros (€) (ex.: `185 000,00 €`).
+4. **Responsividade Estrita:**
+   - Em ecrãs móveis (`< sm`), os cards distribuem-se fluidamente em grelha responsiva mantendo a legibilidade dos valores.
+   - Em ecrãs largos (`lg` e `xl`), posicionam-se à direita em alinhamento horizontal com a saudação, preservando a ilustração técnica vetorial de estaleiro em ecrãs `2xl`.
+
+
+## 019: Modo Escuro (Dark Mode) Universal e Funcional (17/11/2026)
+
+**Decisão:** Implementar a funcionalidade completa de Modo Escuro (Dark Mode) em toda a aplicação — tanto na Landing Page como no Dashboard —, com suporte a persistência local, prevenção de flash de tema (Anti-FOUC) e sincronização reativa com React 19 via `useSyncExternalStore`.
+
+**Princípios e Implementação:**
+1. **Prevenção de FOUC (Flash of Unstyled Content):**
+   - Injetado no `<head>` de `app/layout.tsx` um script inline síncrono que lê a preferência salva em `localStorage.getItem('medido-theme')` ou a preferência do sistema operacional (`prefers-color-scheme: dark`) e adiciona a classe `.dark` ao elemento `<html>` antes da primeira pintura.
+   - Adicionado `suppressHydrationWarning` na tag `<html>` para assegurar hidratação limpa sem erros no cliente.
+2. **Componente Reativo de Alternância (`ThemeToggle`):**
+   - Utiliza a API canónica `useSyncExternalStore` do React 19 para sincronizar o estado da classe `.dark` do DOM com o componente sem provocar renderizações em cascata (`react-hooks/set-state-in-effect`).
+   - Dispara eventos de sincronização em janela para manter todos os botões de alternância da página perfeitamente coordenados.
+   - Apresenta ícones acessíveis com transição suave: Sol (`Sun`) em modo escuro e Lua (`Moon`) em modo claro.
+3. **Integração no Dashboard e na Landing Page:**
+   - **Landing Page:** Integrado no cabeçalho fixo ([`LandingNav`](file:///c:/Users/user/Desktop/Projeto/medido/components/landing-nav.tsx)) tanto na barra de topo como no menu móvel.
+   - **Dashboard:** Integrado na barra superior ([`DashboardLayout`](file:///c:/Users/user/Desktop/Projeto/medido/app/dashboard/layout.tsx)), ao lado da identificação do utilizador e da empresa.
+   - **Superfícies e Componentes:** Todos os cartões, barras, menus e formulários receberam classes semânticas com suporte dual (ex.: `bg-white dark:bg-slate-900`, `text-slate-900 dark:text-white`, `border-slate-200 dark:border-slate-800`), respeitando a folha de variáveis globais de Tailwind CSS v4.
+
+## 020: Remoção de Dados Fictícios do Dashboard do Dono e Captação Real de Leads (17/11/2026)
+
+**Decisão:** O dashboard do Dono passa a apresentar apenas dados reais da base de dados, mantendo o design. Onde não existe fonte de dados, o cartão mantém-se com "—" ou estado vazio.
+
+**Implementação:**
+1. **Calculados a partir da BD:** Orçamento Total (soma de `Project.budget` de todas as obras ativas, antes limitado às 5 mais recentes), progresso por obra (tarefas concluídas / tarefas não canceladas, via `calculateProjectProgress`), novas obras no mês, apontamentos da semana (segunda a domingo, Lisboa), assiduidade (funcionários ativos com registo hoje / funcionários ativos), prioridade das tarefas (pelo prazo: atrasada ou até amanhã = Alta, até 7 dias = Média) e calendário mensal real (tarefas pendentes e conclusões de obra previstas, com navegação por `?mes=`/`?dia=`).
+2. **Sem fonte de dados (apresentados como "—"):** Valor Executado, Comprometido e Saldo Livre (não existe registo de custos), meteorologia e curvas Planeado/Executado/Previsão do cronograma (não existe planeamento de obra).
+3. **Removidas** todas as listas de recurso com obras, tarefas e notificações fictícias.
+4. **Leads:** o formulário da landing page grava no modelo `Lead` através de `createLeadAction` (validação zod no servidor, honeypot verificado no servidor, deduplicação por email em 24 horas).
+5. **Isolamento multi-tenant:** `createProjectAction` recusa `clientId` que não pertença à empresa (teste 25 em `tests/authorization-rules.test.ts`).
+
+## 021: Valores Monetários em Decimal, Rate Limiting Persistente e Endurecimento das Server Actions (17/11/2026)
+
+**Decisões:**
+1. **Todos os valores financeiros em `Decimal`.** `Project.budget` passou de `Float` para `Decimal(14,2)` (migração `20261117210000_project_budget_decimal_and_login_attempts`, com arredondamento explícito ao cêntimo; os 3 valores existentes não tinham casas decimais extra). A escrita usa `Prisma.Decimal` (sem aritmética de vírgula flutuante) e a leitura converte para `number` apenas na fronteira com Client Components. O orçamento aceita no máximo 2 casas decimais. Regra a seguir: qualquer novo campo financeiro é `Decimal`.
+2. **Rate limiting de início de sessão em Postgres** (tabela `login_attempts`, `lib/login-rate-limit.ts`), partilhado por todas as instâncias serverless: 5 falhas por email ou 20 por IP em 15 minutos bloqueiam essa chave durante 15 minutos. O utilizador vê uma mensagem própria (`LoginRateLimitedError`, código `rate_limited`). Quando o email não existe é feita na mesma uma comparação bcrypt, para o tempo de resposta não revelar se a conta existe.
+3. **Logs sem dados pessoais:** o login deixou de registar emails.
+4. **Ligação ao Neon:** o `DATABASE_URL` com pooler leva `pgbouncer=true`, porque sem ele o Prisma falha com "cached plan must not change result type" depois de migrações que alteram tipos de colunas. Tem de ser configurado também na Vercel.
+5. **Datas limite de tarefas** são interpretadas como hora de parede em `Europe/Lisbon` (`parseLisbonDateTime`); uma data sem hora vale até às 23:59 desse dia; uma data inválida é recusada.
+6. **Editar obra** permite escolher o cliente associado, validado por `companyId`.
+7. **Validação em runtime nas Server Actions:** dados da empresa (zod; NIF duplicado devolve erro em vez de 500), estado e motivo da revisão de registos (máx. 500 carateres, atualização atómica só se ainda `PENDING`), estado das tarefas (só `PENDING → CANCELLED`, atualização condicionada ao estado lido), ativação/desativação de utilizadores com o estado lido da BD, convites com `crypto.randomInt` e erro de email duplicado só para P2002, e alocação que não deixa a obra sem encarregado responsável.
+
+## 022: Ficha do Cliente como Centro do Processo Comercial (padrões CRM) (17/11/2026)
+
+**Decisão:** O percurso comercial (contacto → visita → orçamento → obra) passa a viver na ficha de cada cliente, inspirada nos padrões de trabalho de um CRM (página de registo, barra de etapas, histórico de atividade, listas relacionadas e pipeline de oportunidades), mantendo a identidade visual do Medido.
+
+**Implementação:**
+1. **Página própria `/dashboard/clientes/[id]`** (substitui o `ClientDetailsDialog`):
+   - cabeçalho com contactos e ações rápidas: Marcar visita, Registar interação, Criar orçamento, Editar e Eliminar;
+   - barra de etapas **Contacto → Visita → Orçamento → Negociação → Obra**, calculada automaticamente em `computeClientStage` (`lib/client-record.ts`), sem campo manual;
+   - indicadores: obras, valor em orçamento, valor adjudicado e último contacto;
+   - histórico cronológico com secção "Próximas" (visitas agendadas no futuro): interações, visitas, criação e mudanças de estado dos orçamentos e obras criadas;
+   - listas relacionadas: dados, visitas (com gestão de estado), orçamentos e obras.
+2. **Interações (`ClientActivity`):** chamada, email, reunião ou nota, com data (Europe/Lisbon, não futura) e autor. Restritas ao `OWNER`.
+3. **Visitas:** deixam de ter página e item de menu próprios (`/dashboard/visitas` redireciona para Clientes). São marcadas na ficha do cliente; com data indicada, ficam logo agendadas. As visitas agendadas aparecem no calendário do dashboard (ponto azul) e na agenda do dia, com link para a ficha.
+4. **Orçamento com visita opcional:**
+   - `Budget.visitRequestId` passou a opcional (migração `20261117230000_client_activities_and_optional_budget_visit`);
+   - o orçamento é criado para um cliente em `/dashboard/orcamentos/novo?cliente=…[&visita=…]`;
+   - quando indicada, a visita tem de ser do mesmo cliente, estar realizada e ainda não ter orçamento;
+   - o endereço antigo `/novo/[visitId]` redireciona.
+5. **Pipeline de Orçamentos:** a página passa a ter indicadores (em aberto, em negociação, adjudicado e taxa de adjudicação), pesquisa, vista em quadro por estado (com total em € por coluna) ou em lista, e opção de mostrar os fechados. O detalhe do orçamento foi alinhado visualmente, com link para a ficha do cliente e modo escuro.
+6. **Navegação:** "Visitas" saiu do menu lateral; na barra do telemóvel foi substituída por "Clientes". Criar um cliente abre a sua ficha, para marcar a visita logo a seguir.
+7. **Fora de âmbito, de propósito:** potenciais clientes vindos do site (modelo `Lead`) e vários contactos por cliente ficam para uma fase seguinte.
+
+## 023: Agenda do Responsável na Marcação de Visitas e Revisão Global do Modo Escuro (18/11/2026)
+
+**Decisão 1: as visitas têm responsável, duração e agenda.**
+1. `VisitRequest` ganhou `assignedToId` (encarregado ou Dono ativo da empresa) e `durationMinutes` (30 min a 4 h; 60 por defeito). Migração aditiva `20261118100000_visit_assignee_and_duration`.
+2. **Agendar exige responsável.** Ao marcar, agendar ou reagendar, o diálogo mostra a agenda do responsável para os próximos 14 dias (`getVisitAgendaAction`):
+   - visitas agendadas, com hora de início e fim, cliente e morada;
+   - tarefas com prazo;
+   - aviso em tempo real se o horário escolhido se sobrepõe a outra visita.
+3. **O servidor recusa sobreposições** na agenda do mesmo responsável, numa transação `Serializable` (`findVisitConflict` em `lib/visit-scheduling.ts`). Visitas encostadas (uma acaba às 11:00 e outra começa às 11:00) são permitidas.
+4. **Novo reagendamento** (`SCHEDULED → SCHEDULED`): permite mudar a data e/ou o responsável, ignorando a própria visita na verificação.
+5. **Permissões:** o encarregado vê no seu painel as visitas que lhe estão atribuídas ("As Minhas Visitas": cliente, telefone, morada, hora e duração), apenas em leitura. A gestão das visitas continua exclusiva do Dono.
+6. A agenda do dia no dashboard do Dono e a ficha do cliente mostram o responsável de cada visita.
+7. Removido de `createVisitRequestAction` o caminho de criação de cliente dentro do pedido de visita, que deixou de ter uso (decisão 022).
+
+**Decisão 2: modo escuro coerente em toda a aplicação.**
+1. **Transformação automática com regras fixas** sobre os `className`, com o mesmo mapa de cores das páginas já adaptadas:
+   - superfícies `dark:bg-slate-900`, bordas `dark:border-slate-800`, textos `slate-300/400`;
+   - fundos coloridos `{cor}-950/40` e textos coloridos `{cor}-300`.
+
+   Só acrescenta a variante quando falta para aquela propriedade e nunca altera a cor do texto em elementos com fundo sólido. Abrangeu 538 `className` em 39 ficheiros, incluindo 27 ecrãs que não tinham modo escuro (Tarefas, detalhe da obra, Registos, Perfil, Alertas, login, registo diário, entre outros).
+2. **Botões principais:** no tema escuro usam âmbar (`dark:bg-amber-500`), em vez de slate-900, que ficava quase invisível sobre o fundo slate-950.
+3. **Tokens do tema escuro** (`app/globals.css`) alinhados com a mesma paleta slate, para os componentes shadcn (diálogos, botões, campos) terem o mesmo tom das páginas. Antes usavam cinza `#111827` e um `accent` castanho. O fundo escurecido por trás dos diálogos passou a ser visível no tema escuro.
+4. **Verificado visualmente** com capturas de ecrã (Chrome headless) do dashboard, Clientes, ficha do cliente, diálogo de marcação, Orçamentos, Tarefas, Registos e Perfil.
+
+## 024: Registo de Empresa, Base de Dados Limpa, Testes Isolados e Nova Landing/Login (18/11/2026)
+
+**Decisões:**
+1. **Registo de empresa (`/registo`):** cria numa transação a `Company` e o utilizador `OWNER` e inicia sessão logo a seguir.
+   - Validação zod no servidor: NIF opcional com 9 algarismos (espaços ignorados) e a mesma política de palavra-passe do resto do sistema.
+   - Limite de 5 contas por IP a cada 15 minutos, na tabela `login_attempts`.
+   - Erros de email ou NIF duplicado aparecem junto do campo.
+   - Foi testado de ponta a ponta no browser: criar conta → sessão iniciada → dashboard vazio da nova empresa.
+2. **Base de dados limpa (18/11/2026)** para começar com dados reais. Antes, foi exportada uma cópia de segurança JSON local. Todas as tabelas da aplicação foram esvaziadas; as migrações mantêm-se. **O seed não deve voltar a ser corrido nesta base de dados**, porque cria uma empresa de demonstração; serve apenas para bases de dados locais.
+3. **Testes de integração isolados** (`tests/helpers/test-tenant.ts`):
+   - cada suite cria as suas próprias empresas de teste, com emails únicos em `@test.medido.invalid`, e apaga-as por completo no fim;
+   - não dependem do seed e não deixam dados (verificado: 0 registos após a bateria completa);
+   - recusam-se a correr com `NODE_ENV=production`.
+4. **Login sem credenciais expostas:** o rodapé que mostrava as contas e a palavra-passe do seed foi removido.
+5. **Nova landing, login e registo**, seguindo as skills `claude-design`, `design-better` e `ui-ux-pro-max`:
+   - **Diagnóstico de "aspeto de IA"** da landing anterior: 7/10. Tinha grelha de cartões com ícone por cima, barras de cor laterais, números grandes inventados, composição centrada e tipografia por defeito.
+   - **Recomposição** em vez de recolorir:
+     - hero alinhado à esquerda com um único registo diário de exemplo, identificado como tal;
+     - percurso numerado em cinco passos;
+     - tabela comparativa de perfis, baseada em `docs/permissions.md`;
+     - especificações reais do produto;
+     - faixa final com "Criar conta" e "Já tenho conta".
+   - **Saíram** a secção e o formulário de acesso antecipado, as perguntas frequentes e a pré-visualização de dashboard com dados inventados.
+   - **Tipografia IBM Plex Sans e Plex Mono** via `next/font`, aplicada só às páginas públicas (o dashboard mantém a fonte do sistema). É a recomendação dos dados da skill para construção: Swiss/minimalista, com estética de planta técnica.
+   - **Uma única cor de destaque** (âmbar de segurança), cantos mais retos e uma grelha fina de planta técnica como único motivo gráfico.
+   - **Login e registo** com campos de etiqueta visível, `autocomplete` correto, mostrar/ocultar palavra-passe, erros junto do campo e painel de marca só em ecrãs largos.
+   - **Todos os textos novos** ficam centralizados em `lib/texts.ts` (`auth` e `landing`).
+6. **O modelo `Lead` deixou de ter uso na aplicação.** A tabela fica no schema (vazia) até se decidir se volta a haver captação de contactos.
+
+## 025: Landing ao nível de sites premiados, a partir da referência extds.eu (18/11/2026)
+
+1. **Referência usada como linguagem, não como cópia.** Da extds.eu ficaram os padrões: hero de ecrã inteiro com uma frase gigante, navegação transparente que fica sólida ao deslizar, títulos grotescos fortes, montra do produto (portátil e telemóvel), painéis por perfil e faixa escura de contacto. Não se usou marca, texto, imagens nem cores da referência.
+2. **Sem fotografias de banco de imagens.** No lugar do vídeo da referência, o hero tem um alçado técnico em SVG (edifício, andaime e cotas) que se desenha ao carregar. A montra do produto é HTML real com dados de exemplo identificados como tal. Fotografias reais de obras da empresa podem substituir o desenho mais tarde.
+3. **Archivo (variável, eixo de largura) como fonte de display**, via `next/font`, só nas páginas públicas. IBM Plex mantém-se para texto corrido e rótulos técnicos. O título do login e do registo passa a usar a mesma fonte de display.
+4. **Movimento só com CSS, sem bibliotecas novas:** texto do hero a subir de uma máscara, traço SVG a desenhar-se, faixa contínua (marquee) e revelações ligadas ao scroll com `animation-timeline: view()`. Em browsers sem suporte o conteúdo fica estático e visível. Tudo é desativado com `prefers-reduced-motion`.
+5. **Secções:** hero, faixa contínua, declaração com revelação palavra a palavra, produto, percurso com título fixo, perfis, números do estaleiro (só especificações reais do produto), chamada final e rodapé com a marca em grande escala.
