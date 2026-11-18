@@ -60,7 +60,7 @@ Estado: **Em desenvolvimento**
   - Server actions `createClientAction`, `updateClientAction`, `deleteClientAction` com validação Zod e isolamento multi-tenant.
   - Componente reutilizável `components/ui/dialog.tsx` (sem dependências externas): fecha com Escape, clique no backdrop e botão X; bloqueia scroll; foco inicial no painel.
   - Integrado no menu lateral do OWNER e na barra mobile (5 itens; substituiu "Registos" na barra mobile, que continua acessível no sidebar desktop).
-- [x] Visão Geral do OWNER completamente reformulada de acordo com o design system de ERP para construção civil (skills `yafa-ui-dashboard` e `office-web-ui-system`):
+- [x] Visão Geral do OWNER completamente reformulada de acordo com um design system de ERP para construção civil:
   - Banner de boas-vindas com meteorologia, dados em tempo real, cartões financeiros de Saldo Livre e Orçamento Total consolidado e arte vetorial técnica de estaleiro.
   - Fileira de 6 KPI cards semânticos de alta densidade (Obras Ativas, Concluídas, em Atraso, Apontamentos em Obra, Validações Pendentes e Assiduidade da Equipa).
   - Painel de Execução Orçamental das Obras com gráfico tipo Donut SVG puro desagregando orçamento total, executado, comprometido e saldo em Euros (€).
