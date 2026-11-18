@@ -42,6 +42,3 @@ yarn-error.log*
 
 # gerado pelo Tailwind CLI (sai na migração para o v4)
 /public/main.css
-
-.agents/skills/
-skills-lock.json

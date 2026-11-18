@@ -12,7 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    ".agents/**",
+    // Pastas ocultas locais (configuração pessoal, fora do projeto)
+    ".*/**",
   ]),
 ]);
 

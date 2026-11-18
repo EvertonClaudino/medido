@@ -109,24 +109,24 @@ Regras:
 5. Aprovar cria uma obra `ACTIVE`, sem equipa atribuída, ligada ao cliente e ao orçamento. `Project.budget` recebe o total com IVA. Alterações posteriores ao orçamento sincronizam os dados da obra; cancelar um orçamento aprovado arquiva a obra. As linhas do orçamento ficam como referência do âmbito orçamentado, sem constituírem registo de consumo/medição real.
 6. A migração aditiva `20261111185700_add_budget_visit_workflow` foi criada, mas só deve ser aplicada após validação no ambiente de base de dados adequado.
 
-## 010: Redesenho da Visão Geral do Dono com Yafa-UI e Office-Web-UI (11/11/2026)
+## 010: Redesenho da Visão Geral do Dono (11/11/2026)
 
-**Decisão:** Redesenhar a página principal da visão geral do Dono da Empresa (`/dashboard` para perfil `OWNER`), adotando os padrões visuais e ergonómicos dos sistemas de design `yafa-ui-dashboard` e `office-web-ui-system` para replicar a densidade analítica e operacional da referência de ERP de construção civil fornecida.
+**Decisão:** Redesenhar a página principal da visão geral do Dono da Empresa (`/dashboard` para perfil `OWNER`), adotando padrões visuais e ergonómicos de ERP para replicar a densidade analítica e operacional da referência de ERP de construção civil fornecida.
 
 Regras e estrutura:
-1. **Banner de Boas-Vindas Operacional (`OwnerHeroBanner`):** Saudação personalizada contextualizada com data local (`Europe/Lisbon`), estado meteorológico, indicador em tempo real ("Dados ao vivo") e ilustração técnica vetorial de estaleiro. Foram removidos o medidor fictício de "Índice de Eficiência IA" e referências de IA simuladas, mantendo o foco em dados tangíveis.
+1. **Banner de Boas-Vindas Operacional (`OwnerHeroBanner`):** Saudação personalizada contextualizada com data local (`Europe/Lisbon`), estado meteorológico, indicador em tempo real ("Dados ao vivo") e ilustração técnica vetorial de estaleiro. Foram removidos o medidor fictício de eficiência e outros indicadores simulados, mantendo o foco em dados tangíveis.
 2. **Fileira de KPIs Semânticos (`OwnerKpiRow`):** 6 cartões compactos com acentos cromáticos na borda esquerda, ícones Lucide específicos e comparativos: Obras Ativas, Obras Concluídas, Obras em Atraso, Apontamentos em Obra, Validações Pendentes e Assiduidade da Equipa.
 3. **Canvas Analítico e Operacional Central (2/3):**
    - Execução Orçamental das Obras com gráfico circular tipo donut em SVG puro (sem bibliotecas externas pesadas) desagregando orçamento total, executado, comprometido e saldo.
    - Cronograma e Evolução de Obras com curvas SVG de tendência temporal (Planeado vs. Real vs. Previsão).
    - Desempenho por Obra com barras de progresso percentual e estado.
-   - Barra de Acessos Rápidos em formato "pill bar" para atalhos diretos de criação e gestão (com "Alertas" limpo de menções a IA).
+   - Barra de Acessos Rápidos em formato "pill bar" para atalhos diretos de criação e gestão.
    - Grelha Operacional tripartite (Atualizações Recentes de Obras, Alertas Críticos com badges de gravidade e Próximos Prazos de Entrega).
 4. **Painel Lateral Operacional (1/3) (`OwnerSidebarColumn`):**
    - Mini-calendário operacional interativo de navegação mensal e seleção de dia em `Europe/Lisbon`.
    - "As Minhas Tarefas" prioritárias com caixas de seleção interativas, ligação à obra e etiquetas de prioridade (Alta, Média, Baixa).
    - Feed de notificações e acontecimentos recentes em obra.
-   - Removido o widget do assistente de IA/Copilot, preservando apenas as ferramentas operacionais reais de gestão.
+   - Removido o widget de assistente virtual, preservando apenas as ferramentas operacionais reais de gestão.
 5. **Compatibilidade e Integridade:** Todas as consultas no servidor mantêm estrito isolamento por `companyId`, cálculo no fuso `Europe/Lisbon`, valores monetários em Euros (`€`) e textos rigorosamente em português de Portugal (PT-PT).
 
 
@@ -380,8 +380,8 @@ Regras e estrutura:
    - não dependem do seed e não deixam dados (verificado: 0 registos após a bateria completa);
    - recusam-se a correr com `NODE_ENV=production`.
 4. **Login sem credenciais expostas:** o rodapé que mostrava as contas e a palavra-passe do seed foi removido.
-5. **Nova landing, login e registo**, seguindo as skills `claude-design`, `design-better` e `ui-ux-pro-max`:
-   - **Diagnóstico de "aspeto de IA"** da landing anterior: 7/10. Tinha grelha de cartões com ícone por cima, barras de cor laterais, números grandes inventados, composição centrada e tipografia por defeito.
+5. **Nova landing, login e registo:**
+   - **Diagnóstico de "aspeto genérico"** da landing anterior: tinha grelha de cartões com ícone por cima, barras de cor laterais, números grandes inventados, composição centrada e tipografia por defeito.
    - **Recomposição** em vez de recolorir:
      - hero alinhado à esquerda com um único registo diário de exemplo, identificado como tal;
      - percurso numerado em cinco passos;
@@ -389,7 +389,7 @@ Regras e estrutura:
      - especificações reais do produto;
      - faixa final com "Criar conta" e "Já tenho conta".
    - **Saíram** a secção e o formulário de acesso antecipado, as perguntas frequentes e a pré-visualização de dashboard com dados inventados.
-   - **Tipografia IBM Plex Sans e Plex Mono** via `next/font`, aplicada só às páginas públicas (o dashboard mantém a fonte do sistema). É a recomendação dos dados da skill para construção: Swiss/minimalista, com estética de planta técnica.
+   - **Tipografia IBM Plex Sans e Plex Mono** via `next/font`, aplicada só às páginas públicas (o dashboard mantém a fonte do sistema). Estilo Swiss/minimalista, com estética de planta técnica, adequado à construção.
    - **Uma única cor de destaque** (âmbar de segurança), cantos mais retos e uma grelha fina de planta técnica como único motivo gráfico.
    - **Login e registo** com campos de etiqueta visível, `autocomplete` correto, mostrar/ocultar palavra-passe, erros junto do campo e painel de marca só em ecrãs largos.
    - **Todos os textos novos** ficam centralizados em `lib/texts.ts` (`auth` e `landing`).
